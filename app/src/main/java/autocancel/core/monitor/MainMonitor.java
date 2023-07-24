@@ -1,0 +1,35 @@
+package autocancel.core.monitor;
+
+import autocancel.core.monitor.Monitor;
+import autocancel.core.monitor.CPUMonitor;
+import autocancel.core.monitor.MemoryMonitor;
+import autocancel.core.utils.CancellableID;
+import autocancel.core.utils.Cancellable;
+import autocancel.manager.MainManager;
+import autocancel.utils.ResourceType;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class MainMonitor {
+    
+    Map<CancellableID, Cancellable> cancellables;
+
+    MainManager mainManager;
+
+    Map<ResourceType, Monitor> monitors;
+
+    public MainMonitor(MainManager mainManager, Map<CancellableID, Cancellable> cancellables) {
+        this.mainManager = mainManager;
+        this.cancellables = cancellables;
+
+        this.monitors = new HashMap<ResourceType, Monitor>();
+        this.monitors.put(ResourceType.CPU, new CPUMonitor(this.mainManager));
+        this.monitors.put(ResourceType.MEMORY, new MemoryMonitor(this.mainManager));
+
+    }
+
+    public void updateTasksResources() {
+
+    }
+}
