@@ -30,6 +30,11 @@ public class MainMonitor {
     }
 
     public void updateTasksResources() {
-
+        this.mainManager.startNewVersion();
+        for (Map.Entry<CancellableID, Cancellable> entry : cancellables.entrySet()) {
+            for (ResourceType resourceType : entry.getValue().getResourceTypes()) {
+                this.monitors.get(resourceType).updateResource(entry.getKey());
+            }
+        }
     }
 }

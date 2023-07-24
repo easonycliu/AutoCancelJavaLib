@@ -13,9 +13,11 @@ import autocancel.core.AutoCancelCore;
 
 public class MainManager {
 
-    private AutoCancelCore autoCancelCore;
-
     public MainManager() {
-        this.autoCancelCore = new AutoCancelCore(this);
+        AutoCancelCore autoCancelCore = new AutoCancelCore(this);
+    }
+
+    public void startNewVersion() {
+
     }
 }
