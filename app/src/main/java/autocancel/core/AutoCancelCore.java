@@ -7,6 +7,7 @@ import autocancel.core.utils.CancellableID;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.lang.Thread;
 
 public class AutoCancelCore {
 
@@ -22,4 +23,8 @@ public class AutoCancelCore {
         this.mainMonitor = new MainMonitor(this.mainManager, this.cancellables);
         
     }
+
+    // public Thread StartCoreOnNewThread() {
+
+    // }
 }
