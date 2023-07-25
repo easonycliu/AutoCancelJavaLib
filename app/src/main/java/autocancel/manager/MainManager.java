@@ -11,6 +11,7 @@ package autocancel.manager;
 
 import autocancel.core.AutoCancelCore;
 import autocancel.utils.CancellableID;
+import autocancel.utils.JavaThreadID;
 
 import java.util.Queue;
 
@@ -38,7 +39,10 @@ public class MainManager {
 
     }
 
-    // public CancellableID createCancellable() {
-
-    // }
+    public CancellableID createCancellable(JavaThreadID jid) {
+        CancellableID cid = new CancellableID();
+        idManager.setCancellableIDAndJavaThreadID(cid, jid);
+        // TODO: Connect AutoCancelCore
+        return cid;
+    }
 }

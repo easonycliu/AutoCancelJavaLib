@@ -8,6 +8,9 @@ public class TaskWrapper {
         assert task.toString().contains("Task") : "Input is not a class Task.";
 
         this.task = task;
+
+        Runnable r;
+        r.toString();
     }
 
     @Override
