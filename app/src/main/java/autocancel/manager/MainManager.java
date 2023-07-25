@@ -10,8 +10,17 @@
 package autocancel.manager;
 
 import autocancel.core.AutoCancelCore;
+import autocancel.utils.CancellableID;
+
+import java.util.Queue;
 
 public class MainManager {
+
+    private Queue<String> buffer;
+
+    private IDManager idManager;
+
+    private InfrastructureManager infrastructureManager;
 
     public MainManager() {
         AutoCancelCore autoCancelCore = new AutoCancelCore(this);
@@ -20,4 +29,16 @@ public class MainManager {
     public void startNewVersion() {
 
     }
+
+    public void start() {
+        
+    }
+
+    public void stop() {
+
+    }
+
+    // public CancellableID createCancellable() {
+
+    // }
 }

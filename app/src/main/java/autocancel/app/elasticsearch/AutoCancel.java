@@ -1,20 +1,34 @@
 package autocancel.app.elasticsearch;
 
 import autocancel.manager.MainManager;
+import autocancel.app.elasticsearch.TaskWrapper;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.lang.Thread;
 
 public class AutoCancel {
     
-    private MainManager mainManager;
+    private static Boolean started = false;
 
-    public AutoCancel() {
-        this.mainManager = new MainManager();
+    private static MainManager mainManager = new MainManager();
+
+    public static void start() {
+        mainManager.start();
+        started = true;
     }
 
-    public void start() {
-
+    public static void stop() throws AssertionError {
+        assert started : "You should start lib AutoCancel first.";
+        mainManager.stop();
     }
 
-    public void stop() {
+    public static void onTaskCreated(Object task) throws AssertionError {
+        assert started : "You should start lib AutoCancel first.";
+        
+        TaskWrapper wrappedTask = new TaskWrapper(task);
 
+
+        Thread.currentThread().getId();
     }
 }

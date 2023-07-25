@@ -1,9 +1,9 @@
 package autocancel.core;
 
 import autocancel.manager.MainManager;
+import autocancel.utils.Cancellable;
+import autocancel.utils.CancellableID;
 import autocancel.core.monitor.MainMonitor;
-import autocancel.core.utils.Cancellable;
-import autocancel.core.utils.CancellableID;
 
 import java.util.Map;
 import java.util.HashMap;

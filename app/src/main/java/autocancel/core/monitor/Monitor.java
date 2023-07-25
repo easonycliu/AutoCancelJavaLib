@@ -1,6 +1,6 @@
 package autocancel.core.monitor;
 
-import autocancel.core.utils.CancellableID;
+import autocancel.utils.CancellableID;
 
 public interface Monitor {
 

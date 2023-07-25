@@ -1,6 +1,5 @@
-package autocancel.core.utils;
+package autocancel.utils;
 
-import autocancel.utils.ResourceType;
 import autocancel.core.utils.ResourceUsage;
 
 import java.util.HashMap;

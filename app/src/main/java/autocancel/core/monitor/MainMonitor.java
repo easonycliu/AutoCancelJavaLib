@@ -3,9 +3,9 @@ package autocancel.core.monitor;
 import autocancel.core.monitor.Monitor;
 import autocancel.core.monitor.CPUMonitor;
 import autocancel.core.monitor.MemoryMonitor;
-import autocancel.core.utils.CancellableID;
-import autocancel.core.utils.Cancellable;
 import autocancel.manager.MainManager;
+import autocancel.utils.Cancellable;
+import autocancel.utils.CancellableID;
 import autocancel.utils.ResourceType;
 
 import java.util.HashMap;

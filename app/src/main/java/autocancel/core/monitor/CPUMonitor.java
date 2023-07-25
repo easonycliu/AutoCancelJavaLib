@@ -2,7 +2,7 @@ package autocancel.core.monitor;
 
 import autocancel.core.monitor.Monitor;
 import autocancel.manager.MainManager;
-import autocancel.core.utils.CancellableID;
+import autocancel.utils.CancellableID;
 
 public class CPUMonitor implements Monitor {
 
