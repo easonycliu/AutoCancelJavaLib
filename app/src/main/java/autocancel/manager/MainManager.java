@@ -81,7 +81,7 @@ public class MainManager {
     }
 
     public void destoryCancellableIDOnCurrentJavaThreadID() {
-
+        // TODO: Connect AutoCancelCore
     }
 
     public CancellableID getCancellableIDOnCurrentJavaThreadID() {

@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 import java.util.List;
 import java.lang.Thread;
 
@@ -54,8 +55,29 @@ public class AutoCancel {
     }
 
     public static void onTaskExit(Object task) throws AssertionError {
-        // TODO: Find the exit point of elasticsearch task        
+        assert started : "You should start lib AutoCancel first.";
 
+        TaskWrapper wrappedTask = new TaskWrapper(task);
+        CancellableID cid = null;
+
+        try (ReleasableLock ignored = AutoCancel.readLock.acquire()) {
+            for (Map.Entry<CancellableID, TaskWrapper> entry : AutoCancel.cancellableIDToTask.entrySet()) {
+                if (entry.getValue().equals(wrappedTask)) {
+                    cid = entry.getKey();
+                    break;
+                }
+            }
+        }
+
+        assert cid != null : "Cannot exit an uncreated task.";
+
+        try (ReleasableLock ignored = AutoCancel.writeLock.acquire()) {
+            assert AutoCancel.cancellableIDToAsyncRunnables.containsKey(cid) &&
+            AutoCancel.cancellableIDToTask.containsKey(cid) : "Maps should contains the cid to be removed.";
+            AutoCancel.removeCancellableIDFromMaps(cid);
+        }
+
+        AutoCancel.mainManager.destoryCancellableIDOnCurrentJavaThreadID();
     }
 
     public static void onTaskFinishInThread() throws AssertionError {
@@ -87,9 +109,24 @@ public class AutoCancel {
         assert started : "You should start lib AutoCancel first.";
         assert runnable != null : "Runable cannot be a null pointer.";
 
-        // TODO: Find cid
+        CancellableID cid = null;
 
-        AutoCancel.mainManager.registerCancellableIDOnCurrentJavaThreadID(null);
+        try (ReleasableLock ignored = AutoCancel.readLock.acquire()) {
+            for (Map.Entry<CancellableID, List<Runnable>> entry : AutoCancel.cancellableIDToAsyncRunnables.entrySet()) {
+                if (entry.getValue().contains(runnable)) {
+                    cid = entry.getKey();
+                    break;
+                }
+            }
+        }
 
+        assert cid != null : "Cannot start a runnable out of excute entry.";
+
+        AutoCancel.mainManager.registerCancellableIDOnCurrentJavaThreadID(cid);
+    }
+
+    private static void removeCancellableIDFromMaps(CancellableID cid) {
+        AutoCancel.cancellableIDToAsyncRunnables.remove(cid);
+        AutoCancel.cancellableIDToTask.remove(cid);
     }
 }
