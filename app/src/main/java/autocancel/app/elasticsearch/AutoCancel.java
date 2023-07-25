@@ -6,6 +6,7 @@ import autocancel.utils.CancellableID;
 import autocancel.utils.JavaThreadID;
 import autocancel.utils.ReleasableLock;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -43,8 +44,7 @@ public class AutoCancel {
         assert started : "You should start lib AutoCancel first.";
         
         TaskWrapper wrappedTask = new TaskWrapper(task);
-        JavaThreadID jid = new JavaThreadID(Thread.currentThread().getId());
-        CancellableID cid = AutoCancel.mainManager.createCancellable(jid);
+        CancellableID cid = AutoCancel.mainManager.createCancellableIDOnCurrentJavaThreadID();
 
         try (ReleasableLock ignored = AutoCancel.writeLock.acquire()) {
             assert !cancellableIDToTask.containsKey(cid) : "Do not register one task twice.";
@@ -53,17 +53,43 @@ public class AutoCancel {
 
     }
 
-    public static void onTaskFinish() throws AssertionError {
-        assert started : "You should start lib AutoCancel first.";
+    public static void onTaskExit(Object task) throws AssertionError {
+        // TODO: Find the exit point of elasticsearch task        
 
     }
 
-    public static void onTaskRunAsync() throws AssertionError {
+    public static void onTaskFinishInThread() throws AssertionError {
         assert started : "You should start lib AutoCancel first.";
 
-        JavaThreadID jid = new JavaThreadID(Thread.currentThread().getId());
+        AutoCancel.mainManager.unregisterCancellableIDOnCurrentJavaThreadID();
+    }
 
+    public static void onTaskQueueInThread(Runnable runnable) throws AssertionError {
+        assert started : "You should start lib AutoCancel first.";
+        assert runnable != null : "Runable cannot be a null pointer.";
 
+        CancellableID cid = AutoCancel.mainManager.getCancellableIDOnCurrentJavaThreadID();
+
+        assert !cid.equals(new CancellableID()) : "Task must be running before queuing into threadpool.";
+
+        try (ReleasableLock ignored = AutoCancel.writeLock.acquire()) {
+            if (AutoCancel.cancellableIDToAsyncRunnables.containsKey(cid)) {
+                AutoCancel.cancellableIDToAsyncRunnables.get(cid).add(runnable);
+            }
+            else {
+                AutoCancel.cancellableIDToAsyncRunnables.put(cid, Arrays.asList(runnable));
+            }
+        }
+
+    }
+
+    public static void onTaskStartInThread(Runnable runnable) throws AssertionError {
+        assert started : "You should start lib AutoCancel first.";
+        assert runnable != null : "Runable cannot be a null pointer.";
+
+        // TODO: Find cid
+
+        AutoCancel.mainManager.registerCancellableIDOnCurrentJavaThreadID(null);
 
     }
 }

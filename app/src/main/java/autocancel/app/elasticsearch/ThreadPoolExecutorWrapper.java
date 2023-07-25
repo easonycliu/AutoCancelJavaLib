@@ -1,5 +1,7 @@
 package autocancel.app.elasticsearch;
 
+import autocancel.app.elasticsearch.AutoCancel;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
@@ -44,6 +46,19 @@ public class ThreadPoolExecutorWrapper extends ThreadPoolExecutor {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, handler);
     }
 
-    
+    protected void beforeExecute(Thread t, Runnable r) {
+        AutoCancel.onTaskStartInThread(r);
+        super.beforeExecute(t, r);
+    }
+
+    protected void afterExecute(Runnable r, Throwable t) {
+        super.afterExecute(r, t);
+        AutoCancel.onTaskFinishInThread();
+    }
+
+    public void execute(Runnable command) {
+        AutoCancel.onTaskQueueInThread(command);
+        super.execute(command);
+    }
 
 }
