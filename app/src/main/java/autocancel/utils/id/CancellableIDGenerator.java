@@ -1,8 +1,8 @@
-package autocancel.utils;
-
-import autocancel.utils.CancellableID;
+package autocancel.utils.id;
 
 import java.util.concurrent.atomic.AtomicLong;
+
+import autocancel.utils.id.CancellableID;
 
 public class CancellableIDGenerator {
 

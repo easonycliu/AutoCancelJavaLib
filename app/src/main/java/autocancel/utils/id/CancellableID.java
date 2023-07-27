@@ -1,6 +1,8 @@
-package autocancel.utils;
+package autocancel.utils.id;
 
-public class CancellableID {
+import autocancel.utils.id.ID;
+
+public class CancellableID implements ID {
     
     private Long id;
 

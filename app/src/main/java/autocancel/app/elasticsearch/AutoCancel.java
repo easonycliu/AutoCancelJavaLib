@@ -2,9 +2,9 @@ package autocancel.app.elasticsearch;
 
 import autocancel.manager.MainManager;
 import autocancel.app.elasticsearch.TaskWrapper;
-import autocancel.utils.CancellableID;
-import autocancel.utils.JavaThreadID;
 import autocancel.utils.ReleasableLock;
+import autocancel.utils.id.CancellableID;
+import autocancel.utils.id.JavaThreadID;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -1,6 +1,8 @@
-package autocancel.utils;
+package autocancel.utils.id;
 
-public class JavaThreadID {
+import autocancel.utils.id.ID;
+
+public class JavaThreadID implements ID {
 
     private Long id;
 

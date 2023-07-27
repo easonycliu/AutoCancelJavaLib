@@ -11,11 +11,10 @@ package autocancel.manager;
 
 import autocancel.app.elasticsearch.AutoCancel;
 import autocancel.core.AutoCancelCore;
-import autocancel.manager.IDManager;
-import autocancel.utils.CancellableID;
-import autocancel.utils.JavaThreadID;
 import autocancel.utils.ReleasableLock;
-import autocancel.utils.CancellableIDGenerator;
+import autocancel.utils.id.CancellableID;
+import autocancel.utils.id.CancellableIDGenerator;
+import autocancel.utils.id.JavaThreadID;
 
 import java.io.File;
 import java.io.FileOutputStream;
