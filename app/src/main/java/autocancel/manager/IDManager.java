@@ -74,6 +74,21 @@ public class IDManager {
         return cancellableID;
     }
 
+    public List<IDInfo<JavaThreadID>> getAllJavaThreadIDInfoOfCancellableID(CancellableID cid) {
+        List<IDInfo<JavaThreadID>> javaThreadIDInfos;
+
+        try (ReleasableLock ignored = this.readLock.acquire()) {
+            if (this.cancellableIDToJavaThreadID.containsKey(cid)) {
+                javaThreadIDInfos = this.cancellableIDToJavaThreadID.get(cid);
+            }
+            else {
+                javaThreadIDInfos = new ArrayList<IDInfo<JavaThreadID>>(Arrays.asList(new IDInfo<JavaThreadID>(new JavaThreadID())));
+            }
+        }
+
+        return javaThreadIDInfos;
+    }
+
     public void setCancellableIDAndJavaThreadID(CancellableID cid, JavaThreadID jid) {
         try (ReleasableLock ignored = this.writeLock.acquire()) {
             this.doSetCancellableIDAndJavaThreadID(cid, jid);

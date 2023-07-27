@@ -11,10 +11,12 @@ package autocancel.manager;
 
 import autocancel.app.elasticsearch.AutoCancel;
 import autocancel.core.AutoCancelCore;
+import autocancel.core.utils.OperationRequest;
 import autocancel.utils.ReleasableLock;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.id.CancellableIDGenerator;
 import autocancel.utils.id.JavaThreadID;
+import autocancel.utils.id.IDInfo;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -23,10 +25,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Queue;
+import java.util.LinkedList;
 
 public class MainManager {
 
-    private Queue<String> buffer;
+    private Queue<OperationRequest> managerRequestToCoreBuffer;
 
     private IDManager idManager;
 
@@ -36,7 +39,9 @@ public class MainManager {
 
     public MainManager() {
         // AutoCancelCore autoCancelCore = new AutoCancelCore(this);
+        this.managerRequestToCoreBuffer = new LinkedList<OperationRequest>();
         this.idManager = new IDManager();
+        this.infrastructureManager = new InfrastructureManager();
         this.cidGenerator = new CancellableIDGenerator();
     }
 
@@ -93,6 +98,7 @@ public class MainManager {
 
     public void destoryCancellableIDOnCurrentJavaThreadID(CancellableID cid) {
         // TODO: Connect AutoCancelCore
+        
     }
 
     public CancellableID getCancellableIDOnCurrentJavaThreadID() {
@@ -100,6 +106,43 @@ public class MainManager {
         CancellableID cid = this.idManager.getCancellableIDOfJavaThreadID(jid);
 
         return cid;
+    }
+
+    public void logCancellableJavaThreadIDInfo(CancellableID cid) {
+        List<IDInfo<JavaThreadID>> javaThreadIDInfos = this.idManager.getAllJavaThreadIDInfoOfCancellableID(cid);
+
+        // TODO: add config to jidinfo save path
+        try (FileWriter jidInfoWriter = new FileWriter("/tmp/jidinfo", true)) {
+            jidInfoWriter.write(String.format("========== Cancellable %s ==========\n", cid.toString()));
+            for (IDInfo<JavaThreadID> javaThreadIDInfo : javaThreadIDInfos) {
+                jidInfoWriter.write(javaThreadIDInfo.toString() + "\n");
+            }
+        }
+        catch (IOException e) {
+
+        }
+    }
+
+    public void putManagerRequestToCore(OperationRequest request) {
+        synchronized(this.managerRequestToCoreBuffer) {
+            this.managerRequestToCoreBuffer.add(request);
+        }
+    }
+
+    public OperationRequest getManagerRequestToCore() {
+        OperationRequest request;
+        synchronized(this.managerRequestToCoreBuffer) {
+            request = this.managerRequestToCoreBuffer.poll();
+        }
+        return request;
+    }
+
+    public Integer getManagerRequestToCoreBufferSize() {
+        Integer size;
+        synchronized(this.managerRequestToCoreBuffer) {
+            size = this.managerRequestToCoreBuffer.size();
+        }
+        return size;
     }
 
 }
