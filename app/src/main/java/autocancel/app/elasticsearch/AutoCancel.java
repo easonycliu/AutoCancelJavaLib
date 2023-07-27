@@ -6,6 +6,7 @@ import autocancel.utils.CancellableID;
 import autocancel.utils.JavaThreadID;
 import autocancel.utils.ReleasableLock;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -77,7 +78,7 @@ public class AutoCancel {
             AutoCancel.removeCancellableIDFromMaps(cid);
         }
 
-        AutoCancel.mainManager.destoryCancellableIDOnCurrentJavaThreadID();
+        AutoCancel.mainManager.destoryCancellableIDOnCurrentJavaThreadID(cid);
     }
 
     public static void onTaskFinishInThread() throws AssertionError {
@@ -99,7 +100,7 @@ public class AutoCancel {
                 AutoCancel.cancellableIDToAsyncRunnables.get(cid).add(runnable);
             }
             else {
-                AutoCancel.cancellableIDToAsyncRunnables.put(cid, Arrays.asList(runnable));
+                AutoCancel.cancellableIDToAsyncRunnables.put(cid, new ArrayList<Runnable>(Arrays.asList(runnable)));
             }
         }
 

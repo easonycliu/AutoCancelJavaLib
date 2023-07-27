@@ -11,10 +11,18 @@ package autocancel.manager;
 
 import autocancel.app.elasticsearch.AutoCancel;
 import autocancel.core.AutoCancelCore;
+import autocancel.manager.IDManager;
 import autocancel.utils.CancellableID;
 import autocancel.utils.JavaThreadID;
 import autocancel.utils.ReleasableLock;
+import autocancel.utils.CancellableIDGenerator;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.List;
 import java.util.Queue;
 
 public class MainManager {
@@ -25,8 +33,12 @@ public class MainManager {
 
     private InfrastructureManager infrastructureManager;
 
+    private CancellableIDGenerator cidGenerator;
+
     public MainManager() {
-        AutoCancelCore autoCancelCore = new AutoCancelCore(this);
+        // AutoCancelCore autoCancelCore = new AutoCancelCore(this);
+        this.idManager = new IDManager();
+        this.cidGenerator = new CancellableIDGenerator();
     }
 
     public void startNewVersion() {
@@ -42,7 +54,7 @@ public class MainManager {
     }
 
     private CancellableID createCancellable(JavaThreadID jid) {
-        CancellableID cid = new CancellableID();
+        CancellableID cid = this.cidGenerator.generate();
         this.idManager.setCancellableIDAndJavaThreadID(cid, jid);
         // TODO: Connect AutoCancelCore
         return cid;
@@ -80,7 +92,7 @@ public class MainManager {
         return cid;
     }
 
-    public void destoryCancellableIDOnCurrentJavaThreadID() {
+    public void destoryCancellableIDOnCurrentJavaThreadID(CancellableID cid) {
         // TODO: Connect AutoCancelCore
     }
 

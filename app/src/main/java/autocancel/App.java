@@ -12,7 +12,47 @@ public class App {
     }
 
     public static void main(String[] args) {
-        AutoCancel autoCancel = new AutoCancel();
         System.out.println(new App().getGreeting());
+        Object t = new Object() {
+            @Override
+            public String toString() {
+                return "Task 1";
+            }
+        };
+        AutoCancel.onTaskCreate(t);
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                for (Integer i = 0; i < 10; ++i) {
+                    System.out.println(i);
+                }
+            }
+        };
+        AutoCancel.onTaskQueueInThread(r);
+        AutoCancel.onTaskStartInThread(r);
+        AutoCancel.onTaskFinishInThread();
+        AutoCancel.onTaskExit(t);
+        System.out.println("Finish 0");
+
+        Object t1 = new Object() {
+            @Override
+            public String toString() {
+                return "Task 2";
+            }
+        };
+        AutoCancel.onTaskCreate(t1);
+        Runnable r1 = new Runnable() {
+            @Override
+            public void run() {
+                for (Integer i = 0; i < 11; ++i) {
+                    System.out.println(i);
+                }
+            }
+        };
+        AutoCancel.onTaskQueueInThread(r1);
+        AutoCancel.onTaskStartInThread(r1);
+        AutoCancel.onTaskFinishInThread();
+        AutoCancel.onTaskExit(t1);
+        System.out.println("Finish 1");
     }
 }
