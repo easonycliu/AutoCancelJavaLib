@@ -1,6 +1,7 @@
 package autocancel.utils;
 
 import autocancel.core.utils.ResourceUsage;
+import autocancel.utils.Resource.ResourceType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,6 +10,8 @@ import java.util.Set;
 public class Cancellable {
     
     private Map<ResourceType, ResourceUsage> resourceMap;
+
+    private Boolean isCancellable;
 
     public Cancellable() {
         this.resourceMap = new HashMap<ResourceType, ResourceUsage>();

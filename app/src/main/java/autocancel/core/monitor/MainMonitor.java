@@ -5,7 +5,7 @@ import autocancel.core.monitor.CPUMonitor;
 import autocancel.core.monitor.MemoryMonitor;
 import autocancel.manager.MainManager;
 import autocancel.utils.Cancellable;
-import autocancel.utils.ResourceType;
+import autocancel.utils.Resource.ResourceType;
 import autocancel.utils.id.CancellableID;
 
 import java.util.HashMap;

@@ -78,6 +78,8 @@ public class AutoCancel {
             AutoCancel.removeCancellableIDFromMaps(cid);
         }
 
+        AutoCancel.mainManager.logCancellableJavaThreadIDInfo(cid);
+
         AutoCancel.mainManager.destoryCancellableIDOnCurrentJavaThreadID(cid);
     }
 

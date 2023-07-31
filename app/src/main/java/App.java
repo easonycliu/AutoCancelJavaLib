@@ -27,7 +27,28 @@ public class App {
             }
         };
         AutoCancel.onTaskQueueInThread(r);
-        AutoCancel.onTaskStartInThread(r);
+        Thread thread1 = new Thread() {
+            @Override
+            public void run() {
+                AutoCancel.onTaskStartInThread(r);
+                try {
+                    Thread.sleep(1);
+                }
+                catch (Exception e) {
+
+                }
+                AutoCancel.onTaskFinishInThread();
+            }
+        };
+        thread1.start();
+        
+        
+        try {
+            thread1.join();
+        }
+        catch (Exception e) {
+
+        }
         AutoCancel.onTaskFinishInThread();
         AutoCancel.onTaskExit(t);
         System.out.println("Finish 0");

@@ -27,8 +27,13 @@ public class IDInfo<ObjectID extends ID> {
 
     @Override
     public boolean equals(Object o) {
-        return this.timestamp.equals(((IDInfo<?>)o).getTimestamp()) && 
+        return this.id.getClass() == ((IDInfo<?>)o).getID().getClass() && 
         this.id.equals(((IDInfo<?>)o).getID());
+    }
+
+    @Override
+    public int hashCode() {
+        return this.id.hashCode();
     }
 
     public Instant getTimestamp() {

@@ -87,6 +87,7 @@ public class MainManager {
         assert !cid.equals(new CancellableID()) : "Task must be running before finishing.";
 
         this.idManager.setCancellableIDAndJavaThreadID(new CancellableID(), jid);
+        this.idManager.setCancellableIDAndJavaThreadID(cid, new JavaThreadID());
     }
 
     public CancellableID createCancellableIDOnCurrentJavaThreadID() {
@@ -97,8 +98,13 @@ public class MainManager {
     }
 
     public void destoryCancellableIDOnCurrentJavaThreadID(CancellableID cid) {
+        JavaThreadID jid = new JavaThreadID(Thread.currentThread().getId());
+        CancellableID cidReadFromManager = this.idManager.getCancellableIDOfJavaThreadID(jid);
+
+        assert cid.equals(cidReadFromManager) : "Input cancellable id is not running on the current java thread id";
+
+        this.idManager.setCancellableIDAndJavaThreadID(cidReadFromManager, jid);
         // TODO: Connect AutoCancelCore
-        
     }
 
     public CancellableID getCancellableIDOnCurrentJavaThreadID() {
