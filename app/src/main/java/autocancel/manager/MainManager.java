@@ -37,24 +37,35 @@ public class MainManager {
 
     private CancellableIDGenerator cidGenerator;
 
+    private Thread autoCancelCoreThread;
+
     public MainManager() {
-        // AutoCancelCore autoCancelCore = new AutoCancelCore(this);
         this.managerRequestToCoreBuffer = new LinkedList<OperationRequest>();
         this.idManager = new IDManager();
         this.infrastructureManager = new InfrastructureManager();
         this.cidGenerator = new CancellableIDGenerator();
+        this.autoCancelCoreThread = null;
+    }
+
+    public void start() throws AssertionError {
+        assert this.autoCancelCoreThread == null : "AutoCancel core thread has been started";
+        AutoCancelCore autoCancelCore = new AutoCancelCore(this);
+        this.autoCancelCoreThread = new Thread() {
+            @Override
+            public void run() {
+                autoCancelCore.start();
+            }
+        };
+        this.autoCancelCoreThread.start();
+    }
+
+    public void stop() throws AssertionError {
+        assert this.autoCancelCoreThread != null : "AutoCancel core thread has to be started";
+        this.autoCancelCoreThread.interrupt();
     }
 
     public void startNewVersion() {
-
-    }
-
-    public void start() {
         
-    }
-
-    public void stop() {
-
     }
 
     private CancellableID createCancellable(JavaThreadID jid) {
