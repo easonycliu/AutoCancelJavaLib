@@ -15,13 +15,28 @@ public class Cancellable {
 
     public Cancellable() {
         this.resourceMap = new HashMap<ResourceType, ResourceUsage>();
+        this.isCancellable = null;
     }
 
     public Set<ResourceType> getResourceTypes() {
-        return resourceMap.keySet();
+        return this.resourceMap.keySet();
     }
 
     public void setResourceUsage(ResourceType type, Double usage) {
-        this.resourceMap.get(type).setUsage(usage);
+        if (this.resourceMap.containsKey(type)) {
+            this.resourceMap.get(type).setUsage(usage);
+        }
+        else {
+            this.resourceMap.put(type, new ResourceUsage(usage));
+        }
+    }
+
+    public Boolean getIsCancellable() {
+        assert this.isCancellable != null : "this.isCancellable hasn't been set yet";
+        return this.isCancellable;
+    }
+
+    public void setIsCancellable(Boolean isCancellable) {
+        this.isCancellable = isCancellable;
     }
 }

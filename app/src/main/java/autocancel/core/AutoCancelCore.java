@@ -9,6 +9,9 @@ import autocancel.core.utils.OperationMethod;
 
 import java.util.Map;
 import java.util.function.Consumer;
+
+import org.checkerframework.checker.units.qual.C;
+
 import java.util.HashMap;
 import java.lang.Thread;
 
@@ -26,17 +29,22 @@ public class AutoCancelCore {
         this.mainManager = mainManager;
         this.cancellables = new HashMap<CancellableID, Cancellable>();
         this.mainMonitor = new MainMonitor(this.mainManager, this.cancellables);
-        
+        this.requestParser = new RequestParser();
     }
 
     public void start() {
         while (!Thread.interrupted()) {
             // TODO: Maybe this can be added to settings
             try {
+                Integer requestBufferSize = this.mainManager.getManagerRequestToCoreBufferSize();
+                for (Integer ignore = 0; ignore < requestBufferSize; ++ignore) {
+                    OperationRequest request = this.mainManager.getManagerRequestToCoreWithoutLock();
+                    this.requestParser.parse(request);
+                }
                 Thread.sleep(100);
             }
             catch (InterruptedException e) {
-                
+
             }
         }
     }
@@ -45,7 +53,8 @@ public class AutoCancelCore {
         Map<String, Consumer<OperationRequest>> paramHandlers;
 
         public RequestParser() {
-
+            this.paramHandlers = new HashMap<String, Consumer<OperationRequest>>();
+            this.paramHandlers.put("is_cancellable", request -> this.isCancellable(request));
         }
 
         public void parse(OperationRequest request) {
@@ -68,7 +77,15 @@ public class AutoCancelCore {
         }
 
         private void create(OperationRequest request) {
+            Cancellable cancellable = new Cancellable();
+            assert request.getTarget() != new CancellableID() : "Create operation must have cancellable id set";
+            cancellables.put(request.getTarget(), cancellable);
 
+            Map<String, Object> params = request.getParams();
+            for (String key : params.keySet()) {
+                assert this.paramHandlers.containsKey(key) : "Invalid parameter handler";
+                this.paramHandlers.get(key).accept(request);
+            }
         }
 
         private void retrieve(OperationRequest request) {
@@ -81,6 +98,12 @@ public class AutoCancelCore {
 
         private void delete(OperationRequest request) {
 
+        }
+
+        private void isCancellable(OperationRequest request) {
+            Cancellable cancellable = cancellables.get(request.getTarget());
+            Boolean isCancellable = (Boolean)request.getParams().get("is_cancellable");
+            cancellable.setIsCancellable(isCancellable);
         }
     }
 }

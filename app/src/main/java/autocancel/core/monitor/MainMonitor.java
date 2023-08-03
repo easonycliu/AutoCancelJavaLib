@@ -1,6 +1,7 @@
 package autocancel.core.monitor;
 
 import autocancel.core.monitor.Monitor;
+import autocancel.core.utils.OperationRequest;
 import autocancel.core.monitor.CPUMonitor;
 import autocancel.core.monitor.MemoryMonitor;
 import autocancel.manager.MainManager;
@@ -9,10 +10,14 @@ import autocancel.utils.Resource.ResourceType;
 import autocancel.utils.id.CancellableID;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 
 public class MainMonitor {
     
+    private Queue<OperationRequest> monitorUpdateToCoreBuffer;
+
     Map<CancellableID, Cancellable> cancellables;
 
     MainManager mainManager;
@@ -20,6 +25,7 @@ public class MainMonitor {
     Map<ResourceType, Monitor> monitors;
 
     public MainMonitor(MainManager mainManager, Map<CancellableID, Cancellable> cancellables) {
+        this.monitorUpdateToCoreBuffer = new LinkedList<OperationRequest>();
         this.mainManager = mainManager;
         this.cancellables = cancellables;
 
@@ -33,7 +39,7 @@ public class MainMonitor {
         this.mainManager.startNewVersion();
         for (Map.Entry<CancellableID, Cancellable> entry : cancellables.entrySet()) {
             for (ResourceType resourceType : entry.getValue().getResourceTypes()) {
-                this.monitors.get(resourceType).updateResource(entry.getKey());
+                this.monitorUpdateToCoreBuffer.add(this.monitors.get(resourceType).updateResource(entry.getKey()));
             }
         }
     }

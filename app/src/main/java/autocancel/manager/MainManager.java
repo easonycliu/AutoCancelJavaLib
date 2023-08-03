@@ -11,6 +11,7 @@ package autocancel.manager;
 
 import autocancel.app.elasticsearch.AutoCancel;
 import autocancel.core.AutoCancelCore;
+import autocancel.core.utils.OperationMethod;
 import autocancel.core.utils.OperationRequest;
 import autocancel.utils.ReleasableLock;
 import autocancel.utils.id.CancellableID;
@@ -68,10 +69,14 @@ public class MainManager {
         
     }
 
-    private CancellableID createCancellable(JavaThreadID jid) {
+    private CancellableID createCancellable(JavaThreadID jid, Boolean isCancellable) {
         CancellableID cid = this.cidGenerator.generate();
         this.idManager.setCancellableIDAndJavaThreadID(cid, jid);
-        // TODO: Connect AutoCancelCore
+
+        OperationRequest request = new OperationRequest(OperationMethod.CREATE, cid);
+        request.addRequestParam("is_cancellable", isCancellable);
+        this.putManagerRequestToCore(request);
+
         return cid;
     }
 
@@ -101,9 +106,9 @@ public class MainManager {
         this.idManager.setCancellableIDAndJavaThreadID(cid, new JavaThreadID());
     }
 
-    public CancellableID createCancellableIDOnCurrentJavaThreadID() {
+    public CancellableID createCancellableIDOnCurrentJavaThreadID(Boolean isCancellable) {
         JavaThreadID jid = new JavaThreadID(Thread.currentThread().getId());
-        CancellableID cid = this.createCancellable(jid);
+        CancellableID cid = this.createCancellable(jid, isCancellable);
 
         return cid;
     }
@@ -151,6 +156,12 @@ public class MainManager {
         synchronized(this.managerRequestToCoreBuffer) {
             request = this.managerRequestToCoreBuffer.poll();
         }
+        return request;
+    }
+
+    public OperationRequest getManagerRequestToCoreWithoutLock() {
+        OperationRequest request;
+        request = this.managerRequestToCoreBuffer.poll();
         return request;
     }
 
