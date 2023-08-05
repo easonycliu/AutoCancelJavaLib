@@ -46,7 +46,8 @@ public class AutoCancel {
         assert started : "You should start lib AutoCancel first.";
         
         TaskWrapper wrappedTask = new TaskWrapper(task);
-        CancellableID cid = AutoCancel.mainManager.createCancellableIDOnCurrentJavaThreadID();
+        // TODO: isCancellable
+        CancellableID cid = AutoCancel.mainManager.createCancellableIDOnCurrentJavaThreadID(true);
 
         try (ReleasableLock ignored = AutoCancel.writeLock.acquire()) {
             assert !cancellableIDToTask.containsKey(cid) : "Do not register one task twice.";

@@ -3,6 +3,7 @@ package autocancel.core.monitor;
 import autocancel.core.monitor.Monitor;
 import autocancel.core.utils.OperationRequest;
 import autocancel.manager.MainManager;
+import autocancel.utils.Resource.ResourceType;
 import autocancel.utils.id.CancellableID;
 
 public class MemoryMonitor implements Monitor {
@@ -19,6 +20,6 @@ public class MemoryMonitor implements Monitor {
     }
 
     private Double getResource(CancellableID cid) {
-        return 0.0;
+        return this.mainManager.getSpecifiedTypeResource(cid, ResourceType.MEMORY);
     }
 }
