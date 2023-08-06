@@ -43,4 +43,16 @@ public class MainMonitor {
             }
         }
     }
+
+    public void getMonitorUpdateToCoreWithoutLock() {
+        OperationRequest request;
+        request = this.monitorUpdateToCoreBuffer.poll();
+        return request;
+    }
+
+    public void getMonitorUpdateToCoreBufferSizeWithoutLock() {
+        Integer size;
+        size = this.monitorUpdateToCoreBuffer.size();
+        return size;
+    }
 }

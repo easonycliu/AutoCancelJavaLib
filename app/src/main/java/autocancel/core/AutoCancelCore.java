@@ -41,10 +41,19 @@ public class AutoCancelCore {
                     OperationRequest request = this.mainManager.getManagerRequestToCoreWithoutLock();
                     this.requestParser.parse(request);
                 }
+
+                this.mainMonitor.updateTasksResources();
+
+                Integer updateBufferSize = this.mainMonitor.getMonitorUpdateToCoreBufferSizeWithoutLock();
+                for (Integer ignore = 0; ignore < updateBufferSize; ++ignore) {
+                    OperationRequest request = this.mainMonitor.getMonitorUpdateToCoreWithoutLock();
+                    this.requestParser.parse(request);
+                }
+
                 Thread.sleep(100);
             }
             catch (InterruptedException e) {
-
+                break;
             }
         }
     }
@@ -54,7 +63,9 @@ public class AutoCancelCore {
 
         public RequestParser() {
             this.paramHandlers = new HashMap<String, Consumer<OperationRequest>>();
+
             this.paramHandlers.put("is_cancellable", request -> this.isCancellable(request));
+            this.paramHandlers.put("set_value", request -> this.setValue(request));
         }
 
         public void parse(OperationRequest request) {
@@ -93,7 +104,11 @@ public class AutoCancelCore {
         }
 
         private void update(OperationRequest request) {
-
+            Map<String, Object> params = request.getParams();
+            for (String key : params.keySet()) {
+                assert this.paramHandlers.containsKey(key) : "Invalid parameter handler";
+                this.paramHandlers.get(key).accept(request);
+            }
         }
 
         private void delete(OperationRequest request) {
@@ -104,6 +119,12 @@ public class AutoCancelCore {
             Cancellable cancellable = cancellables.get(request.getTarget());
             Boolean isCancellable = (Boolean)request.getParams().get("is_cancellable");
             cancellable.setIsCancellable(isCancellable);
+        }
+
+        private void setValue(OperationRequest request) {
+            Cancellable cancellable = cancellables.get(request.getTarget());
+            Double value = (Double)request.getParams().get("set_value");
+            cancellable.setResourceUsage(request.getResourceType(), value);
         }
     }
 }
