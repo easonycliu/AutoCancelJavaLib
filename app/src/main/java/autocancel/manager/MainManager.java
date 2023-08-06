@@ -76,7 +76,7 @@ public class MainManager {
 
     private CancellableID createCancellable(JavaThreadID jid, Boolean isCancellable) {
         CancellableID cid = this.cidGenerator.generate();
-        this.idManager.setCancellableIDAndJavaThreadID(cid, jid);
+        this.idManager.setCancellableIDAndJavaThreadID(cid, jid, IDInfo.Status.RUN);
 
         OperationRequest request = new OperationRequest(OperationMethod.CREATE, cid);
         request.addRequestParam("is_cancellable", isCancellable);
@@ -98,7 +98,7 @@ public class MainManager {
 
         assert !cid.equals(new CancellableID()) : "Cannot register an invalid cancellable id.";
 
-        this.idManager.setCancellableIDAndJavaThreadID(cid, jid);
+        this.idManager.setCancellableIDAndJavaThreadID(cid, jid, IDInfo.Status.RUN);
     }
 
     public void unregisterCancellableIDOnCurrentJavaThreadID() {
@@ -107,8 +107,7 @@ public class MainManager {
 
         assert !cid.equals(new CancellableID()) : "Task must be running before finishing.";
 
-        this.idManager.setCancellableIDAndJavaThreadID(new CancellableID(), jid);
-        this.idManager.setCancellableIDAndJavaThreadID(cid, new JavaThreadID());
+        this.idManager.setCancellableIDAndJavaThreadID(cid, jid, IDInfo.Status.EXIT);
     }
 
     public CancellableID createCancellableIDOnCurrentJavaThreadID(Boolean isCancellable) {
@@ -124,7 +123,8 @@ public class MainManager {
 
         assert cid.equals(cidReadFromManager) : "Input cancellable id is not running on the current java thread id";
 
-        this.idManager.setCancellableIDAndJavaThreadID(cidReadFromManager, jid);
+        // BUGGY
+        this.idManager.setCancellableIDAndJavaThreadID(cidReadFromManager, jid, IDInfo.Status.EXIT);
         // TODO: Connect AutoCancelCore
     }
 

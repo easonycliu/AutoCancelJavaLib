@@ -12,6 +12,7 @@ import autocancel.utils.id.JavaThreadID;
 import autocancel.utils.id.IDInfo;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
@@ -22,9 +23,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class IDManager {
 
-    private Map<CancellableID, List<IDInfo<JavaThreadID>>> cancellableIDToJavaThreadID;
-
     private Map<JavaThreadID, List<IDInfo<CancellableID>>> javaThreadIDToCancellableID;
+
+    private Map<CancellableID, List<IDInfo<JavaThreadID>>> cancellableIDToJavaThreadID;
 
     private ReadWriteLock idManagerLock;
 
@@ -37,25 +38,28 @@ public class IDManager {
         this.readLock = new ReleasableLock(idManagerLock.readLock());
         this.writeLock = new ReleasableLock(idManagerLock.writeLock());
 
-        this.cancellableIDToJavaThreadID = new HashMap<CancellableID, List<IDInfo<JavaThreadID>>>();
         this.javaThreadIDToCancellableID = new HashMap<JavaThreadID, List<IDInfo<CancellableID>>>();
-
+        this.cancellableIDToJavaThreadID = new HashMap<CancellableID, List<IDInfo<JavaThreadID>>>();
     }
 
-    public JavaThreadID getJavaThreadIDOfCancellableID(CancellableID cid) {
-        JavaThreadID javaThreadID;
+    public List<JavaThreadID> getJavaThreadIDOfCancellableID(CancellableID cid) {
+        List<JavaThreadID> javaThreadIDs = new ArrayList<JavaThreadID>();
 
         try (ReleasableLock ignored = this.readLock.acquire()) {
             if (this.cancellableIDToJavaThreadID.containsKey(cid)) {
-                List<IDInfo<JavaThreadID>> javaThreadIDList = this.cancellableIDToJavaThreadID.get(cid);
-                javaThreadID = javaThreadIDList.get(javaThreadIDList.size() - 1).getID();
+                for (IDInfo<JavaThreadID> javaThreadIDInfo : this.cancellableIDToJavaThreadID.get(cid)) {
+                    if (javaThreadIDInfo.isRun()) {
+                        javaThreadIDs.add(javaThreadIDInfo.getID());
+                    }
+                }
+                assert javaThreadIDs.size() > 0 : String.format("%s is alive but not running on any java threads", cid.toString());
             }
             else {
-                javaThreadID = new JavaThreadID();
+                javaThreadIDs.add(new JavaThreadID());
             }
         }
 
-        return javaThreadID;
+        return javaThreadIDs;
     }
 
     public CancellableID getCancellableIDOfJavaThreadID(JavaThreadID jid) {
@@ -82,33 +86,32 @@ public class IDManager {
                 javaThreadIDInfos = this.cancellableIDToJavaThreadID.get(cid);
             }
             else {
-                javaThreadIDInfos = new ArrayList<IDInfo<JavaThreadID>>(Arrays.asList(new IDInfo<JavaThreadID>(new JavaThreadID())));
+                javaThreadIDInfos = new ArrayList<IDInfo<JavaThreadID>>();
             }
         }
 
         return javaThreadIDInfos;
     }
 
-    public void setCancellableIDAndJavaThreadID(CancellableID cid, JavaThreadID jid) {
+    public void setCancellableIDAndJavaThreadID(CancellableID cid, JavaThreadID jid, IDInfo.Status status) {
         try (ReleasableLock ignored = this.writeLock.acquire()) {
-            this.doSetCancellableIDAndJavaThreadID(cid, jid);
+            this.doSetCancellableIDAndJavaThreadID(cid, jid, status);
         }
     }
 
-    private void doSetCancellableIDAndJavaThreadID(CancellableID cid, JavaThreadID jid) {
+    private void doSetCancellableIDAndJavaThreadID(CancellableID cid, JavaThreadID jid, IDInfo.Status status) {
         if (this.cancellableIDToJavaThreadID.containsKey(cid)) {
-            this.cancellableIDToJavaThreadID.get(cid).add(new IDInfo<JavaThreadID>(jid));
+            this.cancellableIDToJavaThreadID.get(cid).add(new IDInfo<JavaThreadID>(status, jid));
         }
         else {
-            this.cancellableIDToJavaThreadID.put(cid, new ArrayList<IDInfo<JavaThreadID>>(Arrays.asList(new IDInfo<JavaThreadID>(jid))));
+            this.cancellableIDToJavaThreadID.put(cid, new ArrayList<IDInfo<JavaThreadID>>(Arrays.asList(new IDInfo<JavaThreadID>(status, jid))));
         }
 
         if (this.javaThreadIDToCancellableID.containsKey(jid)) {
-            this.javaThreadIDToCancellableID.get(jid).add(new IDInfo<CancellableID>(cid));
+            this.javaThreadIDToCancellableID.get(jid).add(new IDInfo<CancellableID>(status, cid));
         }
         else {
-            this.javaThreadIDToCancellableID.put(jid, new ArrayList<IDInfo<CancellableID>>(Arrays.asList(new IDInfo<CancellableID>(cid))));
+            this.javaThreadIDToCancellableID.put(jid, new ArrayList<IDInfo<CancellableID>>(Arrays.asList(new IDInfo<CancellableID>(status, cid))));
         }
-
     }
 }
