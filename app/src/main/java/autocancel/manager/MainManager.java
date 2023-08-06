@@ -150,6 +150,21 @@ public class MainManager {
         }
     }
 
+    public void logJavaThreadCancellableIDInfo(JavaThreadID jid) {
+        List<IDInfo<CancellableID>> cancellableIDInfos = this.idManager.getAllCancellableIDInfoOfJavaThreadID(jid);
+
+        // TODO: add config to jidinfo save path
+        try (FileWriter jidInfoWriter = new FileWriter("/tmp/jidinfo", true)) {
+            jidInfoWriter.write(String.format("========== Java Thread %s ==========\n", jid.toString()));
+            for (IDInfo<CancellableID> cancellableIDInfo : cancellableIDInfos) {
+                jidInfoWriter.write(cancellableIDInfo.toString() + "\n");
+            }
+        }
+        catch (IOException e) {
+
+        }
+    }
+
     public void putManagerRequestToCore(OperationRequest request) {
         synchronized(this.managerRequestToCoreBuffer) {
             this.managerRequestToCoreBuffer.add(request);

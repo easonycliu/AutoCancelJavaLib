@@ -10,6 +10,8 @@ public class App {
     }
 
     public static void main(String[] args) {
+        AutoCancel.start();
+
         System.out.println(new App().getGreeting());
         Object t = new Object() {
             @Override
@@ -72,6 +74,7 @@ public class App {
         AutoCancel.onTaskStartInThread(r1);
         AutoCancel.onTaskFinishInThread();
         AutoCancel.onTaskExit(t1);
+        AutoCancel.stop();
         System.out.println("Finish 1");
     }
 }

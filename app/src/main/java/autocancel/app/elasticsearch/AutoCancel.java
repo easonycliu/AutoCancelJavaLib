@@ -33,13 +33,14 @@ public class AutoCancel {
     private static ReleasableLock writeLock = new ReleasableLock(autoCancelReadWriteLock.writeLock());
 
     public static void start() {
-        mainManager.start();
+        AutoCancel.mainManager.start();
         started = true;
     }
 
     public static void stop() throws AssertionError {
         assert started : "You should start lib AutoCancel first.";
-        mainManager.stop();
+        AutoCancel.mainManager.logJavaThreadCancellableIDInfo(new JavaThreadID(Thread.currentThread().getId()));
+        AutoCancel.mainManager.stop();
     }
 
     public static void onTaskCreate(Object task) throws AssertionError {
