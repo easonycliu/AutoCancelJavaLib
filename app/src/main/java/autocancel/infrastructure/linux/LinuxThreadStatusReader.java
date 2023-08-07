@@ -1,10 +1,12 @@
 package autocancel.infrastructure.linux;
 
 import autocancel.infrastructure.AbstractInfrastructure;
+import autocancel.infrastructure.ResourceReader;
 import autocancel.utils.Resource.ResourceType;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.id.ID;
 import autocancel.utils.id.JavaThreadID;
+import autocancel.infrastructure.linux.LinuxThreadID;
 
 import sun.jvm.hotspot.debugger.Address;
 import sun.jvm.hotspot.oops.Field;
@@ -17,23 +19,50 @@ import sun.jvm.hotspot.runtime.Threads;
 import sun.jvm.hotspot.runtime.VM;
 
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class LinuxThreadStatusReader extends AbstractInfrastructure {
     
     private Map<JavaThreadID, LinuxThreadID> javaThreadIDToLinuxThreadID;
 
+    private List<ResourceType> resourceTypes;
+
+    private Map<ResourceType, ResourceReader> resourceReaders;
+
     public LinuxThreadStatusReader() {
         super();
+        
         this.javaThreadIDToLinuxThreadID = new HashMap<JavaThreadID, LinuxThreadID>();
+        
+        this.resourceTypes = this.getRequiredResourceTypes();
+
+        this.resourceReaders = this.initializeResourceReaders();
+    }
+
+    public Map<ResourceType, ResourceReader> initializeResourceReaders() {
+        Map<ResourceType, ResourceReader> resourceReaders = new HashMap<ResourceType, ResourceReader>();
+        resourceReaders.put(ResourceType.CPU, new LinuxCPUReader());
+        resourceReaders.put(ResourceType.MEMORY, new LinuxMemoryReader());
+
+        return resourceReaders;
+    }
+
+    public List<ResourceType> getRequiredResourceTypes() {
+        // TODO: set which resource types to update by settings
+        return new ArrayList<ResourceType>(Arrays.asList(ResourceType.CPU, ResourceType.MEMORY));
     }
 
     @Override
     protected void updateResource(ID id, Integer version) {
         LinuxThreadID linuxThreadID = this.getLinuxThreadIDFromJavaThreadID((JavaThreadID) id);
         assert !linuxThreadID.equals(new LinuxThreadID()) : "Failed to find linux thread id of java thread id";
-        // TODO: set which resource types to update by settings
         
+        for (ResourceType type : this.resourceTypes) {
+
+        }
     }
 
     private LinuxThreadID getLinuxThreadIDFromJavaThreadID(JavaThreadID jid) {
@@ -72,36 +101,4 @@ public class LinuxThreadStatusReader extends AbstractInfrastructure {
 
     }
 
-    private class LinuxThreadID implements ID {
-        private Long id;
-
-        public LinuxThreadID(Long id) {
-            this.id = id;
-        }
-
-        // Invalid LinuxThreadID
-        public LinuxThreadID() {
-            this.id = -1L;
-        }
-
-        @Override
-        public String toString() {
-            return String.format("Linux Thread ID : %d", this.id);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            // TODO: Class should be the same
-            return this.id == ((LinuxThreadID) o).id;
-        }
-
-        @Override
-        public int hashCode() {
-            return this.id.intValue();
-        }
-
-        public Long unwrap() {
-            return this.id;
-        }
-    }
 }
