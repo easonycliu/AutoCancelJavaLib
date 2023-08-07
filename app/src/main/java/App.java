@@ -4,6 +4,8 @@
 
 import autocancel.app.elasticsearch.AutoCancel;
 
+import sun.jvm.hotspot.runtime.VM;
+
 public class App {
     public String getGreeting() {
         return "Hello world.";
@@ -74,6 +76,12 @@ public class App {
         AutoCancel.onTaskStartInThread(r1);
         AutoCancel.onTaskFinishInThread();
         AutoCancel.onTaskExit(t1);
+        try {
+            Thread.sleep(1000);
+        }
+        catch (Exception e) {
+
+        }
         AutoCancel.stop();
         System.out.println("Finish 1");
     }

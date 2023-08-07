@@ -5,15 +5,15 @@ import autocancel.utils.Cancellable;
 import autocancel.utils.id.CancellableID;
 import autocancel.core.monitor.MainMonitor;
 import autocancel.core.utils.OperationRequest;
+import autocancel.core.utils.ResourceUsage;
 import autocancel.core.utils.OperationMethod;
+import autocancel.utils.Resource.ResourceType;
 
 import java.util.Map;
 import java.util.function.Consumer;
-
-import org.checkerframework.checker.units.qual.C;
-
 import java.util.HashMap;
 import java.lang.Thread;
+import java.util.List;
 
 public class AutoCancelCore {
 
@@ -50,12 +50,13 @@ public class AutoCancelCore {
                     this.requestParser.parse(request);
                 }
 
-                Thread.sleep(100);
+                Thread.sleep(1);
             }
             catch (InterruptedException e) {
                 break;
             }
         }
+        System.out.println("Recieve interrupt, exit");
     }
 
     private class RequestParser {
@@ -66,9 +67,11 @@ public class AutoCancelCore {
 
             this.paramHandlers.put("is_cancellable", request -> this.isCancellable(request));
             this.paramHandlers.put("set_value", request -> this.setValue(request));
+            this.paramHandlers.put("monitor_resource", request -> this.monitorResource(request));
         }
 
         public void parse(OperationRequest request) {
+            System.out.println(String.format("%s %s %s", request.getOperation().toString(), request.getTarget().toString(), request.getResourceType().toString()));
             switch (request.getOperation()) {
                 case CREATE:
                     create(request);
@@ -125,6 +128,14 @@ public class AutoCancelCore {
             Cancellable cancellable = cancellables.get(request.getTarget());
             Double value = (Double)request.getParams().get("set_value");
             cancellable.setResourceUsage(request.getResourceType(), value);
+        }
+
+        private void monitorResource(OperationRequest request) {
+            Cancellable cancellable = cancellables.get(request.getTarget());
+            List<?> resourceTypes = (List<?>)request.getParams().get("monitor_resource");
+            for (Object resourceType : resourceTypes) {
+                cancellable.setResourceUsage((ResourceType)resourceType, 0.0);
+            }
         }
     }
 }

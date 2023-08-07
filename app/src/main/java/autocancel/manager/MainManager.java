@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Queue;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -77,6 +79,8 @@ public class MainManager {
 
         OperationRequest request = new OperationRequest(OperationMethod.CREATE, cid);
         request.addRequestParam("is_cancellable", isCancellable);
+        // TODO: According to settings
+        request.addRequestParam("monitor_resource", new ArrayList<ResourceType>(Arrays.asList(ResourceType.CPU, ResourceType.MEMORY)));
         this.putManagerRequestToCore(request);
 
         return cid;
