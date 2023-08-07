@@ -1,6 +1,7 @@
 package autocancel.infrastructure.linux;
 
 import autocancel.infrastructure.AbstractInfrastructure;
+import autocancel.infrastructure.ResourceBatch;
 import autocancel.infrastructure.ResourceReader;
 import autocancel.utils.Resource.ResourceType;
 import autocancel.utils.id.CancellableID;
@@ -34,7 +35,7 @@ public class LinuxThreadStatusReader extends AbstractInfrastructure {
 
     public LinuxThreadStatusReader() {
         super();
-        
+
         this.javaThreadIDToLinuxThreadID = new HashMap<JavaThreadID, LinuxThreadID>();
         
         this.resourceTypes = this.getRequiredResourceTypes();
@@ -60,9 +61,13 @@ public class LinuxThreadStatusReader extends AbstractInfrastructure {
         LinuxThreadID linuxThreadID = this.getLinuxThreadIDFromJavaThreadID((JavaThreadID) id);
         assert !linuxThreadID.equals(new LinuxThreadID()) : "Failed to find linux thread id of java thread id";
         
+        ResourceBatch resourceBatch = new ResourceBatch(version);
         for (ResourceType type : this.resourceTypes) {
-
+            Double value = this.resourceReaders.get(type).readResource(id, type);
+            resourceBatch.setResourceValue(type, value);
         }
+
+        this.setResourceBatch(linuxThreadID, resourceBatch);
     }
 
     private LinuxThreadID getLinuxThreadIDFromJavaThreadID(JavaThreadID jid) {

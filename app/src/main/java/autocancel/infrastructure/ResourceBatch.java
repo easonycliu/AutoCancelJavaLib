@@ -17,11 +17,11 @@ public class ResourceBatch {
         this.resourceMap = new HashMap<ResourceType, ResourceUsage>();
     }
 
-    public void setResourceMap(ResourceType type, Double value) {
+    public void setResourceValue(ResourceType type, Double value) {
         this.resourceMap.put(type, new ResourceUsage(value));
     }
 
-    public Double getResourceMap(ResourceType type) {
+    public Double getResourceValue(ResourceType type) {
         Double resource;
         if (this.resourceMap.containsKey(type)) {
             resource = this.resourceMap.get(type).getUsage();

@@ -1,6 +1,7 @@
 package autocancel.core.monitor;
 
 import autocancel.core.monitor.Monitor;
+import autocancel.core.utils.OperationMethod;
 import autocancel.core.utils.OperationRequest;
 import autocancel.manager.MainManager;
 import autocancel.utils.Resource.ResourceType;
@@ -16,8 +17,9 @@ public class CPUMonitor implements Monitor {
     }
 
     public OperationRequest updateResource(CancellableID cid) {
-        // TODO: Wrap to a request
-        return null;
+        OperationRequest request = new OperationRequest(OperationMethod.UPDATE, cid, ResourceType.CPU);
+        request.addRequestParam("set_value", this.getResource(cid));
+        return request;
     }
 
     private Double getResource(CancellableID cid) {

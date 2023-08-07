@@ -39,10 +39,14 @@ public abstract class AbstractInfrastructure {
 
     protected abstract void updateResource(ID id, Integer version);
 
+    protected void setResourceBatch(ID id, ResourceBatch resourceBatch) {
+        this.resourceMap.put(id, resourceBatch);
+    }
+
     private Double getResourceValue(ID id, ResourceType type) {
         Double resource;
         if (this.resourceMap.containsKey(id)) {
-            resource = this.resourceMap.get(id).getResourceMap(type);
+            resource = this.resourceMap.get(id).getResourceValue(type);
         }
         else {
             resource = 0.0;
