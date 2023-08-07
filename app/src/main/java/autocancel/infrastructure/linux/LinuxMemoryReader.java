@@ -4,11 +4,64 @@ import autocancel.infrastructure.ResourceReader;
 import autocancel.utils.Resource.ResourceType;
 import autocancel.utils.id.ID;
 
-public class LinuxMemoryReader implements ResourceReader {
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.TreeMap;
+
+public class LinuxMemoryReader extends ResourceReader {
     
     @Override
     public Double readResource(ID id, ResourceType type) {
-        // TODO: Read from /proc/[pid]/task/[tid]/stat
-        return 0.0;
+        Long memoryUsingKB = Long.valueOf(0);
+        // Read from /proc/[pid]/task/[tid]/status
+        String fileName = String.format("/proc/pid/%s/task/%d/status", this.getJVMPID(), ((LinuxThreadID) id).unwrap());
+
+        try {
+            Scanner scanner = new Scanner(new File(fileName));
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                if (line.contains("VmRSS")) {
+                    memoryUsingKB = Long.parseLong(line.split(": \t")[1]);
+                    break;
+                }
+            }
+        }
+        catch (FileNotFoundException e) {
+            assert false : String.format("Failed to open %s", fileName);
+        }
+
+        Long totalMemoryKB = this.getTotalMemory();
+        assert totalMemoryKB != 0 && totalMemoryKB > memoryUsingKB : "Failed to read total memory: invalid value";
+
+        return Double.valueOf(memoryUsingKB) / totalMemoryKB;
+    }
+
+    private Long getTotalMemory() {
+        String memInfo = "/proc/meminfo";
+        Long totalMemoryKB = Long.valueOf(0);
+        
+        try {
+            Scanner scanner = new Scanner(new File(memInfo));
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                if (line.contains("MemTotal")) {
+                    totalMemoryKB = Long.parseLong(line.split(": \t")[1]);
+                    break;
+                }
+            }
+        }
+        catch (IOException e) {
+            assert false : String.format("Failed to open file %s", memInfo);
+        }
+
+        return totalMemoryKB;
     }
 }

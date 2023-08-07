@@ -4,7 +4,7 @@ import autocancel.infrastructure.ResourceReader;
 import autocancel.utils.Resource.ResourceType;
 import autocancel.utils.id.ID;
 
-public class LinuxCPUReader implements ResourceReader {
+public class LinuxCPUReader extends ResourceReader {
     
     @Override
     public Double readResource(ID id, ResourceType type) {
