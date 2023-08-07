@@ -44,13 +44,13 @@ public class MainMonitor {
         }
     }
 
-    public void getMonitorUpdateToCoreWithoutLock() {
+    public OperationRequest getMonitorUpdateToCoreWithoutLock() {
         OperationRequest request;
         request = this.monitorUpdateToCoreBuffer.poll();
         return request;
     }
 
-    public void getMonitorUpdateToCoreBufferSizeWithoutLock() {
+    public Integer getMonitorUpdateToCoreBufferSizeWithoutLock() {
         Integer size;
         size = this.monitorUpdateToCoreBuffer.size();
         return size;

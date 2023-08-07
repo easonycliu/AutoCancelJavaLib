@@ -2,6 +2,7 @@ package autocancel.core.monitor;
 
 import autocancel.core.monitor.Monitor;
 import autocancel.core.utils.OperationRequest;
+import autocancel.core.utils.OperationMethod;
 import autocancel.manager.MainManager;
 import autocancel.utils.Resource.ResourceType;
 import autocancel.utils.id.CancellableID;
