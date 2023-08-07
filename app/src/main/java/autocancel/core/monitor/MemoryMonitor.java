@@ -16,7 +16,6 @@ public class MemoryMonitor implements Monitor {
     }
 
     public OperationRequest updateResource(CancellableID cid) {
-        // TODO: Wrap to a request
         OperationRequest request = new OperationRequest(OperationMethod.UPDATE, cid, ResourceType.MEMORY);
         request.addRequestParam("set_value", this.getResource(cid));
         return request;

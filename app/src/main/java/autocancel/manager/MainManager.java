@@ -42,15 +42,12 @@ public class MainManager {
 
     private Thread autoCancelCoreThread;
 
-    private AtomicInteger version;
-
     public MainManager() {
         this.managerRequestToCoreBuffer = new LinkedList<OperationRequest>();
         this.idManager = new IDManager();
         this.infrastructureManager = new InfrastructureManager();
         this.cidGenerator = new CancellableIDGenerator();
         this.autoCancelCoreThread = null;
-        this.version = new AtomicInteger();
     }
 
     public void start() throws AssertionError {
@@ -71,7 +68,7 @@ public class MainManager {
     }
 
     public void startNewVersion() {
-        this.version.incrementAndGet();
+        this.infrastructureManager.startNewVersion();
     }
 
     private CancellableID createCancellable(JavaThreadID jid, Boolean isCancellable) {
@@ -194,7 +191,12 @@ public class MainManager {
     }
 
     public Double getSpecifiedTypeResource(CancellableID cid, ResourceType type) {
-        return this.infrastructureManager.getSpecifiedTypeResourceLatest(cid, type, this.version.get());
+        Double resource = 0.0;
+        List<JavaThreadID> javaThreadIDs = this.idManager.getJavaThreadIDOfCancellableID(cid);
+        for (JavaThreadID javaThreadID : javaThreadIDs) {
+            resource += this.infrastructureManager.getSpecifiedTypeResourceLatest(javaThreadID, type);
+        }
+        return resource;
     }
 
 }
