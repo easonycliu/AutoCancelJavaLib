@@ -1,5 +1,6 @@
 package autocancel.infrastructure;
 
+import autocancel.core.utils.ResourceUsage;
 import autocancel.utils.Resource.ResourceType;
 
 import java.util.Map;
@@ -9,21 +10,21 @@ public class ResourceBatch {
     
     private Integer version;
 
-    private Map<ResourceType, Double> resourceMap;
+    private Map<ResourceType, ResourceUsage> resourceMap;
 
     public ResourceBatch(Integer version) {
         this.version = version;
-        this.resourceMap = new HashMap<ResourceType, Double>();
+        this.resourceMap = new HashMap<ResourceType, ResourceUsage>();
     }
 
     public void setResourceMap(ResourceType type, Double value) {
-        this.resourceMap.put(type, value);
+        this.resourceMap.put(type, new ResourceUsage(value));
     }
 
     public Double getResourceMap(ResourceType type) {
         Double resource;
         if (this.resourceMap.containsKey(type)) {
-            resource = this.resourceMap.get(type);
+            resource = this.resourceMap.get(type).getUsage();
         }
         else {
             resource = 0.0;

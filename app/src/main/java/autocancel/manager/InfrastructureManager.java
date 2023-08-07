@@ -7,7 +7,7 @@ package autocancel.manager;
 
 import autocancel.infrastructure.AbstractInfrastructure;
 import autocancel.infrastructure.jvm.JavaThreadStatusReader;
-import autocancel.infrastructure.linux.NativeThreadStatusReader;
+import autocancel.infrastructure.linux.LinuxThreadStatusReader;
 import autocancel.utils.Resource.ResourceType;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.id.JavaThreadID;
@@ -20,12 +20,12 @@ public class InfrastructureManager {
 
     private JavaThreadStatusReader javaThreadStatusReader;
 
-    private NativeThreadStatusReader nativeThreadStatusReader;
+    private LinuxThreadStatusReader nativeThreadStatusReader;
     
     public InfrastructureManager() {
         this.version = new AtomicInteger();
         this.javaThreadStatusReader = new JavaThreadStatusReader();
-        this.nativeThreadStatusReader = new NativeThreadStatusReader();
+        this.nativeThreadStatusReader = new LinuxThreadStatusReader();
     }
 
     public Double getSpecifiedTypeResourceLatest(JavaThreadID jid, ResourceType type) {

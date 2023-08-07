@@ -17,11 +17,12 @@ public class CancellableID implements ID {
 
     @Override
     public String toString() {
-        return String.format("ID : %d", this.id);
+        return String.format("Cancellable ID : %d", this.id);
     }
 
     @Override
     public boolean equals(Object o) {
+        // TODO: Class should be the same
         return this.id == ((CancellableID) o).id;
     }
 
