@@ -11,10 +11,13 @@ public class Cancellable {
     
     private Map<ResourceType, ResourceUsage> resourceMap;
 
+    private String name;
+
     private Boolean isCancellable;
 
     public Cancellable() {
         this.resourceMap = new HashMap<ResourceType, ResourceUsage>();
+        this.name = "Anonymous";
         this.isCancellable = null;
     }
 
@@ -29,6 +32,14 @@ public class Cancellable {
         else {
             this.resourceMap.put(type, new ResourceUsage(usage));
         }
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Boolean getIsCancellable() {

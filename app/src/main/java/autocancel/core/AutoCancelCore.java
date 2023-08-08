@@ -3,6 +3,7 @@ package autocancel.core;
 import autocancel.manager.MainManager;
 import autocancel.utils.Cancellable;
 import autocancel.utils.id.CancellableID;
+import autocancel.utils.logger.Logger;
 import autocancel.core.monitor.MainMonitor;
 import autocancel.core.utils.OperationRequest;
 import autocancel.core.utils.ResourceUsage;
@@ -25,11 +26,14 @@ public class AutoCancelCore {
 
     private RequestParser requestParser;
 
+    private Logger logger;
+
     public AutoCancelCore(MainManager mainManager) {
         this.mainManager = mainManager;
         this.cancellables = new HashMap<CancellableID, Cancellable>();
         this.mainMonitor = new MainMonitor(this.mainManager, this.cancellables);
         this.requestParser = new RequestParser();
+        this.logger = new Logger("/tmp/logs", "corerequest", 10000);
     }
 
     public void start() {
@@ -56,6 +60,11 @@ public class AutoCancelCore {
                 break;
             }
         }
+        this.stop();
+    }
+
+    private void stop() {
+        this.logger.close();
         System.out.println("Recieve interrupt, exit");
     }
 
@@ -68,10 +77,11 @@ public class AutoCancelCore {
             this.paramHandlers.put("is_cancellable", request -> this.isCancellable(request));
             this.paramHandlers.put("set_value", request -> this.setValue(request));
             this.paramHandlers.put("monitor_resource", request -> this.monitorResource(request));
+            this.paramHandlers.put("cancellable_name", request -> this.cancellableName(request));
         }
 
         public void parse(OperationRequest request) {
-            // System.out.println(request.toString());
+            logger.log(request.toString() + "\n");
             switch (request.getOperation()) {
                 case CREATE:
                     create(request);
@@ -143,6 +153,12 @@ public class AutoCancelCore {
             for (Object resourceType : resourceTypes) {
                 cancellable.setResourceUsage((ResourceType)resourceType, 0.0);
             }
+        }
+
+        private void cancellableName(OperationRequest request) {
+            Cancellable cancellable = cancellables.get(request.getTarget());
+            String name = (String)request.getParams().get("cancellable_name");
+            cancellable.setName(name);
         }
     }
 }

@@ -51,7 +51,7 @@ public class TaskTracker {
     public void onTaskCreate(Object task) throws AssertionError {        
         TaskWrapper wrappedTask = new TaskWrapper(task);
         // TODO: isCancellable
-        CancellableID cid = this.mainManager.createCancellableIDOnCurrentJavaThreadID(true);
+        CancellableID cid = this.mainManager.createCancellableIDOnCurrentJavaThreadID(true, task.toString());
 
         try (ReleasableLock ignored = this.writeLock.acquire()) {
             assert !cancellableIDToTask.containsKey(cid) : "Do not register one task twice.";
