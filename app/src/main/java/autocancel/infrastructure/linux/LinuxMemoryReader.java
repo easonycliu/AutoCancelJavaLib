@@ -12,7 +12,8 @@ import java.util.Scanner;
 public class LinuxMemoryReader extends ResourceReader {
     
     @Override
-    public Double readResource(ID id, ResourceType type) {
+    public Double readResource(ID id, Integer version) {
+        assert id instanceof LinuxThreadID : "Linux memory reader must recieve linux thread id";
         Long memoryUsingKB = Long.valueOf(0);
         // Read from /proc/[pid]/task/[tid]/status
         String fileName = String.format("/proc/pid/%s/task/%d/status", this.getJVMPID(), ((LinuxThreadID) id).unwrap());

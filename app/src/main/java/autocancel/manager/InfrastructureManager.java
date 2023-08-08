@@ -25,6 +25,7 @@ public class InfrastructureManager {
     public InfrastructureManager() {
         this.version = new AtomicInteger();
         this.javaThreadStatusReader = new JavaThreadStatusReader();
+        // BUGGY
         this.linuxThreadStatusReader = new LinuxThreadStatusReader();
     }
 
@@ -45,10 +46,10 @@ public class InfrastructureManager {
         AbstractInfrastructure infrastructure;
         switch (type) {
             case CPU:
-                infrastructure = this.linuxThreadStatusReader;
+                infrastructure = this.javaThreadStatusReader;
                 break;
             case MEMORY:
-                infrastructure = this.linuxThreadStatusReader;
+                infrastructure = this.javaThreadStatusReader;
                 break;
             case NULL:
                 infrastructure = null;

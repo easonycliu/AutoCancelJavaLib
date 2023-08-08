@@ -1,13 +1,11 @@
-package autocancel.infrastructure.linux;
+package autocancel.infrastructure.jvm;
 
 import autocancel.infrastructure.ResourceReader;
 import autocancel.utils.id.ID;
 
-public class LinuxCPUReader extends ResourceReader {
-    
+public class JavaMemoryReader extends ResourceReader {
     @Override
     public Double readResource(ID id, Integer version) {
-        // TODO: Read from /proc/[pid]/task/[tid]/stat
         return 0.0;
     }
 }

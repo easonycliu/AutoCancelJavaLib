@@ -71,7 +71,7 @@ public class AutoCancelCore {
         }
 
         public void parse(OperationRequest request) {
-            System.out.println(String.format("%s %s %s", request.getOperation().toString(), request.getTarget().toString(), request.getResourceType().toString()));
+            // System.out.println(String.format("%s %s %s", request.getOperation().toString(), request.getTarget().toString(), request.getResourceType().toString()));
             switch (request.getOperation()) {
                 case CREATE:
                     create(request);
