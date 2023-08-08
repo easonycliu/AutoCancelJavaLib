@@ -40,6 +40,7 @@ public class AutoCancelCore {
         while (!Thread.interrupted()) {
             // TODO: Maybe this can be added to settings
             try {
+                this.logger.log(String.format("Current time: %d\n", System.currentTimeMillis()));
                 Integer requestBufferSize = this.mainManager.getManagerRequestToCoreBufferSize();
                 for (Integer ignore = 0; ignore < requestBufferSize; ++ignore) {
                     OperationRequest request = this.mainManager.getManagerRequestToCoreWithoutLock();
