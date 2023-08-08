@@ -115,7 +115,14 @@ public class AutoCancelCore {
         }
 
         private void delete(OperationRequest request) {
+            assert request.getTarget() != new CancellableID() : "Create operation must have cancellable id set";
+            cancellables.remove(request.getTarget());
 
+            Map<String, Object> params = request.getParams();
+            for (String key : params.keySet()) {
+                assert this.paramHandlers.containsKey(key) : "Invalid parameter handler";
+                this.paramHandlers.get(key).accept(request);
+            }
         }
 
         private void isCancellable(OperationRequest request) {
