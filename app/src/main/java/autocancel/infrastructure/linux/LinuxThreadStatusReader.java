@@ -9,15 +9,15 @@ import autocancel.utils.id.ID;
 import autocancel.utils.id.JavaThreadID;
 import autocancel.infrastructure.linux.LinuxThreadID;
 
-import sun.jvm.hotspot.debugger.Address;
-import sun.jvm.hotspot.oops.Field;
-import sun.jvm.hotspot.oops.InstanceKlass;
-import sun.jvm.hotspot.oops.Klass;
-import sun.jvm.hotspot.oops.LongField;
-import sun.jvm.hotspot.oops.Oop;
-import sun.jvm.hotspot.runtime.JavaThread;
-import sun.jvm.hotspot.runtime.Threads;
-import sun.jvm.hotspot.runtime.VM;
+// import sun.jvm.hotspot.debugger.Address;
+// import sun.jvm.hotspot.oops.Field;
+// import sun.jvm.hotspot.oops.InstanceKlass;
+// import sun.jvm.hotspot.oops.Klass;
+// import sun.jvm.hotspot.oops.LongField;
+// import sun.jvm.hotspot.oops.Oop;
+// import sun.jvm.hotspot.runtime.JavaThread;
+// import sun.jvm.hotspot.runtime.Threads;
+// import sun.jvm.hotspot.runtime.VM;
 
 import java.util.Map;
 import java.util.ArrayList;
@@ -71,39 +71,40 @@ public class LinuxThreadStatusReader extends AbstractInfrastructure {
     }
 
     private LinuxThreadID getLinuxThreadIDFromJavaThreadID(JavaThreadID jid) {
-        LinuxThreadID linuxThreadID = null;
-        if (this.javaThreadIDToLinuxThreadID.containsKey(jid)) {
-            linuxThreadID = this.javaThreadIDToLinuxThreadID.get(jid);
-        }
-        else {
-            Threads threads = VM.getVM().getThreads();
-            for (JavaThread thread = threads.first(); thread != null; thread = thread.next()) {
-                if (getJavaThreadID(thread).equals(jid)) {
-                    linuxThreadID = new LinuxThreadID(Long.parseLong(thread.getThreadProxy().toString()));
-                    this.javaThreadIDToLinuxThreadID.put(jid, linuxThreadID);
-                }
-            }
-            if (linuxThreadID == null) {
-                linuxThreadID = new LinuxThreadID();
-            }
-        }
-        return linuxThreadID;
+        // LinuxThreadID linuxThreadID = null;
+        // if (this.javaThreadIDToLinuxThreadID.containsKey(jid)) {
+        //     linuxThreadID = this.javaThreadIDToLinuxThreadID.get(jid);
+        // }
+        // else {
+        //     Threads threads = VM.getVM().getThreads();
+        //     for (JavaThread thread = threads.first(); thread != null; thread = thread.next()) {
+        //         if (getJavaThreadID(thread).equals(jid)) {
+        //             linuxThreadID = new LinuxThreadID(Long.parseLong(thread.getThreadProxy().toString()));
+        //             this.javaThreadIDToLinuxThreadID.put(jid, linuxThreadID);
+        //         }
+        //     }
+        //     if (linuxThreadID == null) {
+        //         linuxThreadID = new LinuxThreadID();
+        //     }
+        // }
+        // return linuxThreadID;
+        return new LinuxThreadID();
     }
 
-    public static JavaThreadID getJavaThreadID(JavaThread thread) {
-        final JavaThreadID BAD_TID = new JavaThreadID();
+    // public static JavaThreadID getJavaThreadID(JavaThread thread) {
+    //     final JavaThreadID BAD_TID = new JavaThreadID();
         
-        Oop threadObj = thread.getThreadObj();
-        Klass klass = threadObj.getKlass();
-        if (!(klass instanceof InstanceKlass)) return BAD_TID;
+    //     Oop threadObj = thread.getThreadObj();
+    //     Klass klass = threadObj.getKlass();
+    //     if (!(klass instanceof InstanceKlass)) return BAD_TID;
         
-        InstanceKlass instanceKlass = (InstanceKlass) klass;
-        Field tidField = instanceKlass.findField("tid", "J");
-        if (!(tidField instanceof LongField)) return BAD_TID;
+    //     InstanceKlass instanceKlass = (InstanceKlass) klass;
+    //     Field tidField = instanceKlass.findField("tid", "J");
+    //     if (!(tidField instanceof LongField)) return BAD_TID;
         
-        long tid = ((LongField) tidField).getValue(threadObj);
-        return new JavaThreadID(tid);
+    //     long tid = ((LongField) tidField).getValue(threadObj);
+    //     return new JavaThreadID(tid);
 
-    }
+    // }
 
 }

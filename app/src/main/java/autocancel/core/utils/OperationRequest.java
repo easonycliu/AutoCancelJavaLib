@@ -60,4 +60,13 @@ public class OperationRequest {
     public Map<String, Object> getParams() {
         return this.params;
     }
+
+    @Override
+    public String toString() {
+        String strRequest = String.format("%s %s %s. ", this.operation.toString(), this.target.toString(), this.resourceType.toString());
+        for (Map.Entry<String, Object> entry : this.params.entrySet()) {
+            strRequest = strRequest + String.format("%s: %s; ", entry.getKey(), entry.getValue().toString());
+        }
+        return strRequest;
+    }
 }
