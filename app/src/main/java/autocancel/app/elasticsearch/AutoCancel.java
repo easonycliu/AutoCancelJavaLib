@@ -75,18 +75,28 @@ public class AutoCancel {
         assert cid != null : "Cannot exit an uncreated task.";
 
         try (ReleasableLock ignored = AutoCancel.writeLock.acquire()) {
-            assert AutoCancel.cancellableIDToAsyncRunnables.containsKey(cid) &&
-            AutoCancel.cancellableIDToTask.containsKey(cid) : "Maps should contains the cid to be removed.";
+            assert AutoCancel.cancellableIDToTask.containsKey(cid) : "Maps should contains the cid to be removed.";
+            if (!AutoCancel.cancellableIDToAsyncRunnables.containsKey(cid)) {
+                // task has not been created when runnable starts on the first thread
+                // TODO: maybe there is a better way to identify the status
+            }
             AutoCancel.removeCancellableIDFromMaps(cid);
         }
 
-        AutoCancel.mainManager.logCancellableJavaThreadIDInfo(cid);
-
         AutoCancel.mainManager.destoryCancellableIDOnCurrentJavaThreadID(cid);
+
+        AutoCancel.mainManager.logCancellableJavaThreadIDInfo(cid);
     }
 
     public static void onTaskFinishInThread() throws AssertionError {
         assert started : "You should start lib AutoCancel first.";
+
+        CancellableID cid = AutoCancel.mainManager.getCancellableIDOnCurrentJavaThreadID();
+        if (cid.equals(new CancellableID())) {
+            // task has exited
+            // TODO: maybe there is a better way to identify the status
+            return;
+        }
 
         AutoCancel.mainManager.unregisterCancellableIDOnCurrentJavaThreadID();
     }
@@ -97,7 +107,12 @@ public class AutoCancel {
 
         CancellableID cid = AutoCancel.mainManager.getCancellableIDOnCurrentJavaThreadID();
 
-        assert !cid.equals(new CancellableID()) : "Task must be running before queuing into threadpool.";
+        // assert !cid.equals(new CancellableID()) : "Task must be running before queuing into threadpool.";
+        if (cid.equals(new CancellableID())) {
+            // task has not been created yet
+            // TODO: maybe there is a better way to identify the status
+            return;
+        }
 
         try (ReleasableLock ignored = AutoCancel.writeLock.acquire()) {
             if (AutoCancel.cancellableIDToAsyncRunnables.containsKey(cid)) {
@@ -125,7 +140,12 @@ public class AutoCancel {
             }
         }
 
-        assert cid != null : "Cannot start a runnable out of excute entry.";
+        // assert cid != null : "Cannot start a runnable out of excute entry.";
+        if (cid == null) {
+            // task has not been created yet
+            // TODO: maybe there is a better way to identify the status
+            return;
+        }
 
         AutoCancel.mainManager.registerCancellableIDOnCurrentJavaThreadID(cid);
     }

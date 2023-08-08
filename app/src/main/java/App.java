@@ -54,8 +54,8 @@ public class App {
         catch (Exception e) {
 
         }
-        AutoCancel.onTaskFinishInThread();
         AutoCancel.onTaskExit(t);
+        AutoCancel.onTaskFinishInThread();
         System.out.println("Finish 0");
 
         Object t1 = new Object() {
@@ -64,7 +64,6 @@ public class App {
                 return "Task 2";
             }
         };
-        AutoCancel.onTaskCreate(t1);
         Runnable r1 = new Runnable() {
             @Override
             public void run() {
@@ -75,8 +74,9 @@ public class App {
         };
         AutoCancel.onTaskQueueInThread(r1);
         AutoCancel.onTaskStartInThread(r1);
-        AutoCancel.onTaskFinishInThread();
+        AutoCancel.onTaskCreate(t1);
         AutoCancel.onTaskExit(t1);
+        AutoCancel.onTaskFinishInThread();
         try {
             Thread.sleep(1000);
         }

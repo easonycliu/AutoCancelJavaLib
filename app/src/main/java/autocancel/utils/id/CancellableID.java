@@ -23,7 +23,9 @@ public class CancellableID implements ID {
     @Override
     public boolean equals(Object o) {
         // TODO: Class should be the same
-        return this.id == ((CancellableID) o).id;
+        Long id = this.id;
+        Long input_id = ((CancellableID) o).id;
+        return id == input_id;
     }
 
     @Override

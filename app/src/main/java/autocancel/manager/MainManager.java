@@ -122,7 +122,8 @@ public class MainManager {
         JavaThreadID jid = new JavaThreadID(Thread.currentThread().getId());
         CancellableID cidReadFromManager = this.idManager.getCancellableIDOfJavaThreadID(jid);
 
-        assert cid.equals(cidReadFromManager) : "Input cancellable id is not running on the current java thread id";
+        boolean cidEqual = cid.equals(cidReadFromManager);
+        assert cidEqual : "Input cancellable id is not running on the current java thread id";
 
         // BUGGY
         this.idManager.setCancellableIDAndJavaThreadID(cidReadFromManager, jid, IDInfo.Status.EXIT);

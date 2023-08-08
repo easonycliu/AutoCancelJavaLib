@@ -68,7 +68,13 @@ public class IDManager {
         try (ReleasableLock ignored = this.readLock.acquire()) {
             if (this.javaThreadIDToCancellableID.containsKey(jid)) {
                 List<IDInfo<CancellableID>> cancellableIDList = this.javaThreadIDToCancellableID.get(jid);
-                cancellableID = cancellableIDList.get(cancellableIDList.size() - 1).getID();
+                IDInfo<CancellableID> cancellableIDInfo = cancellableIDList.get(cancellableIDList.size() - 1);
+                if (cancellableIDInfo.isRun()) {
+                    cancellableID = cancellableIDInfo.getID();
+                }
+                else {
+                    cancellableID = new CancellableID();
+                }
             }
             else {
                 cancellableID = new CancellableID();

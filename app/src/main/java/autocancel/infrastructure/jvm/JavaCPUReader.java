@@ -99,7 +99,7 @@ public class JavaCPUReader extends ResourceReader {
         }
 
         public void update(Integer version, Long cpuTime) {
-            assert version > this.version && cpuTime > this.cpuTime : "version and cpu time should always increase.";
+            assert version >= this.version && cpuTime >= this.cpuTime : "version and cpu time should never decrease.";
 
             this.previousVersion = this.version;
             this.previousCPUTime = this.cpuTime;
