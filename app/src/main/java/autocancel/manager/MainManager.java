@@ -138,34 +138,8 @@ public class MainManager {
         return cid;
     }
 
-    public void logCancellableJavaThreadIDInfo(CancellableID cid) {
-        List<IDInfo<JavaThreadID>> javaThreadIDInfos = this.idManager.getAllJavaThreadIDInfoOfCancellableID(cid);
-
-        // TODO: add config to jidinfo save path
-        try (FileWriter jidInfoWriter = new FileWriter("/tmp/jidinfo", true)) {
-            jidInfoWriter.write(String.format("========== Cancellable %s ==========\n", cid.toString()));
-            for (IDInfo<JavaThreadID> javaThreadIDInfo : javaThreadIDInfos) {
-                jidInfoWriter.write(javaThreadIDInfo.toString() + "\n");
-            }
-        }
-        catch (IOException e) {
-
-        }
-    }
-
-    public void logJavaThreadCancellableIDInfo(JavaThreadID jid) {
-        List<IDInfo<CancellableID>> cancellableIDInfos = this.idManager.getAllCancellableIDInfoOfJavaThreadID(jid);
-
-        // TODO: add config to jidinfo save path
-        try (FileWriter jidInfoWriter = new FileWriter("/tmp/jidinfo", true)) {
-            jidInfoWriter.write(String.format("========== Java Thread %s ==========\n", jid.toString()));
-            for (IDInfo<CancellableID> cancellableIDInfo : cancellableIDInfos) {
-                jidInfoWriter.write(cancellableIDInfo.toString() + "\n");
-            }
-        }
-        catch (IOException e) {
-
-        }
+    public List<IDInfo<JavaThreadID>> getAllJavaThreadIDInfoOfCancellableID(CancellableID cid) {
+        return this.idManager.getAllJavaThreadIDInfoOfCancellableID(cid);
     }
 
     public void putManagerRequestToCore(OperationRequest request) {

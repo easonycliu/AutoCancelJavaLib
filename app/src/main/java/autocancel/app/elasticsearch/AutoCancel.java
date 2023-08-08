@@ -31,7 +31,7 @@ public class AutoCancel {
 
     public static void stop() throws AssertionError {
         assert started : "You should start lib AutoCancel first.";
-        AutoCancel.mainManager.logJavaThreadCancellableIDInfo(new JavaThreadID(Thread.currentThread().getId()));
+        AutoCancel.taskTracker.stop();
         AutoCancel.mainManager.stop();
     }
 

@@ -26,6 +26,8 @@ public class TaskTracker {
 
     private ReleasableLock writeLock;
 
+    private Log log;
+
     public TaskTracker(MainManager mainManager) {
         this.mainManager = mainManager;
 
@@ -38,6 +40,12 @@ public class TaskTracker {
         this.readLock = new ReleasableLock(autoCancelReadWriteLock.readLock());
 
         this.writeLock = new ReleasableLock(autoCancelReadWriteLock.writeLock());
+
+        this.log = new Log(this.mainManager);
+    }
+
+    public void stop() {
+        this.log.stop();
     }
 
     public void onTaskCreate(Object task) throws AssertionError {        
@@ -78,6 +86,7 @@ public class TaskTracker {
 
         this.mainManager.destoryCancellableIDOnCurrentJavaThreadID(cid);
 
+        this.log.logCancellableJavaThreadIDInfo(cid, task);
     }
 
     public void onTaskFinishInThread() throws AssertionError {
