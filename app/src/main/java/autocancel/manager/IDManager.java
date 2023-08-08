@@ -48,8 +48,19 @@ public class IDManager {
         try (ReleasableLock ignored = this.readLock.acquire()) {
             if (this.cancellableIDToJavaThreadID.containsKey(cid)) {
                 for (IDInfo<JavaThreadID> javaThreadIDInfo : this.cancellableIDToJavaThreadID.get(cid)) {
-                    if (javaThreadIDInfo.isRun()) {
-                        javaThreadIDs.add(javaThreadIDInfo.getID());
+                    switch (javaThreadIDInfo.getStatus()) {
+                        case RUN:
+                            javaThreadIDs.add(javaThreadIDInfo.getID());
+                            break;
+                        case QUEUE:
+                            break;
+                        case EXIT:
+                            while (javaThreadIDs.contains(javaThreadIDInfo.getID())) {
+                                javaThreadIDs.remove(javaThreadIDInfo.getID());
+                            }
+                            break;
+                        default:
+                            break;
                     }
                 }
                 assert javaThreadIDs.size() > 0 : String.format("%s is alive but not running on any java threads", cid.toString());

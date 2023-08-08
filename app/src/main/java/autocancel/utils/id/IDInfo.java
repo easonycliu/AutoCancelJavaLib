@@ -63,6 +63,10 @@ public class IDInfo<ObjectID extends ID> {
         this.status = status;
     }
 
+    public Status getStatus() {
+        return this.status;
+    }
+
     public void exit() {
         this.status = Status.EXIT;
     }
