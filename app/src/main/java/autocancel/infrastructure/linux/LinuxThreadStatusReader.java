@@ -17,7 +17,7 @@ import autocancel.infrastructure.linux.LinuxThreadID;
 // import sun.jvm.hotspot.oops.Oop;
 // import sun.jvm.hotspot.runtime.JavaThread;
 // import sun.jvm.hotspot.runtime.Threads;
-// import sun.jvm.hotspot.runtime.VM;
+import sun.jvm.hotspot.runtime.VM;
 
 import java.util.Map;
 import java.util.ArrayList;
@@ -41,6 +41,8 @@ public class LinuxThreadStatusReader extends AbstractInfrastructure {
         this.resourceTypes = this.getRequiredResourceTypes();
 
         this.resourceReaders = this.initializeResourceReaders();
+
+        // VM.
     }
 
     public Map<ResourceType, ResourceReader> initializeResourceReaders() {
