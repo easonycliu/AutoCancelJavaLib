@@ -77,11 +77,11 @@ public class LinuxThreadStatusReader extends AbstractInfrastructure {
         
         ResourceBatch resourceBatch = new ResourceBatch(version);
         for (ResourceType type : this.resourceTypes) {
-            Double value = this.resourceReaders.get(type).readResource(id, version);
+            Double value = this.resourceReaders.get(type).readResource(linuxThreadID, version);
             resourceBatch.setResourceValue(type, value);
         }
 
-        this.setResourceBatch(linuxThreadID, resourceBatch);
+        this.setResourceBatch(id, resourceBatch);
     }
 
     private LinuxThreadID getLinuxThreadIDFromJavaThreadID(JavaThreadID jid) {
