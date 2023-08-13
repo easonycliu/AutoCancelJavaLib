@@ -11,10 +11,6 @@ import java.util.concurrent.TimeUnit;
 
 public class ThreadPoolExecutorWrapper extends ThreadPoolExecutor {
 
-    // static {
-    //     System.loadLibrary("gettidfromjava");
-    // }
-
     public ThreadPoolExecutorWrapper(int corePoolSize, 
     int maximumPoolSize, 
     long keepAliveTime, 
@@ -63,7 +59,7 @@ public class ThreadPoolExecutorWrapper extends ThreadPoolExecutor {
         AutoCancel.onTaskFinishInThread();
     }
 
-    final public void execute(Runnable command) {
+    public void execute(Runnable command) {
         AutoCancel.onTaskQueueInThread(command);
         super.execute(command);
     }
@@ -74,9 +70,5 @@ public class ThreadPoolExecutorWrapper extends ThreadPoolExecutor {
             t.setName(String.format("%s-NativeTID:[%d]", threadName, Syscall.gettid()));
         }
     }
-
-    // private void getNativeTID() {
-    //     System.loadLibrary(null);
-    // }
 
 }
