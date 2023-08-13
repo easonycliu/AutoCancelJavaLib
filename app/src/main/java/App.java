@@ -5,12 +5,16 @@
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.util.List;
+import java.util.Scanner;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import autocancel.app.elasticsearch.AutoCancel;
 import autocancel.utils.Syscall;
@@ -22,9 +26,6 @@ public class App {
 
     public static void main(String[] args) {
         AutoCancel.start();
-
-        Long nativeTID = Syscall.gettid();
-        System.out.println("Native Thread ID: " + nativeTID);
 
         System.out.println(new App().getGreeting());
         Object t = new Object() {
@@ -89,7 +90,7 @@ public class App {
         AutoCancel.onTaskExit(t1);
         AutoCancel.onTaskFinishInThread();
         try {
-            Thread.sleep(10000);
+            Thread.sleep(1000);
         }
         catch (Exception e) {
 

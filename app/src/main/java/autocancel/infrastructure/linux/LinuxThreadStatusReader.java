@@ -20,6 +20,11 @@ import autocancel.infrastructure.linux.LinuxThreadID;
 import sun.jvm.hotspot.runtime.VM;
 
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -60,8 +65,15 @@ public class LinuxThreadStatusReader extends AbstractInfrastructure {
 
     @Override
     protected void updateResource(ID id, Integer version) {
-        LinuxThreadID linuxThreadID = this.getLinuxThreadIDFromJavaThreadID((JavaThreadID) id);
-        assert !linuxThreadID.equals(new LinuxThreadID()) : "Failed to find linux thread id of java thread id";
+        LinuxThreadID linuxThreadID = null;
+        if (this.javaThreadIDToLinuxThreadID.containsKey((JavaThreadID) id)) {
+            linuxThreadID = this.javaThreadIDToLinuxThreadID.get((JavaThreadID) id);
+        }
+        else {
+            linuxThreadID = this.getLinuxThreadIDFromJavaThreadID((JavaThreadID) id);
+            assert !linuxThreadID.equals(new LinuxThreadID()) : "Failed to find linux thread id of java thread id";
+            this.javaThreadIDToLinuxThreadID.put((JavaThreadID) id, linuxThreadID);
+        }
         
         ResourceBatch resourceBatch = new ResourceBatch(version);
         for (ResourceType type : this.resourceTypes) {
@@ -73,40 +85,29 @@ public class LinuxThreadStatusReader extends AbstractInfrastructure {
     }
 
     private LinuxThreadID getLinuxThreadIDFromJavaThreadID(JavaThreadID jid) {
-        // LinuxThreadID linuxThreadID = null;
-        // if (this.javaThreadIDToLinuxThreadID.containsKey(jid)) {
-        //     linuxThreadID = this.javaThreadIDToLinuxThreadID.get(jid);
-        // }
-        // else {
-        //     Threads threads = VM.getVM().getThreads();
-        //     for (JavaThread thread = threads.first(); thread != null; thread = thread.next()) {
-        //         if (getJavaThreadID(thread).equals(jid)) {
-        //             linuxThreadID = new LinuxThreadID(Long.parseLong(thread.getThreadProxy().toString()));
-        //             this.javaThreadIDToLinuxThreadID.put(jid, linuxThreadID);
-        //         }
-        //     }
-        //     if (linuxThreadID == null) {
-        //         linuxThreadID = new LinuxThreadID();
-        //     }
-        // }
-        // return linuxThreadID;
-        return new LinuxThreadID();
+        ThreadMXBean tmx = ManagementFactory.getThreadMXBean();
+        ThreadInfo info = tmx.getThreadInfo(jid.unwrap());
+        String threadName = info.getThreadName();
+        String regex = "(.*)(NativeTID:\\[)(.*)(\\])(.*)";
+        Pattern pattern = java.util.regex.Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(threadName);
+        String linuxThreadIDStr = null;
+        while (matcher.find()) {
+            if (linuxThreadIDStr == null) {
+                linuxThreadIDStr = matcher.group(3);
+            }
+            else {
+                assert false : "A thread name should contain two native thread id info";
+            }
+        }
+        LinuxThreadID linuxThreadID = null;
+        if (linuxThreadIDStr != null) {
+            linuxThreadID = new LinuxThreadID(Long.valueOf(linuxThreadIDStr));
+        }
+        else {
+            linuxThreadID = new LinuxThreadID();
+        }
+        return linuxThreadID;
     }
-
-    // public static JavaThreadID getJavaThreadID(JavaThread thread) {
-    //     final JavaThreadID BAD_TID = new JavaThreadID();
-        
-    //     Oop threadObj = thread.getThreadObj();
-    //     Klass klass = threadObj.getKlass();
-    //     if (!(klass instanceof InstanceKlass)) return BAD_TID;
-        
-    //     InstanceKlass instanceKlass = (InstanceKlass) klass;
-    //     Field tidField = instanceKlass.findField("tid", "J");
-    //     if (!(tidField instanceof LongField)) return BAD_TID;
-        
-    //     long tid = ((LongField) tidField).getValue(threadObj);
-    //     return new JavaThreadID(tid);
-
-    // }
 
 }

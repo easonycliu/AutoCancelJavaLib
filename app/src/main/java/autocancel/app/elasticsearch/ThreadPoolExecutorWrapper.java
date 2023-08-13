@@ -1,6 +1,7 @@
 package autocancel.app.elasticsearch;
 
 import autocancel.app.elasticsearch.AutoCancel;
+import autocancel.utils.Syscall;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -69,8 +70,8 @@ public class ThreadPoolExecutorWrapper extends ThreadPoolExecutor {
 
     private void checkThreadName(Thread t) {
         String threadName = t.getName();
-        if (!threadName.contains("NativeTID")) {
-            t.setName(String.format("%s-NativeTID:[%d]", threadName, 1));
+        if (!threadName.matches("(.*)(NativeTID:\\[)(.*)(\\])(.*)")) {
+            t.setName(String.format("%s-NativeTID:[%d]", threadName, Syscall.gettid()));
         }
     }
 

@@ -10,20 +10,27 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class LinuxMemoryReader extends ResourceReader {
+
+    String jvmPID;
+
+    public LinuxMemoryReader() {
+        super();
+        this.jvmPID = this.getJVMPID();
+    }
     
     @Override
     public Double readResource(ID id, Integer version) {
         assert id instanceof LinuxThreadID : "Linux memory reader must recieve linux thread id";
         Long memoryUsingKB = Long.valueOf(0);
         // Read from /proc/[pid]/task/[tid]/status
-        String fileName = String.format("/proc/pid/%s/task/%d/status", this.getJVMPID(), ((LinuxThreadID) id).unwrap());
+        String fileName = String.format("/proc/%s/task/%d/smaps_rollup", this.jvmPID, ((LinuxThreadID) id).unwrap());
 
         try {
             Scanner scanner = new Scanner(new File(fileName));
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
-                if (line.contains("VmRSS")) {
-                    memoryUsingKB = Long.parseLong(line.split(": \t")[1]);
+                if (line.contains("Pss:")) {
+                    memoryUsingKB = Long.parseLong(line.split("[ ]+")[1]);
                     break;
                 }
             }
@@ -46,8 +53,8 @@ public class LinuxMemoryReader extends ResourceReader {
             Scanner scanner = new Scanner(new File(memInfo));
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
-                if (line.contains("MemTotal")) {
-                    totalMemoryKB = Long.parseLong(line.split(": \t")[1]);
+                if (line.contains("MemTotal:")) {
+                    totalMemoryKB = Long.parseLong(line.split("[ ]+")[1]);
                     break;
                 }
             }
