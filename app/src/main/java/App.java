@@ -28,6 +28,8 @@ public class App {
     public static void main(String[] args) {
         AutoCancel.start();
 
+        System.out.println(Syscall.gettid());
+
         System.out.println(new App().getGreeting());
         Object t = new Object() {
             @Override

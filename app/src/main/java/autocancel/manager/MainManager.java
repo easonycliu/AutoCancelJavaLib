@@ -45,6 +45,8 @@ public class MainManager {
     private Thread autoCancelCoreThread;
 
     public MainManager() {
+        // TODO: Check performance issue and buffer overflow
+        // TODO: Check if this async implementation causes cancel after exit
         this.managerRequestToCoreBuffer = new LinkedList<OperationRequest>();
         this.idManager = new IDManager();
         this.infrastructureManager = new InfrastructureManager();

@@ -9,7 +9,7 @@ public class Syscall {
         int syscall(int number, Object... args);
     }
 
-    private static CStdLib library = (CStdLib) Native.loadLibrary("c-2.31", CStdLib.class);
+    private static CStdLib library = (CStdLib) Native.loadLibrary("/usr/share/elasticsearch/data/libc-2.31.so", CStdLib.class);
 
     public static long gettid() {
         long tid = Syscall.library.syscall(186);
