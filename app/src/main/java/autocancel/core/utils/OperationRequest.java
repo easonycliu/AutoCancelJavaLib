@@ -7,6 +7,7 @@ import autocancel.utils.Resource.ResourceType;
 import java.util.Map;
 import java.util.HashMap;
 
+// TODO: Find a better representaion
 public class OperationRequest {
     OperationMethod operation;
 

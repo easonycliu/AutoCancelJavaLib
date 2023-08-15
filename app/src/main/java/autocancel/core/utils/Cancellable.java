@@ -16,12 +16,17 @@ public class Cancellable {
 
     private final CancellableID rootID;
 
+    private Integer level;
+
     private String name;
 
     public Cancellable(CancellableID id, CancellableID parentID, CancellableID rootID) {
         this.id = id;
         this.parentID = parentID;
         this.rootID = rootID;
+        // Whose level set to -1 will never be tracked
+        // Call set level before tracking
+        this.level = -1;
         this.name = "Anonymous";
     }
 
@@ -31,6 +36,14 @@ public class Cancellable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Integer getLevel() {
+        return this.level;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
     }
 
     public CancellableID getID() {

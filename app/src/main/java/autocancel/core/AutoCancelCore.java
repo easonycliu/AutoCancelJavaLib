@@ -13,6 +13,10 @@ import autocancel.utils.Resource.ResourceType;
 
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
+
+import javax.annotation.Nullable;
+
 import java.util.HashMap;
 import java.lang.Thread;
 import java.util.List;
@@ -75,16 +79,10 @@ public class AutoCancelCore {
     }
 
     private class RequestParser {
-        Map<String, Consumer<OperationRequest>> paramHandlers;
+        ParamHandlers paramHandlers;
 
         public RequestParser() {
-            this.paramHandlers = new HashMap<String, Consumer<OperationRequest>>();
-
-            // These parameters' parsing order doesn't matter
-            this.paramHandlers.put("is_cancellable", request -> this.isCancellable(request));
-            this.paramHandlers.put("set_value", request -> this.setValue(request));
-            this.paramHandlers.put("monitor_resource", request -> this.monitorResource(request));
-            this.paramHandlers.put("cancellable_name", request -> this.cancellableName(request));
+            this.paramHandlers = new ParamHandlers();
         }
 
         public void parse(OperationRequest request) {
@@ -108,14 +106,19 @@ public class AutoCancelCore {
         }
 
         private void create(OperationRequest request) {
-            Cancellable cancellable = new Cancellable();
+            assert request.getParams().containsKey("parent_cancellable_id") : "Must set parent_cancellable_id when create cancellable.";
             assert request.getTarget() != new CancellableID() : "Create operation must have cancellable id set";
+            
+            CancellableID parentID = (CancellableID) request.getParams().get("parent_cancellable_id");
+            CancellableID rootID = (CancellableID) this.paramHandlers.handle("parent_cancellable_id", request);
+            Cancellable cancellable = new Cancellable(request.getTarget(), parentID, rootID);
+            
             cancellables.put(request.getTarget(), cancellable);
+            rootCancellableToCancellableGroup.get(rootID).putCancellable(cancellable);
 
             Map<String, Object> params = request.getParams();
             for (String key : params.keySet()) {
-                assert this.paramHandlers.containsKey(key) : "Invalid parameter handler";
-                this.paramHandlers.get(key).accept(request);
+                this.paramHandlers.handle(key, request);
             }
         }
 
@@ -126,8 +129,7 @@ public class AutoCancelCore {
         private void update(OperationRequest request) {
             Map<String, Object> params = request.getParams();
             for (String key : params.keySet()) {
-                assert this.paramHandlers.containsKey(key) : "Invalid parameter handler";
-                this.paramHandlers.get(key).accept(request);
+                this.paramHandlers.handle(key, request);
             }
         }
 
@@ -137,9 +139,50 @@ public class AutoCancelCore {
 
             Map<String, Object> params = request.getParams();
             for (String key : params.keySet()) {
-                assert this.paramHandlers.containsKey(key) : "Invalid parameter handler";
-                this.paramHandlers.get(key).accept(request);
+                this.paramHandlers.handle(key, request);
             }
+        }
+
+    }
+
+    private class ParamHandlers {
+
+        // These parameters' parsing order doesn't matter
+        private final Map<String, Consumer<OperationRequest>> independentParamHandlers = Map.of(
+            "is_cancellable", request -> this.isCancellable(request),
+            "set_value", request -> this.setValue(request),
+            "monitor_resource", request -> this.monitorResource(request),
+            "cancellable_name", request -> this.cancellableName(request)
+        );
+        /*
+         * Some parameters' parsing order does matter, currently there are:
+         * TODO: Find a way to unify them
+         */
+        private final Map<String, Function<OperationRequest, Object>> functionHandlers = Map.of(
+            "parent_cancellable_id", request -> this.parentCancellableID(request)
+        );
+
+        public ParamHandlers() {
+
+        }
+
+        @Nullable
+        public Object handle(String type, OperationRequest request) {
+            Object ret;
+            if (this.functionHandlers.containsKey(type)) {
+                ret = this.functionHandlers.get(type).apply(request);
+            }
+            // TODO: Add other handler types
+            else {
+                ret = null;
+                assert false : "Invalid parameter";
+            }
+            return ret;
+        }
+
+        public void handleIndependentParam(String type, OperationRequest request) {
+            assert this.independentParamHandlers.containsKey(type) : "Invalid parameter";
+            this.independentParamHandlers.get(type).accept(request);
         }
 
         private void isCancellable(OperationRequest request) {
@@ -177,6 +220,12 @@ public class AutoCancelCore {
             Cancellable cancellable = cancellables.get(request.getTarget());
             String name = (String)request.getParams().get("cancellable_name");
             cancellable.setName(name);
+        }
+
+        private CancellableID parentCancellableID(OperationRequest request) {
+            CancellableID parentID = request.getParams().get("parent_cancellable_id");
+            CancellableID rootID = cancellables.get(parentID);
+            return rootID;
         }
     }
 }
