@@ -75,7 +75,7 @@ public class MainManager {
         this.infrastructureManager.startNewVersion();
     }
 
-    private CancellableID createCancellable(JavaThreadID jid, Boolean isCancellable, String name) {
+    private CancellableID createCancellable(JavaThreadID jid, Boolean isCancellable, String name, CancellableID parentID) {
         CancellableID cid = this.cidGenerator.generate();
         this.idManager.setCancellableIDAndJavaThreadID(cid, jid, IDInfo.Status.RUN);
 
@@ -84,6 +84,7 @@ public class MainManager {
         // TODO: According to settings
         request.addRequestParam("monitor_resource", new ArrayList<ResourceType>(Arrays.asList(ResourceType.CPU, ResourceType.MEMORY)));
         request.addRequestParam("cancellable_name", name);
+        request.addRequestParam("parent_cancellable_id", parentID);
         this.putManagerRequestToCore(request);
 
         return cid;
@@ -114,9 +115,9 @@ public class MainManager {
         this.idManager.setCancellableIDAndJavaThreadID(cid, jid, IDInfo.Status.EXIT);
     }
 
-    public CancellableID createCancellableIDOnCurrentJavaThreadID(Boolean isCancellable, String name) {
+    public CancellableID createCancellableIDOnCurrentJavaThreadID(Boolean isCancellable, String name, CancellableID parentID) {
         JavaThreadID jid = new JavaThreadID(Thread.currentThread().getId());
-        CancellableID cid = this.createCancellable(jid, isCancellable, name);
+        CancellableID cid = this.createCancellable(jid, isCancellable, name, parentID);
 
         return cid;
     }

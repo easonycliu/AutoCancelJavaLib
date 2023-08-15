@@ -34,7 +34,7 @@ public class App {
         Object t = new Object() {
             @Override
             public String toString() {
-                return "Task 1";
+                return "Task{id=1180, type='transport', action='indices:data/read/search', description='null', parentTask=unset, startTime=1691498694671, startTimeNanos=1118293583160794}";
             }
         };
         AutoCancel.onTaskCreate(t);
@@ -76,7 +76,7 @@ public class App {
         Object t1 = new Object() {
             @Override
             public String toString() {
-                return "Task 2";
+                return "Task{id=1181, type='direct', action='indices:data/read/search[phase/query]', description='shardId[[news][0]]', parentTask=unset, startTime=1691498694680, startTimeNanos=1118293592124051}";
             }
         };
         Runnable r1 = new Runnable() {

@@ -40,6 +40,7 @@ public class AutoCancelCore {
     public AutoCancelCore(MainManager mainManager) {
         this.mainManager = mainManager;
         this.cancellables = new HashMap<CancellableID, Cancellable>();
+        this.rootCancellableToCancellableGroup = new HashMap<CancellableID, CancellableGroup>();
         this.mainMonitor = new MainMonitor(this.mainManager, this.cancellables, this.rootCancellableToCancellableGroup);
         this.requestParser = new RequestParser();
         this.logger = new Logger("/tmp/logs", "corerequest", 10000);
@@ -123,7 +124,7 @@ public class AutoCancelCore {
 
             Map<String, Object> params = request.getParams();
             for (String key : params.keySet()) {
-                this.paramHandlers.handle(key, request);
+                this.paramHandlers.handleIndependentParam(key, request);
             }
         }
 
@@ -134,7 +135,7 @@ public class AutoCancelCore {
         private void update(OperationRequest request) {
             Map<String, Object> params = request.getParams();
             for (String key : params.keySet()) {
-                this.paramHandlers.handle(key, request);
+                this.paramHandlers.handleIndependentParam(key, request);
             }
         }
 
@@ -144,7 +145,7 @@ public class AutoCancelCore {
 
             Map<String, Object> params = request.getParams();
             for (String key : params.keySet()) {
-                this.paramHandlers.handle(key, request);
+                this.paramHandlers.handleIndependentParam(key, request);
             }
         }
 
@@ -186,13 +187,17 @@ public class AutoCancelCore {
         }
 
         public void handleIndependentParam(String type, OperationRequest request) {
-            assert this.independentParamHandlers.containsKey(type) : "Invalid parameter";
+            if (this.functionHandlers.containsKey(type)) {
+                // TODO: handle this situation properly
+                return;
+            }
+            assert this.independentParamHandlers.containsKey(type) : "Invalid parameter " + type;
             this.independentParamHandlers.get(type).accept(request);
         }
 
         private void isCancellable(OperationRequest request) {
             Cancellable cancellable = cancellables.get(request.getTarget());
-            if (cancellable.getParentID().equals(new CancellableID())) {
+            if (cancellable.isRoot()) {
                 // This is a root cancellable
                 // Parameter is_cancellable is useful only if this cancellable is a root cancellable
                 // TODO: Add a warning if this is not a root cancellable
@@ -210,13 +215,14 @@ public class AutoCancelCore {
 
         private void monitorResource(OperationRequest request) {
             Cancellable cancellable = cancellables.get(request.getTarget());
-            if (cancellable.getParentID().equals(new CancellableID())) {
+            if (cancellable.isRoot()) {
                 // This is a root cancellable
                 // Parameter monitor_resource is useful only if this cancellable is a root cancellable
                 // TODO: Add a warning if this is not a root cancellable
                 List<?> resourceTypes = (List<?>)request.getParams().get("monitor_resource");
+                CancellableGroup cancellableGroup = rootCancellableToCancellableGroup.get(cancellable.getID());
                 for (Object resourceType : resourceTypes) {
-                    cancellable.setResourceUsage((ResourceType)resourceType, 0.0);
+                    cancellableGroup.setResourceUsage((ResourceType)resourceType, 0.0);
                 }
             }
         }
