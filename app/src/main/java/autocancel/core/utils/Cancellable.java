@@ -10,11 +10,11 @@ import java.util.Set;
 
 public class Cancellable {
     
-    private CancellableID id;
+    private final CancellableID id;
 
-    private CancellableID parentID;
+    private final CancellableID parentID;
 
-    private CancellableID rootID;
+    private final CancellableID rootID;
 
     private String name;
 
@@ -31,5 +31,27 @@ public class Cancellable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public CancellableID getID() {
+        return this.id;
+    }
+
+    public CancellableID getParentID() {
+        return this.parentID;
+    }
+
+    public CancellableID getRootID() {
+        return this.rootID;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Cancellable && ((Cancellable) o).getID().equals(this.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return this.id.hashCode();
     }
 }
