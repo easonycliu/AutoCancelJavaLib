@@ -1,12 +1,12 @@
 package autocancel.core;
 
 import autocancel.manager.MainManager;
-import autocancel.utils.Cancellable;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.logger.Logger;
 import autocancel.core.monitor.MainMonitor;
 import autocancel.core.utils.OperationRequest;
 import autocancel.core.utils.ResourceUsage;
+import autocancel.core.utils.Cancellable;
 import autocancel.core.utils.OperationMethod;
 import autocancel.utils.Resource.ResourceType;
 

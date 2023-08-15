@@ -1,11 +1,11 @@
 package autocancel.core.monitor;
 
 import autocancel.core.monitor.Monitor;
+import autocancel.core.utils.Cancellable;
 import autocancel.core.utils.OperationRequest;
 import autocancel.core.monitor.CPUMonitor;
 import autocancel.core.monitor.MemoryMonitor;
 import autocancel.manager.MainManager;
-import autocancel.utils.Cancellable;
 import autocancel.utils.Resource.ResourceType;
 import autocancel.utils.id.CancellableID;
 

@@ -1,25 +1,22 @@
-package autocancel.utils;
+package autocancel.core.utils;
 
-import autocancel.core.utils.ResourceUsage;
+import autocancel.core.utils.Cancellable;
 import autocancel.utils.Resource.ResourceType;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 
-public class Cancellable {
+public class CancellableGroup {
     
+    private List<List<Cancellable>> cancellablesInLevels;
+
     private Map<ResourceType, ResourceUsage> resourceMap;
 
-    private String name;
-
     private Boolean isCancellable;
-
-    public Cancellable() {
-        this.resourceMap = new HashMap<ResourceType, ResourceUsage>();
-        this.name = "Anonymous";
-        this.isCancellable = null;
-    }
 
     public Set<ResourceType> getResourceTypes() {
         return this.resourceMap.keySet();
@@ -34,14 +31,6 @@ public class Cancellable {
         }
     }
 
-    public String getName() {
-        return this.name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public Boolean getIsCancellable() {
         assert this.isCancellable != null : "this.isCancellable hasn't been set yet";
         return this.isCancellable;
@@ -50,4 +39,11 @@ public class Cancellable {
     public void setIsCancellable(Boolean isCancellable) {
         this.isCancellable = isCancellable;
     }
+    
+    public CancellableGroup(Cancellable root) {
+        this.cancellablesInLevels = new ArrayList<List<Cancellable>>();
+        this.cancellablesInLevels.add(new ArrayList<Cancellable>(Arrays.asList(root)));
+    }
+
+
 }
