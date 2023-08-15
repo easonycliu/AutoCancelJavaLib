@@ -2,6 +2,7 @@ package autocancel.core.monitor;
 
 import autocancel.core.monitor.Monitor;
 import autocancel.core.utils.Cancellable;
+import autocancel.core.utils.CancellableGroup;
 import autocancel.core.utils.OperationRequest;
 import autocancel.core.monitor.CPUMonitor;
 import autocancel.core.monitor.MemoryMonitor;
@@ -13,21 +14,25 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 
 public class MainMonitor {
     
     private Queue<OperationRequest> monitorUpdateToCoreBuffer;
 
-    Map<CancellableID, Cancellable> cancellables;
+    private final Map<CancellableID, Cancellable> cancellables;
 
-    MainManager mainManager;
+    private final Map<CancellableID, CancellableGroup> rootCancellableToCancellableGroup;
 
-    Map<ResourceType, Monitor> monitors;
+    private final MainManager mainManager;
 
-    public MainMonitor(MainManager mainManager, Map<CancellableID, Cancellable> cancellables) {
+    private Map<ResourceType, Monitor> monitors;
+
+    public MainMonitor(MainManager mainManager, Map<CancellableID, Cancellable> cancellables, Map<CancellableID, CancellableGroup> rootCancellableToCancellableGroup) {
         this.monitorUpdateToCoreBuffer = new LinkedList<OperationRequest>();
         this.mainManager = mainManager;
         this.cancellables = cancellables;
+        this.rootCancellableToCancellableGroup = rootCancellableToCancellableGroup;
 
         this.monitors = new HashMap<ResourceType, Monitor>();
         this.monitors.put(ResourceType.CPU, new CPUMonitor(this.mainManager));
@@ -37,13 +42,16 @@ public class MainMonitor {
 
     public void updateTasksResources() {
         this.mainManager.startNewVersion();
-        for (Map.Entry<CancellableID, Cancellable> entry : cancellables.entrySet()) {
-            for (ResourceType resourceType : entry.getValue().getResourceTypes()) {
-                this.monitorUpdateToCoreBuffer.add(this.monitors.get(resourceType).updateResource(entry.getKey()));
+        for (Cancellable cancellable : cancellables.values()) {
+            assert this.rootCancellableToCancellableGroup.containsKey(cancellable.getRootID()) : String.format("Ungrouped cancellable %d", cancellable.getID());
+            for (ResourceType resourceType : rootCancellableToCancellableGroup.get(cancellable.getRootID()).getResourceTypes()) {
+                this.monitorUpdateToCoreBuffer.add(this.monitors.get(resourceType).updateResource(cancellable.getID()));
             }
         }
     }
 
+    // Objects in autocancel core is owned by a single thread currently
+    // So we do not need a lock, at least now
     public OperationRequest getMonitorUpdateToCoreWithoutLock() {
         OperationRequest request;
         request = this.monitorUpdateToCoreBuffer.poll();

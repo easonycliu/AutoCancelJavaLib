@@ -7,6 +7,7 @@ import autocancel.core.monitor.MainMonitor;
 import autocancel.core.utils.OperationRequest;
 import autocancel.core.utils.ResourceUsage;
 import autocancel.core.utils.Cancellable;
+import autocancel.core.utils.CancellableGroup;
 import autocancel.core.utils.OperationMethod;
 import autocancel.utils.Resource.ResourceType;
 
@@ -15,12 +16,16 @@ import java.util.function.Consumer;
 import java.util.HashMap;
 import java.lang.Thread;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 public class AutoCancelCore {
 
     private MainManager mainManager;
 
     private MainMonitor mainMonitor;
+
+    private Map<CancellableID, CancellableGroup> rootCancellableToCancellableGroup;
 
     private Map<CancellableID, Cancellable> cancellables;
 
@@ -31,7 +36,7 @@ public class AutoCancelCore {
     public AutoCancelCore(MainManager mainManager) {
         this.mainManager = mainManager;
         this.cancellables = new HashMap<CancellableID, Cancellable>();
-        this.mainMonitor = new MainMonitor(this.mainManager, this.cancellables);
+        this.mainMonitor = new MainMonitor(this.mainManager, this.cancellables, this.rootCancellableToCancellableGroup);
         this.requestParser = new RequestParser();
         this.logger = new Logger("/tmp/logs", "corerequest", 10000);
     }
@@ -75,6 +80,7 @@ public class AutoCancelCore {
         public RequestParser() {
             this.paramHandlers = new HashMap<String, Consumer<OperationRequest>>();
 
+            // These parameters' parsing order doesn't matter
             this.paramHandlers.put("is_cancellable", request -> this.isCancellable(request));
             this.paramHandlers.put("set_value", request -> this.setValue(request));
             this.paramHandlers.put("monitor_resource", request -> this.monitorResource(request));
@@ -138,21 +144,32 @@ public class AutoCancelCore {
 
         private void isCancellable(OperationRequest request) {
             Cancellable cancellable = cancellables.get(request.getTarget());
-            Boolean isCancellable = (Boolean)request.getParams().get("is_cancellable");
-            cancellable.setIsCancellable(isCancellable);
+            if (cancellable.getParentID().equals(new CancellableID())) {
+                // This is a root cancellable
+                // Parameter is_cancellable is useful only if this cancellable is a root cancellable
+                // TODO: Add a warning if this is not a root cancellable
+                Boolean isCancellable = (Boolean)request.getParams().get("is_cancellable");
+                rootCancellableToCancellableGroup.get(cancellable.getID()).setIsCancellable(isCancellable);
+            }
         }
 
+        // TODO: Consider changing a function name
         private void setValue(OperationRequest request) {
             Cancellable cancellable = cancellables.get(request.getTarget());
             Double value = (Double)request.getParams().get("set_value");
-            cancellable.setResourceUsage(request.getResourceType(), value);
+            rootCancellableToCancellableGroup.get(cancellable.getRootID()).setResourceUsage(request.getResourceType(), value);
         }
 
         private void monitorResource(OperationRequest request) {
             Cancellable cancellable = cancellables.get(request.getTarget());
-            List<?> resourceTypes = (List<?>)request.getParams().get("monitor_resource");
-            for (Object resourceType : resourceTypes) {
-                cancellable.setResourceUsage((ResourceType)resourceType, 0.0);
+            if (cancellable.getParentID().equals(new CancellableID())) {
+                // This is a root cancellable
+                // Parameter monitor_resource is useful only if this cancellable is a root cancellable
+                // TODO: Add a warning if this is not a root cancellable
+                List<?> resourceTypes = (List<?>)request.getParams().get("monitor_resource");
+                for (Object resourceType : resourceTypes) {
+                    cancellable.setResourceUsage((ResourceType)resourceType, 0.0);
+                }
             }
         }
 
