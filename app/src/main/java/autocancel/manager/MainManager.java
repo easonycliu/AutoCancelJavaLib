@@ -26,15 +26,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
-import java.util.Queue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class MainManager {
 
-    private Queue<OperationRequest> managerRequestToCoreBuffer;
+    private ConcurrentLinkedQueue<OperationRequest> managerRequestToCoreBuffer;
 
     private IDManager idManager;
 
@@ -47,7 +47,7 @@ public class MainManager {
     public MainManager() {
         // TODO: Check performance issue and buffer overflow
         // TODO: Check if this async implementation causes cancel after exit
-        this.managerRequestToCoreBuffer = new LinkedList<OperationRequest>();
+        this.managerRequestToCoreBuffer = new ConcurrentLinkedQueue<OperationRequest>();
         this.idManager = new IDManager();
         this.infrastructureManager = new InfrastructureManager();
         this.cidGenerator = new CancellableIDGenerator();
@@ -146,20 +146,10 @@ public class MainManager {
     }
 
     public void putManagerRequestToCore(OperationRequest request) {
-        synchronized(this.managerRequestToCoreBuffer) {
-            this.managerRequestToCoreBuffer.add(request);
-        }
+        this.managerRequestToCoreBuffer.add(request);
     }
 
     public OperationRequest getManagerRequestToCore() {
-        OperationRequest request;
-        synchronized(this.managerRequestToCoreBuffer) {
-            request = this.managerRequestToCoreBuffer.poll();
-        }
-        return request;
-    }
-
-    public OperationRequest getManagerRequestToCoreWithoutLock() {
         OperationRequest request;
         request = this.managerRequestToCoreBuffer.poll();
         return request;
