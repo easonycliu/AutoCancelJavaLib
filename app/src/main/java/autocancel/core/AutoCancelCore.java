@@ -114,7 +114,12 @@ public class AutoCancelCore {
             Cancellable cancellable = new Cancellable(request.getTarget(), parentID, rootID);
             
             cancellables.put(request.getTarget(), cancellable);
-            rootCancellableToCancellableGroup.get(rootID).putCancellable(cancellable);
+            if (cancellable.isRoot()) {
+                rootCancellableToCancellableGroup.put(rootID, new CancellableGroup(cancellable));
+            }
+            else {
+                rootCancellableToCancellableGroup.get(rootID).putCancellable(cancellable);
+            }
 
             Map<String, Object> params = request.getParams();
             for (String key : params.keySet()) {
@@ -223,8 +228,15 @@ public class AutoCancelCore {
         }
 
         private CancellableID parentCancellableID(OperationRequest request) {
-            CancellableID parentID = request.getParams().get("parent_cancellable_id");
-            CancellableID rootID = cancellables.get(parentID);
+            CancellableID parentID = (CancellableID) request.getParams().get("parent_cancellable_id");
+            CancellableID rootID = null;
+            if (parentID.equals(new CancellableID())) {
+                // Itself is a root cancellable
+                rootID = request.getTarget();
+            }
+            else{
+                rootID = cancellables.get(parentID).getID();
+            }
             return rootID;
         }
     }

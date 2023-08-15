@@ -8,6 +8,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+/*
+ * root cancellable: id = id, parentID = -1, rootID = id
+ * others: id = id, parentID = parentID, rootID = rootID
+ */ 
 public class Cancellable {
     
     private final CancellableID id;
@@ -56,6 +60,10 @@ public class Cancellable {
 
     public CancellableID getRootID() {
         return this.rootID;
+    }
+
+    public Boolean isRoot() {
+        return this.parentID.equals(new CancellableID());
     }
 
     @Override
