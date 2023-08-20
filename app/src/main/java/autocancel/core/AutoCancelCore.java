@@ -44,7 +44,7 @@ public class AutoCancelCore {
         this.rootCancellableToCancellableGroup = new HashMap<CancellableID, CancellableGroup>();
         this.mainMonitor = new MainMonitor(this.mainManager, this.cancellables, this.rootCancellableToCancellableGroup);
         this.requestParser = new RequestParser();
-        this.logger = new Logger(Settings.getSetting("path_to_logs"), "corerequest", 10000);
+        this.logger = new Logger((String) Settings.getSetting("path_to_logs"), "corerequest", 10000);
     }
 
     public void start() {
@@ -65,7 +65,7 @@ public class AutoCancelCore {
                     this.requestParser.parse(request);
                 }
 
-                Thread.sleep(Long.valueOf(Settings.getSetting("core_update_cycle_ms")));
+                Thread.sleep((Long) Settings.getSetting("core_update_cycle_ms")));
             }
             catch (InterruptedException e) {
                 break;
