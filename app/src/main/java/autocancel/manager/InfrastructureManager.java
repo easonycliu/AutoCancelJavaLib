@@ -30,7 +30,6 @@ public class InfrastructureManager {
     }
 
     public Double getSpecifiedTypeResourceLatest(JavaThreadID jid, ResourceType type) {
-        // TODO: get resource from infrastructure
         AbstractInfrastructure infrastructure = this.getInfrastructure(type);
         assert infrastructure != null : String.format("Unsupported resource type: %s", type.toString());
         Double resource = infrastructure.getResource(jid, type, this.version.get());

@@ -9,6 +9,7 @@ import autocancel.core.utils.ResourceUsage;
 import autocancel.core.utils.Cancellable;
 import autocancel.core.utils.CancellableGroup;
 import autocancel.core.utils.OperationMethod;
+import autocancel.utils.Settings;
 import autocancel.utils.Resource.ResourceType;
 
 import java.util.Map;
@@ -43,12 +44,11 @@ public class AutoCancelCore {
         this.rootCancellableToCancellableGroup = new HashMap<CancellableID, CancellableGroup>();
         this.mainMonitor = new MainMonitor(this.mainManager, this.cancellables, this.rootCancellableToCancellableGroup);
         this.requestParser = new RequestParser();
-        this.logger = new Logger("/tmp/logs", "corerequest", 10000);
+        this.logger = new Logger(Settings.getSetting("path_to_logs"), "corerequest", 10000);
     }
 
     public void start() {
         while (!Thread.interrupted()) {
-            // TODO: Maybe this can be added to settings
             try {
                 this.logger.log(String.format("Current time: %d\n", System.currentTimeMillis()));
                 Integer requestBufferSize = this.mainManager.getManagerRequestToCoreBufferSize();
@@ -65,7 +65,7 @@ public class AutoCancelCore {
                     this.requestParser.parse(request);
                 }
 
-                Thread.sleep(10);
+                Thread.sleep(Long.valueOf(Settings.getSetting("core_update_cycle_ms")));
             }
             catch (InterruptedException e) {
                 break;

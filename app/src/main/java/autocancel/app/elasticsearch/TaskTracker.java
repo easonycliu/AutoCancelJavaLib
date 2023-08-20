@@ -69,7 +69,6 @@ public class TaskTracker {
             parentCancellableID = new CancellableID();
         }
 
-        // TODO: isCancellable
         CancellableID cid = this.mainManager.createCancellableIDOnCurrentJavaThreadID(true, task.toString(), parentCancellableID);
 
         try (ReleasableLock ignored = this.writeLock.acquire()) {
