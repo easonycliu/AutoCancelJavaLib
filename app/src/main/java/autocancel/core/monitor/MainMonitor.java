@@ -45,7 +45,6 @@ public class MainMonitor {
         for (Cancellable cancellable : cancellables.values()) {
             assert this.rootCancellableToCancellableGroup.containsKey(cancellable.getRootID()) : String.format("Ungrouped cancellable %d", cancellable.getID());
             for (ResourceType resourceType : rootCancellableToCancellableGroup.get(cancellable.getRootID()).getResourceTypes()) {
-                // TODO: Buggy
                 this.monitorUpdateToCoreBuffer.add(this.monitors.get(resourceType).updateResource(cancellable.getID()));
             }
         }
