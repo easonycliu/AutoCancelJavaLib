@@ -3,6 +3,7 @@ package autocancel.app.elasticsearch;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import autocancel.app.AppID;
 import autocancel.utils.id.CancellableID;
 
 public class TaskWrapper {
@@ -73,7 +74,7 @@ public class TaskWrapper {
         return this.hashCode() == o.hashCode();
     }
 
-    public class TaskID {
+    public class TaskID implements AppID {
 
         private Long id;
 
@@ -96,7 +97,7 @@ public class TaskWrapper {
             return TaskID.class.equals(o.getClass()) && this.hashCode() == o.hashCode();
         }
 
-        public boolean isValid() {
+        public Boolean isValid() {
             return this.id != -1L;
         }
     }
