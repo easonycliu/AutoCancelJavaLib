@@ -34,8 +34,6 @@ public class CancellableGroup {
         this.isCancellable = null;
     }
 
-    // TODO: Add a function addResourceUsage()
-
     public Set<ResourceType> getResourceTypes() {
         return this.resourceMap.keySet();
     }
@@ -46,6 +44,16 @@ public class CancellableGroup {
         }
         else {
             this.resourceMap.put(type, new ResourceUsage(usage));
+        }
+    }
+
+    public void addResourceUsage(ResourceType type, Double usageAdd) {
+        if (this.resourceMap.containsKey(type)) {
+            Double previousUsage = this.resourceMap.get(type).getUsage();
+            this.resourceMap.get(type).setUsage(previousUsage + usageAdd);
+        }
+        else {
+            this.resourceMap.put(type, new ResourceUsage(usageAdd));
         }
     }
 

@@ -176,7 +176,8 @@ public class AutoCancelCore {
             "is_cancellable", request -> this.isCancellable(request),
             "set_group_resource", request -> this.setGroupResource(request),
             "monitor_resource", request -> this.monitorResource(request),
-            "cancellable_name", request -> this.cancellableName(request)
+            "cancellable_name", request -> this.cancellableName(request),
+            "add_group_resource", request -> this.addGroupResource(request)
         );
         /*
          * Some parameters' parsing order does matter, currently there are:
@@ -249,6 +250,12 @@ public class AutoCancelCore {
             Cancellable cancellable = cancellables.get(request.getTarget());
             String name = (String)request.getParams().get("cancellable_name");
             cancellable.setName(name);
+        }
+
+        private void addGroupResource(OperationRequest request) {
+            Cancellable cancellable = cancellables.get(request.getTarget());
+            Double value = (Double)request.getParams().get("add_group_resource");
+            rootCancellableToCancellableGroup.get(cancellable.getID()).addResourceUsage(request.getResourceType(), value);
         }
 
         private CancellableID parentCancellableID(OperationRequest request) {
