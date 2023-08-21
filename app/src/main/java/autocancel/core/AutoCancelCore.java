@@ -54,6 +54,8 @@ public class AutoCancelCore {
                     this.requestParser.parse(request);
                 }
 
+                this.refreshCancellableGroups();
+
                 this.mainMonitor.updateTasksResources();
 
                 Integer updateBufferSize = this.mainMonitor.getMonitorUpdateToCoreBufferSizeWithoutLock();
@@ -74,6 +76,17 @@ public class AutoCancelCore {
     private void stop() {
         this.logger.close();
         System.out.println("Recieve interrupt, exit");
+    }
+
+    private void refreshCancellableGroups() {
+        for (Map.Entry<CancellableID, CancellableGroup> entries : this.rootCancellableToCancellableGroup.entrySet()) {
+            Set<ResourceType> resourceTypes = entries.getValue().getResourceTypes();
+            for (ResourceType type : resourceTypes) {
+                OperationRequest request = new OperationRequest(OperationMethod.UPDATE, entries.getKey(), type);
+                request.addRequestParam("set_group_resource", 0.0);
+                requestParser.parse(request);
+            }
+        }
     }
 
     protected void addCancellable(Cancellable cancellable) {
