@@ -13,9 +13,9 @@ public class TaskWrapper {
     
     private Object task;
 
-    private Long taskID;
+    private TaskID taskID;
 
-    private Long parentID;
+    private TaskID parentID;
 
     public TaskWrapper(Object task) throws AssertionError {
         assert task.toString().contains("Task") : "Input is not a class Task.";
@@ -27,12 +27,12 @@ public class TaskWrapper {
         if (parentMatcher.find()) {
             String id = parentMatcher.group(3);
             if (id.equals("unset")) {
-                this.parentID = -1L;
+                this.parentID = new TaskID(-1L);
             }
             else {
                 String[] items = id.split(":");
                 assert items.length == 2 && items[1].matches("^[0-9]+$") : "Illegal task name format " + this.task.toString();
-                this.parentID = Long.valueOf(items[1]);
+                this.parentID = new TaskID(Long.valueOf(items[1]));
             }
         }
         else {
@@ -42,7 +42,7 @@ public class TaskWrapper {
         Matcher taskMatcher = taskPattern.matcher(this.task.toString());
 
         if (taskMatcher.find()) {
-            this.taskID = Long.valueOf(taskMatcher.group(3));
+            this.taskID = new TaskID(Long.valueOf(taskMatcher.group(3)));
         }
         else {
             assert false : "Illegal task name format " + this.task.toString();
@@ -50,11 +50,11 @@ public class TaskWrapper {
 
     }
 
-    public Long getParentTaskID() {
+    public TaskID getParentTaskID() {
         return this.parentID;
     }
 
-    public Long getTaskID() {
+    public TaskID getTaskID() {
         return this.taskID;
     }
 
@@ -71,5 +71,33 @@ public class TaskWrapper {
     @Override
     public boolean equals(Object o) {
         return this.hashCode() == o.hashCode();
+    }
+
+    public class TaskID {
+
+        private Long id;
+
+        public TaskID(Long id) {
+            this.id = id;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("Task ID : %d", this.id);
+        }
+
+        @Override
+        public int hashCode() {
+            return this.id.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return TaskID.class.equals(o.getClass()) && this.hashCode() == o.hashCode();
+        }
+
+        public boolean isValid() {
+            return this.id != -1L;
+        }
     }
 }

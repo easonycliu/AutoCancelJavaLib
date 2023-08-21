@@ -22,10 +22,8 @@ public class TaskTracker {
 
     private Map<CancellableID, List<Runnable>> cancellableIDToAsyncRunnables;
 
-    private BidiMap<CancellableID, TaskWrapper> cancellableIDTaskBiMap;
+    private BidiMap<CancellableID, TaskWrapper.TaskID> cancellableIDTaskIDBiMap;
     
-    private Map<Long, TaskWrapper> tasks;
-
     private ReadWriteLock autoCancelReadWriteLock;
 
     private ReleasableLock readLock;
@@ -39,9 +37,7 @@ public class TaskTracker {
 
         this.cancellableIDToAsyncRunnables = new HashMap<CancellableID, List<Runnable>>();
 
-        this.cancellableIDTaskBiMap = new DualHashBidiMap<CancellableID, TaskWrapper>();
-
-        this.tasks = new HashMap<Long, TaskWrapper>();
+        this.cancellableIDTaskIDBiMap = new DualHashBidiMap<CancellableID, TaskWrapper.TaskID>();
 
         this.autoCancelReadWriteLock = new ReentrantReadWriteLock();
 
@@ -61,10 +57,9 @@ public class TaskTracker {
 
         CancellableID parentCancellableID = null;
 
-        if (wrappedTask.getParentTaskID() != -1L) {
-            assert this.tasks.containsKey(wrappedTask.getParentTaskID()) : "Can't find parent task";
-            assert this.cancellableIDTaskBiMap.containsValue(this.tasks.get(wrappedTask.getParentTaskID())) : "Can't find parent task";
-            parentCancellableID = this.cancellableIDTaskBiMap.getKey(this.tasks.get(wrappedTask.getParentTaskID()));
+        if (!wrappedTask.getParentTaskID().isValid()) {
+            assert this.cancellableIDTaskIDBiMap.containsValue(wrappedTask.getParentTaskID()) : "Can't find parent task";
+            parentCancellableID = this.cancellableIDTaskIDBiMap.getKey(wrappedTask.getParentTaskID());
         }
         else {
             parentCancellableID = new CancellableID();
@@ -74,10 +69,9 @@ public class TaskTracker {
         CancellableID cid = this.mainManager.createCancellableIDOnCurrentJavaThreadID(true, task.toString(), parentCancellableID);
 
         try (ReleasableLock ignored = this.writeLock.acquire()) {
-            assert !this.cancellableIDTaskBiMap.containsKey(cid) && !tasks.containsKey(wrappedTask.getTaskID()) : "Do not register one task twice.";
+            assert !this.cancellableIDTaskIDBiMap.containsKey(cid) : "Do not register one task twice.";
 
-            this.cancellableIDTaskBiMap.put(cid, wrappedTask);
-            this.tasks.put(wrappedTask.getTaskID(), wrappedTask);
+            this.cancellableIDTaskIDBiMap.put(cid, wrappedTask.getTaskID());
         }
 
     }
@@ -87,18 +81,13 @@ public class TaskTracker {
         CancellableID cid = null;
 
         try (ReleasableLock ignored = this.readLock.acquire()) {
-            for (Map.Entry<CancellableID, TaskWrapper> entry : this.cancellableIDTaskBiMap.entrySet()) {
-                if (entry.getValue().equals(wrappedTask)) {
-                    cid = entry.getKey();
-                    break;
-                }
-            }
+            cid = this.cancellableIDTaskIDBiMap.getKey(wrappedTask.getTaskID());
         }
 
         assert cid != null : "Cannot exit an uncreated task.";
 
         try (ReleasableLock ignored = this.writeLock.acquire()) {
-            assert this.cancellableIDTaskBiMap.containsKey(cid) : "Maps should contains the cid to be removed.";
+            assert this.cancellableIDTaskIDBiMap.containsKey(cid) : "Maps should contains the cid to be removed.";
             if (!this.cancellableIDToAsyncRunnables.containsKey(cid)) {
                 // task has not been created when runnable starts on the first thread
                 // TODO: maybe there is a better way to identify the status
@@ -171,7 +160,6 @@ public class TaskTracker {
 
     private void removeCancellableIDFromMaps(CancellableID cid) {
         this.cancellableIDToAsyncRunnables.remove(cid);
-        TaskWrapper wrappedTask = this.cancellableIDTaskBiMap.remove(cid);
-        this.tasks.remove(wrappedTask.getTaskID());
+        this.cancellableIDTaskIDBiMap.remove(cid);
     }
 }
