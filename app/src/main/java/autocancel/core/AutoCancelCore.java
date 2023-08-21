@@ -76,6 +76,31 @@ public class AutoCancelCore {
         System.out.println("Recieve interrupt, exit");
     }
 
+    protected void addCancellable(Cancellable cancellable) {
+        this.cancellables.put(cancellable.getID(), cancellable);
+
+        if (cancellable.isRoot()) {
+            this.rootCancellableToCancellableGroup.put(cancellable.getID(), new CancellableGroup(cancellable));
+        }
+        else {
+            this.rootCancellableToCancellableGroup.get(cancellable.getRootID()).putCancellable(cancellable);
+        }
+    }
+
+    protected void removeCancellable(Cancellable cancellable) {
+        assert this.cancellables.remove(cancellable.getID(), cancellable) : "Mismatch between cancellable id and cancellable.";
+        
+        if (cancellable.isRoot()) {
+            this.rootCancellableToCancellableGroup.remove(cancellable.getID());
+        }
+        else {
+            // Nothing to do: In the group, we don't care about whether a cancellable is existing
+            // because we update cancellables according to this.cancellables
+            // TODO: find a more robust way to handle it
+
+        }
+    }
+
     private class RequestParser {
         ParamHandlers paramHandlers;
 
@@ -111,13 +136,7 @@ public class AutoCancelCore {
             CancellableID rootID = (CancellableID) this.paramHandlers.handle("parent_cancellable_id", request);
             Cancellable cancellable = new Cancellable(request.getTarget(), parentID, rootID);
             
-            cancellables.put(request.getTarget(), cancellable);
-            if (cancellable.isRoot()) {
-                rootCancellableToCancellableGroup.put(rootID, new CancellableGroup(cancellable));
-            }
-            else {
-                rootCancellableToCancellableGroup.get(rootID).putCancellable(cancellable);
-            }
+            addCancellable(cancellable);
 
             Map<String, Object> params = request.getParams();
             for (String key : params.keySet()) {
@@ -138,7 +157,9 @@ public class AutoCancelCore {
 
         private void delete(OperationRequest request) {
             assert request.getTarget() != new CancellableID() : "Create operation must have cancellable id set";
-            cancellables.remove(request.getTarget());
+            assert cancellables.containsKey(request.getTarget()) : "Must cancel a existing cancellable.";
+            
+            removeCancellable(cancellables.get(request.getTarget()));
 
             Map<String, Object> params = request.getParams();
             for (String key : params.keySet()) {
