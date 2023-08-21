@@ -42,7 +42,6 @@ public class InfrastructureManager {
     }
 
     private AbstractInfrastructure getInfrastructure(ResourceType type) {
-        // TODO: use infrastructure according to settings
         AbstractInfrastructure infrastructure;
         switch (type) {
             case CPU:

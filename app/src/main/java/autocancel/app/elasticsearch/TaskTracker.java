@@ -8,8 +8,9 @@ import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
+import org.apache.commons.collections4.BidiMap;
+import org.apache.commons.collections4.bidimap.TreeBidiMap;
+import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 
 import autocancel.manager.MainManager;
 import autocancel.utils.ReleasableLock;
@@ -21,8 +22,8 @@ public class TaskTracker {
 
     private Map<CancellableID, List<Runnable>> cancellableIDToAsyncRunnables;
 
-    private BiMap<CancellableID, TaskWrapper> cancellableIDTaskBiMap;
-
+    private BidiMap<CancellableID, TaskWrapper> cancellableIDTaskBiMap;
+    
     private Map<Long, TaskWrapper> tasks;
 
     private ReadWriteLock autoCancelReadWriteLock;
@@ -38,7 +39,7 @@ public class TaskTracker {
 
         this.cancellableIDToAsyncRunnables = new HashMap<CancellableID, List<Runnable>>();
 
-        this.cancellableIDTaskBiMap = HashBiMap.create();
+        this.cancellableIDTaskBiMap = new DualHashBidiMap<CancellableID, TaskWrapper>();
 
         this.tasks = new HashMap<Long, TaskWrapper>();
 
@@ -63,21 +64,19 @@ public class TaskTracker {
         if (wrappedTask.getParentTaskID() != -1L) {
             assert this.tasks.containsKey(wrappedTask.getParentTaskID()) : "Can't find parent task";
             assert this.cancellableIDTaskBiMap.containsValue(this.tasks.get(wrappedTask.getParentTaskID())) : "Can't find parent task";
-            parentCancellableID = this.cancellableIDTaskBiMap.inverse().get(wrappedTask);
+            parentCancellableID = this.cancellableIDTaskBiMap.getKey(this.tasks.get(wrappedTask.getParentTaskID()));
         }
         else {
             parentCancellableID = new CancellableID();
         }
 
+        assert parentCancellableID != null : "Cancellable without parent id should set its parent id to -1 rather than null";
         CancellableID cid = this.mainManager.createCancellableIDOnCurrentJavaThreadID(true, task.toString(), parentCancellableID);
 
         try (ReleasableLock ignored = this.writeLock.acquire()) {
             assert !this.cancellableIDTaskBiMap.containsKey(cid) && !tasks.containsKey(wrappedTask.getTaskID()) : "Do not register one task twice.";
 
             this.cancellableIDTaskBiMap.put(cid, wrappedTask);
-            this.cancellableIDTaskBiMap.forEach((key, value) -> {
-                System.out.println(key.toString() + " " + value.toString());
-            });
             this.tasks.put(wrappedTask.getTaskID(), wrappedTask);
         }
 

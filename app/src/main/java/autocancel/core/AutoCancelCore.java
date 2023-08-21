@@ -15,9 +15,6 @@ import autocancel.utils.Resource.ResourceType;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import javax.annotation.Nullable;
-
 import java.util.HashMap;
 import java.lang.Thread;
 import java.util.List;
@@ -65,7 +62,7 @@ public class AutoCancelCore {
                     this.requestParser.parse(request);
                 }
 
-                Thread.sleep((Long) Settings.getSetting("core_update_cycle_ms")));
+                Thread.sleep((Long) Settings.getSetting("core_update_cycle_ms"));
             }
             catch (InterruptedException e) {
                 break;
@@ -172,7 +169,6 @@ public class AutoCancelCore {
 
         }
 
-        @Nullable
         public Object handle(String type, OperationRequest request) {
             Object ret;
             if (this.functionHandlers.containsKey(type)) {
