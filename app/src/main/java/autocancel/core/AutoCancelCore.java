@@ -174,7 +174,7 @@ public class AutoCancelCore {
         // These parameters' parsing order doesn't matter
         private final Map<String, Consumer<OperationRequest>> independentParamHandlers = Map.of(
             "is_cancellable", request -> this.isCancellable(request),
-            "set_resource_value", request -> this.setResourceValue(request),
+            "set_group_resource", request -> this.setResourceValue(request),
             "monitor_resource", request -> this.monitorResource(request),
             "cancellable_name", request -> this.cancellableName(request)
         );
@@ -223,10 +223,12 @@ public class AutoCancelCore {
             }
         }
 
-        private void setResourceValue(OperationRequest request) {
+        private void setGroupResource(OperationRequest request) {
             Cancellable cancellable = cancellables.get(request.getTarget());
-            Double value = (Double)request.getParams().get("set_resource_value");
-            rootCancellableToCancellableGroup.get(cancellable.getRootID()).setResourceUsage(request.getResourceType(), value);
+            if (cancellable.isRoot()) {
+                Double value = (Double)request.getParams().get("set_group_resource");
+                rootCancellableToCancellableGroup.get(cancellable.getID()).setResourceUsage(request.getResourceType(), value);
+            }
         }
 
         private void monitorResource(OperationRequest request) {
