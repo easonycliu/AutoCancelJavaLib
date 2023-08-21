@@ -174,7 +174,7 @@ public class AutoCancelCore {
         // These parameters' parsing order doesn't matter
         private final Map<String, Consumer<OperationRequest>> independentParamHandlers = Map.of(
             "is_cancellable", request -> this.isCancellable(request),
-            "set_group_resource", request -> this.setResourceValue(request),
+            "set_group_resource", request -> this.setGroupResource(request),
             "monitor_resource", request -> this.monitorResource(request),
             "cancellable_name", request -> this.cancellableName(request)
         );
