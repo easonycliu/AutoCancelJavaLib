@@ -57,7 +57,7 @@ public class TaskTracker {
 
         CancellableID parentCancellableID = null;
 
-        if (!wrappedTask.getParentTaskID().isValid()) {
+        if (wrappedTask.getParentTaskID().isValid()) {
             try (ReleasableLock ignored = this.readLock.acquire()) {
                 assert this.cancellableIDTaskIDBiMap.containsValue(wrappedTask.getParentTaskID()) : "Can't find parent task";
                 parentCancellableID = this.cancellableIDTaskIDBiMap.getKey(wrappedTask.getParentTaskID());
@@ -67,13 +67,19 @@ public class TaskTracker {
             parentCancellableID = new CancellableID();
         }
 
-        assert parentCancellableID != null : "Cancellable without parent id should set its parent id to -1 rather than null";
-        CancellableID cid = this.mainManager.createCancellableIDOnCurrentJavaThreadID(true, task.toString(), parentCancellableID);
+        if (parentCancellableID != null) {
+            CancellableID cid = this.mainManager.createCancellableIDOnCurrentJavaThreadID(true, task.toString(), parentCancellableID);
 
-        try (ReleasableLock ignored = this.writeLock.acquire()) {
-            assert !this.cancellableIDTaskIDBiMap.containsKey(cid) : "Do not register one task twice.";
+            try (ReleasableLock ignored = this.writeLock.acquire()) {
+                assert !this.cancellableIDTaskIDBiMap.containsKey(cid) : "Do not register one task twice.";
 
-            this.cancellableIDTaskIDBiMap.put(cid, wrappedTask.getTaskID());
+                this.cancellableIDTaskIDBiMap.put(cid, wrappedTask.getTaskID());
+            }
+        }
+        else {
+            // Some task will exit before its child task exit
+            // TODO: Find a method to handle it
+            System.out.println(String.format("Parent cancellable id not found: Time: %d, %s, Parent %s", System.currentTimeMillis(), wrappedTask.getTaskID().toString(), wrappedTask.getParentTaskID().toString()));
         }
 
     }
