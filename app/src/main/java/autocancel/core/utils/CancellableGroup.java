@@ -3,6 +3,7 @@ package autocancel.core.utils;
 import autocancel.core.utils.Cancellable;
 import autocancel.utils.Resource.ResourceType;
 import autocancel.utils.id.CancellableID;
+import autocancel.utils.Settings;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -73,6 +74,7 @@ public class CancellableGroup {
     private Integer getCancellableLevel(Cancellable cancellable) {
         Integer level = 0;
         CancellableID tmp;
+        Integer maxLevel = (Integer) Settings.getSetting("max_child_cancellable_level");
         do {
             tmp = cancellable.getParentID();
             if (tmp.equals(new CancellableID())) {
@@ -80,8 +82,7 @@ public class CancellableGroup {
                 break;
             }
             level += 1;
-            if (level > 1000) {
-                // TODO: level add to setting
+            if (level > maxLevel) {
                 // There must something wrong, untrack it
                 // TODO: add warning
                 level = -1;

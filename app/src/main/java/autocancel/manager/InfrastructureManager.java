@@ -8,25 +8,26 @@ package autocancel.manager;
 import autocancel.infrastructure.AbstractInfrastructure;
 import autocancel.infrastructure.jvm.JavaThreadStatusReader;
 import autocancel.infrastructure.linux.LinuxThreadStatusReader;
+import autocancel.utils.Settings;
 import autocancel.utils.Resource.ResourceType;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.id.JavaThreadID;
 
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class InfrastructureManager {
 
     private AtomicInteger version;
 
-    private JavaThreadStatusReader javaThreadStatusReader;
-
-    private LinuxThreadStatusReader linuxThreadStatusReader;
+    private final Map<String, AbstractInfrastructure> infrastructures;
     
     public InfrastructureManager() {
         this.version = new AtomicInteger();
-        this.javaThreadStatusReader = new JavaThreadStatusReader();
-        // BUGGY
-        this.linuxThreadStatusReader = new LinuxThreadStatusReader();
+        this.infrastructures = Map.of(
+            "JVM", new JavaThreadStatusReader(),
+            "Linux", new LinuxThreadStatusReader()
+        );
     }
 
     public Double getSpecifiedTypeResourceLatest(JavaThreadID jid, ResourceType type) {
@@ -45,10 +46,10 @@ public class InfrastructureManager {
         AbstractInfrastructure infrastructure;
         switch (type) {
             case CPU:
-                infrastructure = this.javaThreadStatusReader;
+                infrastructure = this.infrastructures.get((String)((Map<?, ?>)Settings.getSetting("monitor_resources")).get("CPU"));
                 break;
             case MEMORY:
-                infrastructure = this.javaThreadStatusReader;
+                infrastructure = this.infrastructures.get((String)((Map<?, ?>)Settings.getSetting("monitor_resources")).get("MEMORY"));
                 break;
             case NULL:
                 infrastructure = null;

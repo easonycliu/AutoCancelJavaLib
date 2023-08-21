@@ -8,16 +8,7 @@ import autocancel.utils.id.CancellableID;
 import autocancel.utils.id.ID;
 import autocancel.utils.id.JavaThreadID;
 import autocancel.infrastructure.linux.LinuxThreadID;
-
-// import sun.jvm.hotspot.debugger.Address;
-// import sun.jvm.hotspot.oops.Field;
-// import sun.jvm.hotspot.oops.InstanceKlass;
-// import sun.jvm.hotspot.oops.Klass;
-// import sun.jvm.hotspot.oops.LongField;
-// import sun.jvm.hotspot.oops.Oop;
-// import sun.jvm.hotspot.runtime.JavaThread;
-// import sun.jvm.hotspot.runtime.Threads;
-// import sun.jvm.hotspot.runtime.VM;
+import autocancel.utils.Settings;
 
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -59,8 +50,14 @@ public class LinuxThreadStatusReader extends AbstractInfrastructure {
     }
 
     public List<ResourceType> getRequiredResourceTypes() {
-        // TODO: set which resource types to update by settings
-        return new ArrayList<ResourceType>(Arrays.asList(ResourceType.CPU, ResourceType.MEMORY));
+        Map<?, ?> monitorResources = (Map<?, ?>) Settings.getSetting("monitor_resources");
+        List<ResourceType> requiredResources = new ArrayList<ResourceType>();
+        for (Map.Entry<?, ?> entries : monitorResources.entrySet()) {
+            if (((String) entries.getValue()).equals("Linux")) {
+                requiredResources.add(ResourceType.valueOf((String) entries.getKey()));
+            }
+        }
+        return requiredResources;
     }
 
     @Override

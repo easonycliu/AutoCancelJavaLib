@@ -1,6 +1,7 @@
 package autocancel.infrastructure.jvm;
 
 import autocancel.infrastructure.AbstractInfrastructure;
+import autocancel.utils.Settings;
 import autocancel.utils.Resource.ResourceType;
 import autocancel.utils.id.JavaThreadID;
 import autocancel.infrastructure.ResourceBatch;
@@ -35,9 +36,15 @@ public class JavaThreadStatusReader extends AbstractInfrastructure {
         return resourceReaders;
     }
 
-    public List<ResourceType> getRequiredResourceTypes() {
-        // TODO: set which resource types to update by settings
-        return new ArrayList<ResourceType>(Arrays.asList(ResourceType.CPU, ResourceType.MEMORY));
+    private List<ResourceType> getRequiredResourceTypes() {
+        Map<?, ?> monitorResources = (Map<?, ?>) Settings.getSetting("monitor_resources");
+        List<ResourceType> requiredResources = new ArrayList<ResourceType>();
+        for (Map.Entry<?, ?> entries : monitorResources.entrySet()) {
+            if (((String) entries.getValue()).equals("JVM")) {
+                requiredResources.add(ResourceType.valueOf((String) entries.getKey()));
+            }
+        }
+        return requiredResources;
     }
 
     @Override

@@ -10,6 +10,7 @@ public class Settings {
     private final static Map<String, Object> settings = Map.of(
         "path_to_logs", "/usr/share/elasticsearch",
         "core_update_cycle_ms", 100,
+        "max_child_cancellable_level", 1000,
         "monitor_resources", Map.of(
             "CPU", "JVM",
             "MEMORY", "Linux"
