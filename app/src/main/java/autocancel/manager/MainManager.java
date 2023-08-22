@@ -173,4 +173,18 @@ public class MainManager {
         return resource;
     }
 
+    public void updateAppResource(String name, Double value) {
+        JavaThreadID jid = new JavaThreadID(Thread.currentThread().getId());
+        CancellableID cid = this.idManager.getCancellableIDOfJavaThreadID(jid);
+        if (!cid.equals(new CancellableID())) {
+            OperationRequest request = new OperationRequest(OperationMethod.UPDATE, cid, ResourceType.valueOf(name));
+            request.addRequestParam("add_group_resource", value);
+            this.putManagerRequestToCore(request);
+        }
+        else {
+            System.out.println("Cannot find cancellable id from current " + jid.toString());
+            // TODO: do something more
+        }
+    }
+
 }
