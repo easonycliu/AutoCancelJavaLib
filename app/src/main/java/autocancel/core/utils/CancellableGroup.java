@@ -71,6 +71,17 @@ public class CancellableGroup {
         }
     }
 
+    public Double getResourceUsage(ResourceType type) {
+        Double usage = null;
+        if (this.resourceMap.containsKey(type)) {
+            usage = this.resourceMap.get(type).getUsage();
+        }
+        else {
+            usage = 0.0;
+        }
+        return usage;
+    }
+
     public Boolean getIsCancellable() {
         assert this.isCancellable != null : "this.isCancellable hasn't been set yet";
         return this.isCancellable;
