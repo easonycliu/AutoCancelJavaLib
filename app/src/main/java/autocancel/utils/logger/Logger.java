@@ -38,6 +38,10 @@ public class Logger implements Closeable {
     public void log(String line) {
         this.checkCurrentLine();
         if (this.writer != null) {
+            if (!line.endsWith("\n")) {
+                line += "\n";
+            }
+            
             try {
                 this.writer.write(line);
                 this.currentLine += 1;

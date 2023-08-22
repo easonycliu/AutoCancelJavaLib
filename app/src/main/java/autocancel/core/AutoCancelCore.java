@@ -48,7 +48,7 @@ public class AutoCancelCore {
     public void start() {
         while (!Thread.interrupted()) {
             try {
-                this.logger.log(String.format("Current time: %d\n", System.currentTimeMillis()));
+                this.logger.log(String.format("Current time: %d", System.currentTimeMillis()));
                 Integer requestBufferSize = this.mainManager.getManagerRequestToCoreBufferSize();
                 for (Integer ignore = 0; ignore < requestBufferSize; ++ignore) {
                     OperationRequest request = this.mainManager.getManagerRequestToCore();
@@ -137,7 +137,7 @@ public class AutoCancelCore {
         }
 
         public void parse(OperationRequest request) {
-            logger.log(request.toString() + "\n");
+            logger.log(request.toString());
             switch (request.getOperation()) {
                 case CREATE:
                     create(request);

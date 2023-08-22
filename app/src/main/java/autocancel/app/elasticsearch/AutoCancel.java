@@ -5,6 +5,7 @@ import autocancel.app.elasticsearch.TaskWrapper;
 import autocancel.utils.ReleasableLock;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.id.JavaThreadID;
+import autocancel.utils.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,60 +32,86 @@ public class AutoCancel {
         started = true;
     }
 
-    public static void stop() throws AssertionError {
-        assert started : "You should start lib AutoCancel first.";
-        AutoCancel.taskTracker.stop();
-        AutoCancel.mainManager.stop();
+    public static void stop() {
+        if (AutoCancel.started) {
+            AutoCancel.taskTracker.stop();
+            AutoCancel.mainManager.stop();
+        }
+        else {
+            Logger.systemWarn("You should start lib AutoCancel first.");
+        }
     }
 
-    public static void onTaskCreate(Object task) throws AssertionError {
-        assert started : "You should start lib AutoCancel first.";
-        
-        AutoCancel.taskTracker.onTaskCreate(task);
-
+    public static void onTaskCreate(Object task) {
+        if (AutoCancel.started) {
+            AutoCancel.taskTracker.onTaskCreate(task);
+        }
+        else {
+            Logger.systemWarn("You should start lib AutoCancel first.");
+        }
     }
 
-    public static void onTaskExit(Object task) throws AssertionError {
-        assert started : "You should start lib AutoCancel first.";
-
-        AutoCancel.taskTracker.onTaskExit(task);
-        
+    public static void onTaskExit(Object task) {
+        if (AutoCancel.started) {
+            AutoCancel.taskTracker.onTaskExit(task);
+        }
+        else {
+            Logger.systemWarn("You should start lib AutoCancel first.");
+        }
     }
 
-    public static void onTaskFinishInThread() throws AssertionError {
-        assert started : "You should start lib AutoCancel first.";
-
-        AutoCancel.taskTracker.onTaskFinishInThread();
+    public static void onTaskFinishInThread() {
+        if (AutoCancel.started) {
+            AutoCancel.taskTracker.onTaskFinishInThread();
+        }
+        else {
+            Logger.systemWarn("You should start lib AutoCancel first.");
+        }
     }
 
-    public static void onTaskQueueInThread(Runnable runnable) throws AssertionError {
-        assert started : "You should start lib AutoCancel first.";
-
-        AutoCancel.taskTracker.onTaskQueueInThread(runnable);
+    public static void onTaskQueueInThread(Runnable runnable) {
+        if (AutoCancel.started) {
+            AutoCancel.taskTracker.onTaskQueueInThread(runnable);
+        }
+        else {
+            Logger.systemWarn("You should start lib AutoCancel first.");
+        }
     }
 
-    public static void onTaskStartInThread(Runnable runnable) throws AssertionError {
-        assert started : "You should start lib AutoCancel first.";
-        
-        AutoCancel.taskTracker.onTaskStartInThread(runnable);
+    public static void onTaskStartInThread(Runnable runnable) {
+        if (AutoCancel.started) {
+            AutoCancel.taskTracker.onTaskStartInThread(runnable);
+        }
+        else {
+            Logger.systemWarn("You should start lib AutoCancel first.");
+        }
     }
 
     public static void addResourceUsage(String name, Double value) {
-        assert started : "You should start lib AutoCancel first.";
-
-        AutoCancel.resourceTracker.addResourceUsage(name, value);
+        if (AutoCancel.started) {
+            AutoCancel.resourceTracker.addResourceUsage(name, value);
+        }
+        else {
+            Logger.systemWarn("You should start lib AutoCancel first.");
+        }
     }
 
     public void startResourceWait(String name) {
-        assert started : "You should start lib AutoCancel first.";
-        
-        AutoCancel.resourceTracker.startResourceWait(name);
+        if (AutoCancel.started) {
+            AutoCancel.resourceTracker.startResourceWait(name);
+        }
+        else {
+            Logger.systemWarn("You should start lib AutoCancel first.");
+        }
     }
 
     public void endResourceWait(String name) {
-        assert started : "You should start lib AutoCancel first.";
-        
-        AutoCancel.resourceTracker.endResourceWait(name);
+        if (AutoCancel.started) {
+            AutoCancel.resourceTracker.endResourceWait(name);
+        }
+        else {
+            Logger.systemWarn("You should start lib AutoCancel first.");
+        }
     }
 
 }
