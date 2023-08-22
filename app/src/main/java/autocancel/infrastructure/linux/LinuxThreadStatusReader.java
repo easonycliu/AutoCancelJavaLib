@@ -7,6 +7,7 @@ import autocancel.utils.Resource.ResourceType;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.id.ID;
 import autocancel.utils.id.JavaThreadID;
+import autocancel.utils.logger.Logger;
 import autocancel.infrastructure.linux.LinuxThreadID;
 import autocancel.utils.Settings;
 
@@ -68,17 +69,26 @@ public class LinuxThreadStatusReader extends AbstractInfrastructure {
         }
         else {
             linuxThreadID = this.getLinuxThreadIDFromJavaThreadID((JavaThreadID) id);
-            assert !linuxThreadID.equals(new LinuxThreadID()) : "Failed to find linux thread id of java thread id";
-            this.javaThreadIDToLinuxThreadID.put((JavaThreadID) id, linuxThreadID);
+            // TODO: add isValid()
+            if (!linuxThreadID.equals(new LinuxThreadID())) {
+                this.javaThreadIDToLinuxThreadID.put((JavaThreadID) id, linuxThreadID);
+            }
+            else {
+                Logger.systemWarn("Failed to find linux thread id of " + id.toString());
+            }
         }
         
-        ResourceBatch resourceBatch = new ResourceBatch(version);
-        for (ResourceType type : this.resourceTypes) {
-            Double value = this.resourceReaders.get(type).readResource(linuxThreadID, version);
-            resourceBatch.setResourceValue(type, value);
+        if (!linuxThreadID.equals(new LinuxThreadID())) {
+            ResourceBatch resourceBatch = new ResourceBatch(version);
+            for (ResourceType type : this.resourceTypes) {
+                Double value = this.resourceReaders.get(type).readResource(linuxThreadID, version);
+                resourceBatch.setResourceValue(type, value);
+            }
+            this.setResourceBatch(id, resourceBatch);
         }
-
-        this.setResourceBatch(id, resourceBatch);
+        else {
+            Logger.systemWarn("Skip updating version " + version.toString());
+        }
     }
 
     private LinuxThreadID getLinuxThreadIDFromJavaThreadID(JavaThreadID jid) {

@@ -41,7 +41,7 @@ public class Logger implements Closeable {
             if (!line.endsWith("\n")) {
                 line += "\n";
             }
-            
+
             try {
                 this.writer.write(line);
                 this.currentLine += 1;
@@ -97,7 +97,7 @@ public class Logger implements Closeable {
         FileWriter fileWriter;
         try {
             String currentDay = this.getCurrentDayString();
-            Path directory = Paths.get(this.rootPath, currentDay);
+            Path directory = Paths.get(Logger.rootPath, currentDay);
             if (Files.notExists(directory)) {
                 Files.createDirectory(directory);
             }
