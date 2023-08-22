@@ -42,7 +42,7 @@ public class AutoCancelCore {
         this.rootCancellableToCancellableGroup = new HashMap<CancellableID, CancellableGroup>();
         this.mainMonitor = new MainMonitor(this.mainManager, this.cancellables, this.rootCancellableToCancellableGroup);
         this.requestParser = new RequestParser();
-        this.logger = new Logger((String) Settings.getSetting("path_to_logs"), "corerequest", 10000);
+        this.logger = new Logger((String) Settings.getSetting("path_to_logs"), "corerequest");
     }
 
     public void start() {

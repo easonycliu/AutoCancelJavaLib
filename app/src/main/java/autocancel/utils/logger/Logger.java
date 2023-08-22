@@ -9,6 +9,8 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import autocancel.utils.Settings;
+
 // TODO: maybe we can connect to log4j (application related)
 public class Logger implements Closeable {
     
@@ -22,10 +24,10 @@ public class Logger implements Closeable {
 
     FileWriter writer;
 
-    public Logger(String rootPath, String fileBaseName, Integer maxLine) {
+    public Logger(String rootPath, String fileBaseName) {
         this.rootPath = rootPath;
         this.fileBaseName = fileBaseName;
-        this.maxLine = maxLine;
+        this.maxLine = (Integer) Settings.getSetting("log_file_max_line");
         this.currentLine = 0;
         this.writer = this.createFileWriter();
     }
