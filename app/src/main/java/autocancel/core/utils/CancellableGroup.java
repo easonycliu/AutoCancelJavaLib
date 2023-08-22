@@ -6,8 +6,10 @@ import autocancel.utils.id.CancellableID;
 import autocancel.utils.Settings;
 
 import java.util.Map;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.List;
 
 public class CancellableGroup {
 
@@ -18,6 +20,8 @@ public class CancellableGroup {
     private Map<ResourceType, ResourceUsage> resourceMap;
 
     private Boolean isCancellable;
+
+    private Boolean exited;
 
     public CancellableGroup(Cancellable root) {
         root.setLevel(0);
@@ -32,6 +36,16 @@ public class CancellableGroup {
         this.resourceMap.put(ResourceType.MEMORY, new ResourceUsage());
 
         this.isCancellable = null;
+
+        this.exited = false;
+    }
+
+    public void exit() {
+        this.exited = true;
+    }
+
+    public Boolean isExit() {
+        return this.exited;
     }
 
     public Set<ResourceType> getResourceTypes() {
@@ -77,6 +91,10 @@ public class CancellableGroup {
         cancellable.setLevel(level);
             
         this.cancellables.put(cancellable.getID(), cancellable);
+    }
+
+    public Collection<Cancellable> getChildCancellables() {
+        return this.cancellables.values();
     }
 
     private Integer getCancellableLevel(Cancellable cancellable) {

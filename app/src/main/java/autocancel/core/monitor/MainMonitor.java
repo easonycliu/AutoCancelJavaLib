@@ -42,9 +42,9 @@ public class MainMonitor {
 
     public void updateTasksResources() {
         this.mainManager.startNewVersion();
-        for (Cancellable cancellable : cancellables.values()) {
+        for (Cancellable cancellable : this.cancellables.values()) {
             assert this.rootCancellableToCancellableGroup.containsKey(cancellable.getRootID()) : String.format("Ungrouped cancellable %d", cancellable.getID());
-            for (ResourceType resourceType : rootCancellableToCancellableGroup.get(cancellable.getRootID()).getResourceTypes()) {
+            for (ResourceType resourceType : this.rootCancellableToCancellableGroup.get(cancellable.getRootID()).getResourceTypes()) {
                 this.monitorUpdateToCoreBuffer.add(this.monitors.get(resourceType).updateResource(cancellable.getID()));
             }
         }

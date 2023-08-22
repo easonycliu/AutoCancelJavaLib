@@ -15,6 +15,7 @@ import autocancel.utils.Resource.ResourceType;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.Collection;
 import java.util.HashMap;
 import java.lang.Thread;
 import java.util.List;
@@ -80,6 +81,11 @@ public class AutoCancelCore {
 
     private void refreshCancellableGroups() {
         for (Map.Entry<CancellableID, CancellableGroup> entries : this.rootCancellableToCancellableGroup.entrySet()) {
+
+            if (entries.getValue().isExit()) {
+                continue;
+            }
+
             Set<ResourceType> resourceTypes = entries.getValue().getResourceTypes();
             for (ResourceType type : resourceTypes) {
                 OperationRequest request = new OperationRequest(OperationMethod.UPDATE, entries.getKey(), type);
@@ -101,10 +107,17 @@ public class AutoCancelCore {
     }
 
     protected void removeCancellable(Cancellable cancellable) {
-        assert this.cancellables.remove(cancellable.getID(), cancellable) : "Mismatch between cancellable id and cancellable.";
+        this.cancellables.remove(cancellable.getID());
+
         
         if (cancellable.isRoot()) {
-            this.rootCancellableToCancellableGroup.remove(cancellable.getID());
+            // CancellableGroup cancellableGroup = this.rootCancellableToCancellableGroup.remove(cancellable.getID());
+            // // Remove all child cancellables at the same time
+            // Collection<Cancellable> childCancellables = cancellableGroup.getChildCancellables();
+            // for (Cancellable childCancellable : childCancellables) {
+            //     this.cancellables.remove(childCancellable.getID());
+            // }
+            this.rootCancellableToCancellableGroup.get(cancellable.getID()).exit();
         }
         else {
             // Nothing to do: In the group, we don't care about whether a cancellable is existing
@@ -172,11 +185,18 @@ public class AutoCancelCore {
             assert request.getTarget() != new CancellableID() : "Create operation must have cancellable id set";
             assert cancellables.containsKey(request.getTarget()) : "Must cancel a existing cancellable.";
             
-            removeCancellable(cancellables.get(request.getTarget()));
+            if (cancellables.containsKey(request.getTarget())) {
+                removeCancellable(cancellables.get(request.getTarget()));
 
-            Map<String, Object> params = request.getParams();
-            for (String key : params.keySet()) {
-                this.paramHandlers.handleIndependentParam(key, request);
+                Map<String, Object> params = request.getParams();
+                for (String key : params.keySet()) {
+                    this.paramHandlers.handleIndependentParam(key, request);
+                }
+            }
+            else {
+                // Some task will exit before its child task exit, we will remove all child tasks when root task exit (See removeCancellable())
+                // TODO: Find a method to handle it
+                System.out.println(String.format("Cancellable id not found: Time: %d, %s", System.currentTimeMillis(), request.getTarget().toString()));
             }
         }
 

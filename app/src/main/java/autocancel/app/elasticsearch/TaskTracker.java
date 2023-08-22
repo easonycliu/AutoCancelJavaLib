@@ -77,7 +77,7 @@ public class TaskTracker {
             }
         }
         else {
-            // Some task will exit before its child task exit
+            // Some task will exit before its child task create
             // TODO: Find a method to handle it
             System.out.println(String.format("Parent cancellable id not found: Time: %d, %s, Parent %s", System.currentTimeMillis(), wrappedTask.getTaskID().toString(), wrappedTask.getParentTaskID().toString()));
         }
