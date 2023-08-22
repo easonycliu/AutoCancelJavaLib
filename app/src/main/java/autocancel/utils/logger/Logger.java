@@ -1,7 +1,10 @@
 package autocancel.utils.logger;
 
 import java.io.Closeable;
+import java.io.File;
 import java.io.FileWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -58,10 +61,22 @@ public class Logger implements Closeable {
         return dateFormat.format(date);
     }
 
+    private String getCurrentDayString() {
+        Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd");
+        return dateFormat.format(date);
+    }
+
     private FileWriter createFileWriter() {
         FileWriter fileWriter;
         try {
-            fileWriter = new FileWriter(String.format("%s%s.log", Paths.get(this.rootPath, this.fileBaseName).toString(), this.getCurrentTimeString()), true);
+            String currentDay = this.getCurrentDayString();
+            Path directory = Paths.get(this.rootPath, currentDay);
+            if (Files.notExists(directory)) {
+                Files.createDirectory(directory);
+            }
+            
+            fileWriter = new FileWriter(String.format("%s%s.log", Paths.get(directory.toString(), this.fileBaseName).toString(), this.getCurrentTimeString()), true);
         }
         catch (Exception e) {
             fileWriter = null;
