@@ -24,6 +24,8 @@ public class AutoCancel {
 
     private static TaskTracker taskTracker = new TaskTracker(AutoCancel.mainManager);
 
+    private static Resource resourceTracker = new Resource(AutoCancel.mainManager);
+
     public static void start() {
         AutoCancel.mainManager.start();
         started = true;
@@ -65,6 +67,24 @@ public class AutoCancel {
         assert started : "You should start lib AutoCancel first.";
         
         AutoCancel.taskTracker.onTaskStartInThread(runnable);
+    }
+
+    public static void addResourceUsage(String name, Double value) {
+        assert started : "You should start lib AutoCancel first.";
+
+        AutoCancel.resourceTracker.addResourceUsage(name, value);
+    }
+
+    public void startResourceWait(String name) {
+        assert started : "You should start lib AutoCancel first.";
+        
+        AutoCancel.resourceTracker.startResourceWait(name);
+    }
+
+    public void endResourceWait(String name) {
+        assert started : "You should start lib AutoCancel first.";
+        
+        AutoCancel.resourceTracker.endResourceWait(name);
     }
 
 }
