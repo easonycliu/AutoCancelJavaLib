@@ -111,6 +111,7 @@ public class AutoCancelCore {
 
         
         if (cancellable.isRoot()) {
+            // TODO: Problematic point: nullptr
             // CancellableGroup cancellableGroup = this.rootCancellableToCancellableGroup.remove(cancellable.getID());
             // // Remove all child cancellables at the same time
             // Collection<Cancellable> childCancellables = cancellableGroup.getChildCancellables();
@@ -259,6 +260,7 @@ public class AutoCancelCore {
 
         private void setGroupResource(OperationRequest request) {
             Cancellable cancellable = cancellables.get(request.getTarget());
+            // TODO: Problematic point: nullptr
             if (cancellable.isRoot()) {
                 Double value = (Double)request.getParams().get("set_group_resource");
                 rootCancellableToCancellableGroup.get(cancellable.getID()).setResourceUsage(request.getResourceType(), value);
@@ -288,7 +290,7 @@ public class AutoCancelCore {
         private void addGroupResource(OperationRequest request) {
             Cancellable cancellable = cancellables.get(request.getTarget());
             Double value = (Double)request.getParams().get("add_group_resource");
-            rootCancellableToCancellableGroup.get(cancellable.getID()).addResourceUsage(request.getResourceType(), value);
+            rootCancellableToCancellableGroup.get(cancellable.getRootID()).addResourceUsage(request.getResourceType(), value);
         }
 
         private CancellableID parentCancellableID(OperationRequest request) {

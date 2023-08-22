@@ -44,6 +44,7 @@ public class MainMonitor {
         this.mainManager.startNewVersion();
         for (Cancellable cancellable : this.cancellables.values()) {
             assert this.rootCancellableToCancellableGroup.containsKey(cancellable.getRootID()) : String.format("Ungrouped cancellable %d", cancellable.getID());
+            // TODO: Problematic point: nullptr
             for (ResourceType resourceType : this.rootCancellableToCancellableGroup.get(cancellable.getRootID()).getResourceTypes()) {
                 this.monitorUpdateToCoreBuffer.add(this.monitors.get(resourceType).updateResource(cancellable.getID()));
             }
