@@ -13,19 +13,22 @@ import autocancel.utils.Settings;
 
 // TODO: maybe we can connect to log4j (application related)
 public class Logger implements Closeable {
+
+    private static final String rootPath = (String) Settings.getSetting("path_to_logs");
+
+    private static final String systemLogLevel = (String) Settings.getSetting("system_log_level");
+
+    private static final Logger systemLogger = new Logger("system");
     
-    String rootPath;
+    private String fileBaseName;
 
-    String fileBaseName;
+    private Integer maxLine;
 
-    Integer maxLine;
+    private Integer currentLine;
 
-    Integer currentLine;
+    private FileWriter writer;
 
-    FileWriter writer;
-
-    public Logger(String rootPath, String fileBaseName) {
-        this.rootPath = rootPath;
+    public Logger(String fileBaseName) {
         this.fileBaseName = fileBaseName;
         this.maxLine = (Integer) Settings.getSetting("log_file_max_line");
         this.currentLine = 0;
@@ -43,6 +46,23 @@ public class Logger implements Closeable {
 
             }
         }
+    }
+
+    public static void systemTrace(String line) {
+        if (Logger.systemLogLevel.equals("TRACE")) {
+            Logger.systemLogger.log(String.format("[TRACE@%d] %s", System.nanoTime(), line));
+        }
+    }
+
+    public static void systemInfo(String line) {
+        if (Logger.systemLogLevel.equals("TRACE") || Logger.systemLogLevel.equals("INFO")) {
+            Logger.systemLogger.log(String.format("[INFO@%d] %s", System.nanoTime(), line));
+        }
+    }
+
+    public static void systemWarn(String line) {
+        // Whatever log level is, warning must output
+        Logger.systemLogger.log(String.format("[WARN@%d] %s", System.nanoTime(), line));
     }
 
     @Override

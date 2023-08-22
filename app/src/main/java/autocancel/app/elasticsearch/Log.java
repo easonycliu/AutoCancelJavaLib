@@ -19,7 +19,7 @@ public class Log {
 
     public Log(MainManager mainManager) {
         this.mainManager = mainManager;
-        this.logger = new Logger((String) Settings.getSetting("path_to_logs"), "cidinfo");
+        this.logger = new Logger("cidinfo");
     }
 
     public void stop() {
