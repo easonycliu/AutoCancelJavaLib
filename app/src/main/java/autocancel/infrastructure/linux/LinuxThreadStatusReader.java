@@ -70,7 +70,7 @@ public class LinuxThreadStatusReader extends AbstractInfrastructure {
         else {
             linuxThreadID = this.getLinuxThreadIDFromJavaThreadID((JavaThreadID) id);
             // TODO: add isValid()
-            if (!linuxThreadID.equals(new LinuxThreadID())) {
+            if (linuxThreadID.isValid()) {
                 this.javaThreadIDToLinuxThreadID.put((JavaThreadID) id, linuxThreadID);
             }
             else {
@@ -78,7 +78,7 @@ public class LinuxThreadStatusReader extends AbstractInfrastructure {
             }
         }
         
-        if (!linuxThreadID.equals(new LinuxThreadID())) {
+        if (linuxThreadID.isValid()) {
             ResourceBatch resourceBatch = new ResourceBatch(version);
             for (ResourceType type : this.resourceTypes) {
                 Double value = this.resourceReaders.get(type).readResource(linuxThreadID, version);

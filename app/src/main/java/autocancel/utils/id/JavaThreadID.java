@@ -6,6 +6,8 @@ public class JavaThreadID implements ID {
 
     private Long id;
 
+    private static final Long INVALID_ID = -1L;
+
     public JavaThreadID(Long id) {
         this.id = id;
     }

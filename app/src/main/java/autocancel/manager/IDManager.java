@@ -10,6 +10,7 @@ import autocancel.utils.ReleasableLock;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.id.JavaThreadID;
 import autocancel.utils.id.IDInfo;
+import autocancel.utils.logger.Logger;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -20,7 +21,6 @@ import java.util.Arrays;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.logging.Logger;
 
 public class IDManager {
 

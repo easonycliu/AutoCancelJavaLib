@@ -63,7 +63,7 @@ public class Cancellable {
     }
 
     public Boolean isRoot() {
-        return this.parentID.equals(new CancellableID());
+        return !this.parentID.isValid();
     }
 
     @Override

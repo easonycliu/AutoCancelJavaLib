@@ -102,7 +102,7 @@ public class MainManager {
     public void registerCancellableIDOnCurrentJavaThreadID(CancellableID cid) {
         JavaThreadID jid = new JavaThreadID(Thread.currentThread().getId());
 
-        assert !cid.equals(new CancellableID()) : "Cannot register an invalid cancellable id.";
+        assert cid.isValid() : "Cannot register an invalid cancellable id.";
 
         this.idManager.setCancellableIDAndJavaThreadID(cid, jid, IDInfo.Status.RUN);
     }
@@ -111,7 +111,7 @@ public class MainManager {
         JavaThreadID jid = new JavaThreadID(Thread.currentThread().getId());
         CancellableID cid = this.idManager.getCancellableIDOfJavaThreadID(jid);
 
-        assert !cid.equals(new CancellableID()) : "Task must be running before finishing.";
+        assert cid.isValid() : "Task must be running before finishing.";
 
         this.idManager.setCancellableIDAndJavaThreadID(cid, jid, IDInfo.Status.EXIT);
     }
@@ -180,7 +180,7 @@ public class MainManager {
     public void updateAppResource(String name, Double value) {
         JavaThreadID jid = new JavaThreadID(Thread.currentThread().getId());
         CancellableID cid = this.idManager.getCancellableIDOfJavaThreadID(jid);
-        if (!cid.equals(new CancellableID())) {
+        if (cid.isValid()) {
             OperationRequest request = new OperationRequest(OperationMethod.UPDATE, cid, ResourceType.valueOf(name));
             request.addRequestParam("add_group_resource", value);
             this.putManagerRequestToCore(request);

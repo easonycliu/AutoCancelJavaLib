@@ -114,7 +114,7 @@ public class TaskTracker {
 
     public void onTaskFinishInThread() throws AssertionError {
         CancellableID cid = this.mainManager.getCancellableIDOnCurrentJavaThreadID();
-        if (cid.equals(new CancellableID())) {
+        if (!cid.isValid()) {
             // task has exited
             // TODO: maybe there is a better way to identify the status
             return;
@@ -128,8 +128,8 @@ public class TaskTracker {
 
         CancellableID cid = this.mainManager.getCancellableIDOnCurrentJavaThreadID();
 
-        // assert !cid.equals(new CancellableID()) : "Task must be running before queuing into threadpool.";
-        if (cid.equals(new CancellableID())) {
+        // assert cid.isValid() : "Task must be running before queuing into threadpool.";
+        if (!cid.isValid()) {
             // task has not been created yet
             // TODO: maybe there is a better way to identify the status
             return;

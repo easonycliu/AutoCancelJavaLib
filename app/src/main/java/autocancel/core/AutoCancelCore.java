@@ -297,7 +297,7 @@ public class AutoCancelCore {
         private CancellableID parentCancellableID(OperationRequest request) {
             CancellableID parentID = (CancellableID) request.getParams().get("parent_cancellable_id");
             CancellableID rootID = null;
-            if (parentID.equals(new CancellableID())) {
+            if (!parentID.isValid()) {
                 // Itself is a root cancellable
                 rootID = request.getTarget();
             }
