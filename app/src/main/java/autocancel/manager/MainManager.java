@@ -172,7 +172,9 @@ public class MainManager {
         Double resource = 0.0;
         List<JavaThreadID> javaThreadIDs = this.idManager.getJavaThreadIDOfCancellableID(cid);
         for (JavaThreadID javaThreadID : javaThreadIDs) {
-            resource += this.infrastructureManager.getSpecifiedTypeResourceLatest(javaThreadID, type);
+            if (javaThreadID.isValid()) {
+                resource += this.infrastructureManager.getSpecifiedTypeResourceLatest(javaThreadID, type);
+            }
         }
         return resource;
     }

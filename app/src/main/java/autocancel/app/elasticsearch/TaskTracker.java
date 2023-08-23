@@ -60,8 +60,18 @@ public class TaskTracker {
 
         if (wrappedTask.getParentTaskID().isValid()) {
             try (ReleasableLock ignored = this.readLock.acquire()) {
-                assert this.cancellableIDTaskIDBiMap.containsValue(wrappedTask.getParentTaskID()) : "Can't find parent task";
-                parentCancellableID = this.cancellableIDTaskIDBiMap.getKey(wrappedTask.getParentTaskID());
+                if (this.cancellableIDTaskIDBiMap.containsValue(wrappedTask.getParentTaskID())) {
+                    parentCancellableID = this.cancellableIDTaskIDBiMap.getKey(wrappedTask.getParentTaskID());
+                }
+                else {
+                    if (wrappedTask.getTaskID().equals(wrappedTask.getParentTaskID())) {
+                        // It IS root task
+                        parentCancellableID = new CancellableID();
+                    }
+                    else {
+                        assert false : "Can't find parent task of " + task.toString();
+                    }
+                }
             }
         }
         else {

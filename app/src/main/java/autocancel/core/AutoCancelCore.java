@@ -99,6 +99,8 @@ public class AutoCancelCore {
     protected void addCancellable(Cancellable cancellable) {
         this.cancellables.put(cancellable.getID(), cancellable);
 
+        Logger.systemTrace("Add cancellable with " + cancellable.toString());
+
         if (cancellable.isRoot()) {
             this.rootCancellableToCancellableGroup.put(cancellable.getID(), new CancellableGroup(cancellable));
         }

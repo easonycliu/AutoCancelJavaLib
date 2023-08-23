@@ -75,4 +75,9 @@ public class Cancellable {
     public int hashCode() {
         return this.id.hashCode();
     }
+
+    @Override 
+    public String toString() {
+        return this.id.toString() + " Parent " + this.parentID.toString() + " Root " + this.rootID.toString();
+    }
 }
