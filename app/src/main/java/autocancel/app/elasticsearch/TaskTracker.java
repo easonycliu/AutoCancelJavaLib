@@ -15,6 +15,7 @@ import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import autocancel.manager.MainManager;
 import autocancel.utils.ReleasableLock;
 import autocancel.utils.id.CancellableID;
+import autocancel.utils.logger.Logger;
 
 public class TaskTracker {
 
@@ -75,6 +76,8 @@ public class TaskTracker {
 
                 this.cancellableIDTaskIDBiMap.put(cid, wrappedTask.getTaskID());
             }
+
+            Logger.systemTrace("Created " + task.toString());
         }
         else {
             // Some task will exit before its child task create
@@ -88,18 +91,16 @@ public class TaskTracker {
         TaskWrapper wrappedTask = new TaskWrapper(task);
         CancellableID cid = null;
 
+        Logger.systemTrace("Exit " + task.toString());
+
         try (ReleasableLock ignored = this.readLock.acquire()) {
             cid = this.cancellableIDTaskIDBiMap.getKey(wrappedTask.getTaskID());
         }
 
-        assert cid != null : "Cannot exit an uncreated task.";
+        assert cid != null : "Cannot exit an uncreated " + task.toString();
 
         try (ReleasableLock ignored = this.writeLock.acquire()) {
             assert this.cancellableIDTaskIDBiMap.containsKey(cid) : "Maps should contains the cid to be removed.";
-            if (!this.cancellableIDToAsyncRunnables.containsKey(cid)) {
-                // task has not been created when runnable starts on the first thread
-                // TODO: maybe there is a better way to identify the status
-            }
             this.removeCancellableIDFromMaps(cid);
         }
 

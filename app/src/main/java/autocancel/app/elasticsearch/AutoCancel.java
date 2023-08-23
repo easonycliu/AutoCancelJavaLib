@@ -27,9 +27,12 @@ public class AutoCancel {
 
     private static Resource resourceTracker = new Resource(AutoCancel.mainManager);
 
+    private static Boolean warnNotStarted = true;
+
     public static void start() {
         AutoCancel.mainManager.start();
         started = true;
+        Logger.systemWarn("AutoCancel started.");
     }
 
     public static void stop() {
@@ -37,8 +40,9 @@ public class AutoCancel {
             AutoCancel.taskTracker.stop();
             AutoCancel.mainManager.stop();
         }
-        else {
+        else if (warnNotStarted) {
             Logger.systemWarn("You should start lib AutoCancel first.");
+            AutoCancel.warnNotStarted = false;
         }
     }
 
@@ -46,8 +50,9 @@ public class AutoCancel {
         if (AutoCancel.started) {
             AutoCancel.taskTracker.onTaskCreate(task);
         }
-        else {
+        else if (warnNotStarted) {
             Logger.systemWarn("You should start lib AutoCancel first.");
+            AutoCancel.warnNotStarted = false;
         }
     }
 
@@ -55,8 +60,9 @@ public class AutoCancel {
         if (AutoCancel.started) {
             AutoCancel.taskTracker.onTaskExit(task);
         }
-        else {
+        else if (warnNotStarted) {
             Logger.systemWarn("You should start lib AutoCancel first.");
+            AutoCancel.warnNotStarted = false;
         }
     }
 
@@ -64,8 +70,9 @@ public class AutoCancel {
         if (AutoCancel.started) {
             AutoCancel.taskTracker.onTaskFinishInThread();
         }
-        else {
+        else if (warnNotStarted) {
             Logger.systemWarn("You should start lib AutoCancel first.");
+            AutoCancel.warnNotStarted = false;
         }
     }
 
@@ -73,8 +80,9 @@ public class AutoCancel {
         if (AutoCancel.started) {
             AutoCancel.taskTracker.onTaskQueueInThread(runnable);
         }
-        else {
+        else if (warnNotStarted) {
             Logger.systemWarn("You should start lib AutoCancel first.");
+            AutoCancel.warnNotStarted = false;
         }
     }
 
@@ -82,8 +90,9 @@ public class AutoCancel {
         if (AutoCancel.started) {
             AutoCancel.taskTracker.onTaskStartInThread(runnable);
         }
-        else {
+        else if (warnNotStarted) {
             Logger.systemWarn("You should start lib AutoCancel first.");
+            AutoCancel.warnNotStarted = false;
         }
     }
 
@@ -91,8 +100,9 @@ public class AutoCancel {
         if (AutoCancel.started) {
             AutoCancel.resourceTracker.addResourceUsage(name, value);
         }
-        else {
+        else if (warnNotStarted) {
             Logger.systemWarn("You should start lib AutoCancel first.");
+            AutoCancel.warnNotStarted = false;
         }
     }
 
@@ -100,8 +110,9 @@ public class AutoCancel {
         if (AutoCancel.started) {
             AutoCancel.resourceTracker.startResourceWait(name);
         }
-        else {
+        else if (warnNotStarted) {
             Logger.systemWarn("You should start lib AutoCancel first.");
+            AutoCancel.warnNotStarted = false;
         }
     }
 
@@ -109,8 +120,9 @@ public class AutoCancel {
         if (AutoCancel.started) {
             AutoCancel.resourceTracker.endResourceWait(name);
         }
-        else {
+        else if (warnNotStarted) {
             Logger.systemWarn("You should start lib AutoCancel first.");
+            AutoCancel.warnNotStarted = false;
         }
     }
 

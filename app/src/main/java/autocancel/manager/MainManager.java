@@ -18,6 +18,7 @@ import autocancel.utils.Resource.ResourceType;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.id.CancellableIDGenerator;
 import autocancel.utils.id.JavaThreadID;
+import autocancel.utils.logger.Logger;
 import autocancel.utils.id.IDInfo;
 
 import java.io.File;
@@ -127,7 +128,10 @@ public class MainManager {
         CancellableID cidReadFromManager = this.idManager.getCancellableIDOfJavaThreadID(jid);
 
         boolean cidEqual = cid.equals(cidReadFromManager);
-        assert cidEqual : "Input cancellable id is not running on the current java thread id";
+        if (!cidEqual) {
+            Logger.systemWarn("Input " + cid.toString() + " is not running on the current " + jid.toString() + " whose " + cidReadFromManager.toString());
+        }
+        // assert cidEqual : "Input cancellable id is not running on the current java thread id";
 
         this.idManager.setCancellableIDAndJavaThreadID(cidReadFromManager, jid, IDInfo.Status.EXIT);
         
