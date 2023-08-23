@@ -97,16 +97,19 @@ public class TaskTracker {
             cid = this.cancellableIDTaskIDBiMap.getKey(wrappedTask.getTaskID());
         }
 
-        assert cid != null : "Cannot exit an uncreated " + task.toString();
+        if (cid != null) {
+            try (ReleasableLock ignored = this.writeLock.acquire()) {
+                assert this.cancellableIDTaskIDBiMap.containsKey(cid) : "Maps should contains the cid to be removed.";
+                this.removeCancellableIDFromMaps(cid);
+            }
 
-        try (ReleasableLock ignored = this.writeLock.acquire()) {
-            assert this.cancellableIDTaskIDBiMap.containsKey(cid) : "Maps should contains the cid to be removed.";
-            this.removeCancellableIDFromMaps(cid);
+            this.mainManager.destoryCancellableIDOnCurrentJavaThreadID(cid);
+
+            this.log.logCancellableJavaThreadIDInfo(cid, task);
         }
-
-        this.mainManager.destoryCancellableIDOnCurrentJavaThreadID(cid);
-
-        this.log.logCancellableJavaThreadIDInfo(cid, task);
+        else {
+            Logger.systemWarn("Cannot find " + task.toString() + " , check whether it has exited before.");
+        }
     }
 
     public void onTaskFinishInThread() throws AssertionError {

@@ -31,6 +31,11 @@ public class JavaThreadID implements ID {
         return this.id.intValue();
     }
 
+    @Override
+    public Boolean isValid() {
+        return this.id != INVALID_ID;
+    }
+
     public Long unwrap() {
         return this.id;
     }

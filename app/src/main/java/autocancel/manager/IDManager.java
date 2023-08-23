@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.logging.Logger;
 
 public class IDManager {
 
@@ -63,7 +64,10 @@ public class IDManager {
                             break;
                     }
                 }
-                assert javaThreadIDs.size() > 0 : String.format("%s is alive but not running on any java threads", cid.toString());
+                if (javaThreadIDs.size() == 0) {
+                    Logger.systemWarn(String.format("%s is alive but not running on any java threads", cid.toString()));
+                    javaThreadIDs.add(new JavaThreadID());
+                }
             }
             else {
                 javaThreadIDs.add(new JavaThreadID());
