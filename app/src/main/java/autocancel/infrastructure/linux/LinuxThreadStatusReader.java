@@ -71,10 +71,11 @@ public class LinuxThreadStatusReader extends AbstractInfrastructure {
             linuxThreadID = this.getLinuxThreadIDFromJavaThreadID((JavaThreadID) id);
             // TODO: add isValid()
             if (linuxThreadID.isValid()) {
+                Logger.systemTrace(id.toString() + " is running on " + linuxThreadID.toString());
                 this.javaThreadIDToLinuxThreadID.put((JavaThreadID) id, linuxThreadID);
             }
             else {
-                Logger.systemWarn("Failed to find linux thread id of " + id.toString());
+                Logger.systemTrace("Failed to find linux thread id of " + id.toString());
             }
         }
         
@@ -87,7 +88,7 @@ public class LinuxThreadStatusReader extends AbstractInfrastructure {
             this.setResourceBatch(id, resourceBatch);
         }
         else {
-            Logger.systemWarn("Skip updating version " + version.toString());
+            Logger.systemTrace("Skip updating version " + version.toString());
         }
     }
 

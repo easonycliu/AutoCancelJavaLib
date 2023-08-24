@@ -65,7 +65,7 @@ public class IDManager {
                     }
                 }
                 if (javaThreadIDs.size() == 0) {
-                    Logger.systemWarn(String.format("%s is alive but not running on any java threads", cid.toString()));
+                    Logger.systemTrace(String.format("%s is alive but not running on any java threads", cid.toString()));
                     javaThreadIDs.add(new JavaThreadID());
                 }
             }

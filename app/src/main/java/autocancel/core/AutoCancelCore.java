@@ -303,7 +303,7 @@ public class AutoCancelCore {
                 // Itself is a root cancellable
                 rootID = request.getTarget();
             }
-            else{
+            else {
                 rootID = cancellables.get(parentID).getID();
             }
             return rootID;
