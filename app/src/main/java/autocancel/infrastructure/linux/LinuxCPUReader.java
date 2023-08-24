@@ -14,6 +14,7 @@ import java.util.Arrays;
 import autocancel.infrastructure.CPUTimeInfo;
 import autocancel.infrastructure.ResourceReader;
 import autocancel.utils.id.ID;
+import autocancel.utils.logger.Logger;
 import autocancel.infrastructure.linux.LinuxThreadID;
 
 public class LinuxCPUReader extends ResourceReader {
@@ -118,7 +119,8 @@ public class LinuxCPUReader extends ResourceReader {
             }
         }
         catch (IOException e) {
-            assert false : String.format("Failed to open file %s", threadInfo);
+            // assert false : String.format("Failed to open file %s", threadInfo);
+            Logger.systemWarn(String.format("Failed to open file %s: %s", threadInfo, e.getMessage()));
         }
 
         return threadCPUTime;

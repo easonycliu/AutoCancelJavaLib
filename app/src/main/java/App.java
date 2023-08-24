@@ -28,6 +28,8 @@ public class App {
     public static void main(String[] args) {
         AutoCancel.start();
 
+        assert false : "test";
+
         System.out.println(Syscall.gettid());
 
         System.out.println(new App().getGreeting());
