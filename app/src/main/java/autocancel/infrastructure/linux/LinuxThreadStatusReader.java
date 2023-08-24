@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class LinuxThreadStatusReader extends AbstractInfrastructure {
-    
+
     private Map<JavaThreadID, LinuxThreadID> javaThreadIDToLinuxThreadID;
 
     private List<ResourceType> resourceTypes;
@@ -34,7 +34,7 @@ public class LinuxThreadStatusReader extends AbstractInfrastructure {
         super();
 
         this.javaThreadIDToLinuxThreadID = new HashMap<JavaThreadID, LinuxThreadID>();
-        
+
         this.resourceTypes = this.getRequiredResourceTypes();
 
         this.resourceReaders = this.initializeResourceReaders();
@@ -51,7 +51,7 @@ public class LinuxThreadStatusReader extends AbstractInfrastructure {
     }
 
     public List<ResourceType> getRequiredResourceTypes() {
-        Map<?, ?> monitorResources = (Map<?, ?>) Settings.getSetting("monitor_resources");
+        Map<?, ?> monitorResources = (Map<?, ?>) Settings.getSetting("monitor_physical_resources");
         List<ResourceType> requiredResources = new ArrayList<ResourceType>();
         for (Map.Entry<?, ?> entries : monitorResources.entrySet()) {
             if (((String) entries.getValue()).equals("Linux")) {
@@ -66,19 +66,17 @@ public class LinuxThreadStatusReader extends AbstractInfrastructure {
         LinuxThreadID linuxThreadID = null;
         if (this.javaThreadIDToLinuxThreadID.containsKey((JavaThreadID) id)) {
             linuxThreadID = this.javaThreadIDToLinuxThreadID.get((JavaThreadID) id);
-        }
-        else {
+        } else {
             linuxThreadID = this.getLinuxThreadIDFromJavaThreadID((JavaThreadID) id);
             // TODO: add isValid()
             if (linuxThreadID.isValid()) {
                 Logger.systemTrace(id.toString() + " is running on " + linuxThreadID.toString());
                 this.javaThreadIDToLinuxThreadID.put((JavaThreadID) id, linuxThreadID);
-            }
-            else {
+            } else {
                 Logger.systemTrace("Failed to find linux thread id of " + id.toString());
             }
         }
-        
+
         if (linuxThreadID.isValid()) {
             ResourceBatch resourceBatch = new ResourceBatch(version);
             for (ResourceType type : this.resourceTypes) {
@@ -86,8 +84,7 @@ public class LinuxThreadStatusReader extends AbstractInfrastructure {
                 resourceBatch.setResourceValue(type, value);
             }
             this.setResourceBatch(id, resourceBatch);
-        }
-        else {
+        } else {
             Logger.systemTrace("Skip updating version " + version.toString());
         }
     }
@@ -103,16 +100,14 @@ public class LinuxThreadStatusReader extends AbstractInfrastructure {
         while (matcher.find()) {
             if (linuxThreadIDStr == null) {
                 linuxThreadIDStr = matcher.group(3);
-            }
-            else {
+            } else {
                 assert false : "A thread name should contain two native thread id info";
             }
         }
         LinuxThreadID linuxThreadID = null;
         if (linuxThreadIDStr != null) {
             linuxThreadID = new LinuxThreadID(Long.valueOf(linuxThreadIDStr));
-        }
-        else {
+        } else {
             linuxThreadID = new LinuxThreadID();
         }
         return linuxThreadID;

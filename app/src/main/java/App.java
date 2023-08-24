@@ -21,6 +21,16 @@ import autocancel.app.elasticsearch.AutoCancel;
 import autocancel.utils.Syscall;
 
 public class App {
+
+    private static class Test {
+        public void run() {
+            StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+            for (StackTraceElement stackTraceElement : stackTraceElements) {
+                System.out.println(stackTraceElement.toString());
+            }
+            // System.out.println(stackTraceElements[2].toString());
+        }
+    }
     public String getGreeting() {
         return "Hello world.";
     }
@@ -28,7 +38,8 @@ public class App {
     public static void main(String[] args) {
         AutoCancel.start();
 
-        assert false : "test";
+        List<Test> test = Arrays.asList(new Test());
+        test.get(0).run();
 
         System.out.println(Syscall.gettid());
 

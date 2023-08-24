@@ -22,7 +22,7 @@ public class JavaThreadStatusReader extends AbstractInfrastructure {
 
     public JavaThreadStatusReader() {
         super();
-        
+
         this.resourceTypes = this.getRequiredResourceTypes();
 
         this.resourceReaders = this.initializeResourceReaders();
@@ -37,7 +37,7 @@ public class JavaThreadStatusReader extends AbstractInfrastructure {
     }
 
     private List<ResourceType> getRequiredResourceTypes() {
-        Map<?, ?> monitorResources = (Map<?, ?>) Settings.getSetting("monitor_resources");
+        Map<?, ?> monitorResources = (Map<?, ?>) Settings.getSetting("monitor_physical_resources");
         List<ResourceType> requiredResources = new ArrayList<ResourceType>();
         for (Map.Entry<?, ?> entries : monitorResources.entrySet()) {
             if (((String) entries.getValue()).equals("JVM")) {
@@ -48,7 +48,7 @@ public class JavaThreadStatusReader extends AbstractInfrastructure {
     }
 
     @Override
-    protected void updateResource(ID id, Integer version) {        
+    protected void updateResource(ID id, Integer version) {
         ResourceBatch resourceBatch = new ResourceBatch(version);
         for (ResourceType type : this.resourceTypes) {
             Double value = this.resourceReaders.get(type).readResource(id, version);

@@ -21,13 +21,12 @@ public class InfrastructureManager {
     private AtomicInteger version;
 
     private final Map<String, AbstractInfrastructure> infrastructures;
-    
+
     public InfrastructureManager() {
         this.version = new AtomicInteger();
         this.infrastructures = Map.of(
-            "JVM", new JavaThreadStatusReader(),
-            "Linux", new LinuxThreadStatusReader()
-        );
+                "JVM", new JavaThreadStatusReader(),
+                "Linux", new LinuxThreadStatusReader());
     }
 
     public Double getSpecifiedTypeResourceLatest(JavaThreadID jid, ResourceType type) {
@@ -42,8 +41,9 @@ public class InfrastructureManager {
     }
 
     private AbstractInfrastructure getInfrastructure(ResourceType type) {
-        AbstractInfrastructure infrastructure = this.infrastructures.get((String)((Map<?, ?>)Settings.getSetting("monitor_resources")).get(type.toString()));
-        
+        AbstractInfrastructure infrastructure = this.infrastructures
+                .get((String) ((Map<?, ?>) Settings.getSetting("monitor_physical_resources")).get(type.toString()));
+
         if (infrastructure == null) {
             System.out.println("Invalid infrastructure type " + type.toString());
             // TODO: do something more

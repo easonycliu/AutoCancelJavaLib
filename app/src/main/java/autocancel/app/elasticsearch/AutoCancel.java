@@ -108,7 +108,7 @@ public class AutoCancel {
 
     public void startResourceWait(String name) {
         if (AutoCancel.started) {
-            AutoCancel.resourceTracker.startResourceWait(name);
+            AutoCancel.resourceTracker.startResourceEvent(name, "wait");
         }
         else if (warnNotStarted) {
             Logger.systemWarn("You should start lib AutoCancel first.");
@@ -118,7 +118,7 @@ public class AutoCancel {
 
     public void endResourceWait(String name) {
         if (AutoCancel.started) {
-            AutoCancel.resourceTracker.endResourceWait(name);
+            AutoCancel.resourceTracker.startResourceEvent(name, "wait");
         }
         else if (warnNotStarted) {
             Logger.systemWarn("You should start lib AutoCancel first.");
