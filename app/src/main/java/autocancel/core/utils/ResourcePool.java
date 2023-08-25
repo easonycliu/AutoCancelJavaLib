@@ -24,21 +24,21 @@ public class ResourcePool {
         }
     }
 
-    public Double getContentionLevel(ResourceName type) {
+    public Double getContentionLevel(ResourceName resourceName) {
         Double contentionLevel = 0.0;
-        if (this.resources.containsKey(type)) {
-            contentionLevel = this.resources.get(type).getContentionLevel();
+        if (this.resources.containsKey(resourceName)) {
+            contentionLevel = this.resources.get(resourceName).getContentionLevel();
         } else {
-            Logger.systemWarn("Cannot find resource " + type.toString());
+            Logger.systemWarn("Cannot find resource " + resourceName.toString());
         }
         return contentionLevel;
     }
 
-    public void setContentionInfo(ResourceName type, Map<String, Object> contentionInfo) {
-        if (this.resources.containsKey(type)) {
-            this.resources.get(type).setContentionInfo(contentionInfo);
+    public void setContentionInfo(ResourceName resourceName, Map<String, Object> contentionInfo) {
+        if (this.resources.containsKey(resourceName)) {
+            this.resources.get(resourceName).setContentionInfo(contentionInfo);
         } else {
-            Logger.systemWarn("Cannot find resource " + type.toString());
+            Logger.systemWarn("Cannot find resource " + resourceName.toString());
         }
     }
 }

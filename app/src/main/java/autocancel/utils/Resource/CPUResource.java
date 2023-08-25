@@ -8,8 +8,8 @@ public class CPUResource extends Resource {
         super(ResourceName.CPU);
     }
 
-    public CPUResource(ResourceName type) {
-        super(type);
+    public CPUResource(ResourceName resourceName) {
+        super(resourceName);
     }
 
     @Override

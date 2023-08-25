@@ -8,8 +8,8 @@ public class LockResource extends Resource {
 
     private Long totalWaitingTime;
 
-    public LockResource(ResourceName type) {
-        super(type);
+    public LockResource(ResourceName resourceName) {
+        super(resourceName);
     }
 
     @Override

@@ -13,11 +13,11 @@ public abstract class AbstractInfrastructure {
         this.resourceMap = new HashMap<ID, ResourceBatch>();
     }
 
-    public Double getResource(ID id, ResourceName type, Integer version) {
+    public Double getResource(ID id, ResourceName resourceName, Integer version) {
         if (this.outOfDate(id, version)) {
             this.updateResource(id, version);
         }
-        Double resourceValue = this.getResourceValue(id, type);
+        Double resourceValue = this.getResourceValue(id, resourceName);
         return resourceValue;
     }
 
@@ -41,10 +41,10 @@ public abstract class AbstractInfrastructure {
         this.resourceMap.put(id, resourceBatch);
     }
 
-    private Double getResourceValue(ID id, ResourceName type) {
+    private Double getResourceValue(ID id, ResourceName resourceName) {
         Double resource;
         if (this.resourceMap.containsKey(id)) {
-            resource = this.resourceMap.get(id).getResourceValue(type);
+            resource = this.resourceMap.get(id).getResourceValue(resourceName);
         } else {
             resource = 0.0;
         }

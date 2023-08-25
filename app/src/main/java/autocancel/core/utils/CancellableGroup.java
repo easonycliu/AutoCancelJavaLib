@@ -52,27 +52,27 @@ public class CancellableGroup {
         return this.resourceMap.keySet();
     }
 
-    public void setResourceUsage(ResourceName type, Double usage) {
-        if (this.resourceMap.containsKey(type)) {
-            this.resourceMap.get(type).setUsage(usage);
+    public void setResourceUsage(ResourceName resourceName, Double usage) {
+        if (this.resourceMap.containsKey(resourceName)) {
+            this.resourceMap.get(resourceName).setUsage(usage);
         } else {
-            this.resourceMap.put(type, new ResourceUsage(usage));
+            this.resourceMap.put(resourceName, new ResourceUsage(usage));
         }
     }
 
-    public void addResourceUsage(ResourceName type, Double usageAdd) {
-        if (this.resourceMap.containsKey(type)) {
-            Double previousUsage = this.resourceMap.get(type).getUsage();
-            this.resourceMap.get(type).setUsage(previousUsage + usageAdd);
+    public void addResourceUsage(ResourceName resourceName, Double usageAdd) {
+        if (this.resourceMap.containsKey(resourceName)) {
+            Double previousUsage = this.resourceMap.get(resourceName).getUsage();
+            this.resourceMap.get(resourceName).setUsage(previousUsage + usageAdd);
         } else {
-            this.resourceMap.put(type, new ResourceUsage(usageAdd));
+            this.resourceMap.put(resourceName, new ResourceUsage(usageAdd));
         }
     }
 
-    public Double getResourceUsage(ResourceName type) {
+    public Double getResourceUsage(ResourceName resourceName) {
         Double usage = null;
-        if (this.resourceMap.containsKey(type)) {
-            usage = this.resourceMap.get(type).getUsage();
+        if (this.resourceMap.containsKey(resourceName)) {
+            usage = this.resourceMap.get(resourceName).getUsage();
         } else {
             usage = 0.0;
         }

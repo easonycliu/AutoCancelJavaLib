@@ -53,7 +53,7 @@ public class MainMonitor {
                     this.monitorUpdateToCoreBuffer
                             .add(this.monitors.get(resourceName).updateResource(cancellable.getID()));
                 } else {
-                    // Unsupported type in monitor
+                    // Unsupported name in monitor
                     // But may be updated by app
                     // So there is nothing to do
                     // TODO: Add proper checking to make sure this resource is updated by app

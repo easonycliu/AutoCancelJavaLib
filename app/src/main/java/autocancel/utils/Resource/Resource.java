@@ -4,16 +4,16 @@ import java.util.Map;
 
 public abstract class Resource {
 
-    private ResourceName type;
+    private ResourceName resourceName;
 
-    public Resource(ResourceName type) {
-        this.type = type;
+    public Resource(ResourceName resourceName) {
+        this.resourceName = resourceName;
     }
 
     public abstract Double getContentionLevel();
 
     public ResourceName getResourceName() {
-        return this.type;
+        return this.resourceName;
     }
 
     public abstract void setContentionInfo(Map<String, Object> contentionInfo);

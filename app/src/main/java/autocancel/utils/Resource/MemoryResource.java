@@ -8,8 +8,8 @@ public class MemoryResource extends Resource {
         super(ResourceName.MEMORY);
     }
 
-    public MemoryResource(ResourceName type) {
-        super(type);
+    public MemoryResource(ResourceName resourceName) {
+        super(resourceName);
     }
 
     @Override
