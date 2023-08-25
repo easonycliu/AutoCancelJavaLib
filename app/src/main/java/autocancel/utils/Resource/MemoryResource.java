@@ -5,11 +5,11 @@ import java.util.Map;
 public class MemoryResource extends Resource {
 
     public MemoryResource() {
-        super(ResourceName.MEMORY);
+        super(ResourceType.MEMORY, ResourceName.MEMORY);
     }
 
     public MemoryResource(ResourceName resourceName) {
-        super(resourceName);
+        super(ResourceType.MEMORY, resourceName);
     }
 
     @Override

@@ -5,11 +5,11 @@ import java.util.Map;
 public class CPUResource extends Resource {
 
     public CPUResource() {
-        super(ResourceName.CPU);
+        super(ResourceType.CPU, ResourceName.CPU);
     }
 
     public CPUResource(ResourceName resourceName) {
-        super(resourceName);
+        super(ResourceType.CPU, resourceName);
     }
 
     @Override

@@ -9,7 +9,7 @@ public class LockResource extends Resource {
     private Long totalWaitingTime;
 
     public LockResource(ResourceName resourceName) {
-        super(resourceName);
+        super(ResourceType.LOCK, resourceName);
     }
 
     @Override

@@ -4,9 +4,12 @@ import java.util.Map;
 
 public abstract class Resource {
 
-    private ResourceName resourceName;
+    private final ResourceType resourceType;
 
-    public Resource(ResourceName resourceName) {
+    private final ResourceName resourceName;
+
+    public Resource(ResourceType resourceType, ResourceName resourceName) {
+        this.resourceType = resourceType;
         this.resourceName = resourceName;
     }
 
@@ -14,6 +17,10 @@ public abstract class Resource {
 
     public ResourceName getResourceName() {
         return this.resourceName;
+    }
+
+    public ResourceType getResourceTYpe() {
+        return this.resourceType;
     }
 
     public abstract void setContentionInfo(Map<String, Object> contentionInfo);
