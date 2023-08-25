@@ -22,6 +22,6 @@ public class MemoryMonitor implements Monitor {
     }
 
     private Double getResource(CancellableID cid) {
-        return this.mainManager.getSpecifiedTypeResource(cid, ResourceName.MEMORY);
+        return this.mainManager.getSpecifiedResource(cid, ResourceName.MEMORY);
     }
 }

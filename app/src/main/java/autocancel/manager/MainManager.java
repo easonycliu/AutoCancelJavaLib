@@ -174,12 +174,12 @@ public class MainManager {
         return size;
     }
 
-    public Double getSpecifiedTypeResource(CancellableID cid, ResourceName type) {
+    public Double getSpecifiedResource(CancellableID cid, ResourceName type) {
         Double resource = 0.0;
         List<JavaThreadID> javaThreadIDs = this.idManager.getJavaThreadIDOfCancellableID(cid);
         for (JavaThreadID javaThreadID : javaThreadIDs) {
             if (javaThreadID.isValid()) {
-                resource += this.infrastructureManager.getSpecifiedTypeResourceLatest(javaThreadID, type);
+                resource += this.infrastructureManager.getSpecifiedResourceLatest(javaThreadID, type);
             }
         }
         return resource;

@@ -23,6 +23,6 @@ public class CPUMonitor implements Monitor {
     }
 
     private Double getResource(CancellableID cid) {
-        return this.mainManager.getSpecifiedTypeResource(cid, ResourceName.CPU);
+        return this.mainManager.getSpecifiedResource(cid, ResourceName.CPU);
     }
 }
