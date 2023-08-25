@@ -4,6 +4,10 @@ import java.util.Map;
 
 public class LockResource extends Resource {
 
+    private Integer waitingTasks;
+
+    private Long totalWaitingTime;
+
     public LockResource(ResourceType type) {
         super(type);
     }
