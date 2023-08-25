@@ -3,16 +3,16 @@ package autocancel.utils.Resource;
 import java.util.Map;
 
 public abstract class Resource {
-    
-    private ResourceType type;
 
-    public Resource(ResourceType type) {
+    private ResourceName type;
+
+    public Resource(ResourceName type) {
         this.type = type;
     }
 
     public abstract Double getContentionLevel();
 
-    public ResourceType getResourceType() {
+    public ResourceName getResourceName() {
         return this.type;
     }
 

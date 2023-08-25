@@ -2,7 +2,7 @@ package autocancel.infrastructure.jvm;
 
 import autocancel.infrastructure.ResourceReader;
 import autocancel.infrastructure.CPUTimeInfo;
-import autocancel.utils.Resource.ResourceType;
+import autocancel.utils.Resource.ResourceName;
 import autocancel.utils.id.ID;
 import autocancel.utils.id.JavaThreadID;
 
@@ -59,15 +59,15 @@ public class JavaCPUReader extends ResourceReader {
         this.systemCPUTime.update(version, System.nanoTime());
 
         // update all working threads
-        // if there is a dead threads, do not update it, then its version will not be comparable with system cpu time, thus its utilization will be 0.0.
+        // if there is a dead threads, do not update it, then its version will not be
+        // comparable with system cpu time, thus its utilization will be 0.0.
         long[] threads = this.threadMXBean.getAllThreadIds();
         for (long thread : threads) {
             JavaThreadID jid = new JavaThreadID(thread);
             if (this.javaThreadCPUTime.containsKey(jid)) {
                 CPUTimeInfo cpuTimeInfo = this.javaThreadCPUTime.get(jid);
                 cpuTimeInfo.update(version, this.threadMXBean.getThreadCpuTime(thread));
-            }
-            else {
+            } else {
                 this.javaThreadCPUTime.put(jid, new CPUTimeInfo(version, this.threadMXBean.getThreadCpuTime(thread)));
             }
         }

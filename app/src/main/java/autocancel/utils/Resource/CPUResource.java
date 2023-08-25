@@ -3,12 +3,12 @@ package autocancel.utils.Resource;
 import java.util.Map;
 
 public class CPUResource extends Resource {
-    
+
     public CPUResource() {
-        super(ResourceType.CPU);
+        super(ResourceName.CPU);
     }
 
-    public CPUResource(ResourceType type) {
+    public CPUResource(ResourceName type) {
         super(type);
     }
 

@@ -1,7 +1,7 @@
 package autocancel.infrastructure.linux;
 
 import autocancel.infrastructure.ResourceReader;
-import autocancel.utils.Resource.ResourceType;
+import autocancel.utils.Resource.ResourceName;
 import autocancel.utils.id.ID;
 import autocancel.utils.logger.Logger;
 
@@ -18,7 +18,7 @@ public class LinuxMemoryReader extends ResourceReader {
         super();
         this.jvmPID = this.getJVMPID();
     }
-    
+
     @Override
     public Double readResource(ID id, Integer version) {
         assert id instanceof LinuxThreadID : "Linux memory reader must recieve linux thread id";
@@ -35,8 +35,7 @@ public class LinuxMemoryReader extends ResourceReader {
                     break;
                 }
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             // assert false : String.format("Failed to open %s", fileName);
             Logger.systemWarn(String.format("Failed to open file %s: %s", fileName, e.getMessage()));
         }
@@ -50,7 +49,7 @@ public class LinuxMemoryReader extends ResourceReader {
     private Long getTotalMemory() {
         String memInfo = "/proc/meminfo";
         Long totalMemoryKB = Long.valueOf(0);
-        
+
         try {
             Scanner scanner = new Scanner(new File(memInfo));
             while (scanner.hasNextLine()) {
@@ -60,8 +59,7 @@ public class LinuxMemoryReader extends ResourceReader {
                     break;
                 }
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             assert false : String.format("Failed to open file %s: %s", memInfo, e.getMessage());
         }
 

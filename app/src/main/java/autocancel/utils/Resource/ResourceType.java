@@ -1,5 +1,5 @@
 package autocancel.utils.Resource;
 
-public enum ResourceType {
+public enum ResourceName {
     CPU, MEMORY, LOCK
 }

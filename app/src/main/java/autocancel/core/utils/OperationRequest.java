@@ -2,7 +2,7 @@ package autocancel.core.utils;
 
 import autocancel.core.utils.OperationMethod;
 import autocancel.utils.id.CancellableID;
-import autocancel.utils.Resource.ResourceType;
+import autocancel.utils.Resource.ResourceName;
 
 import java.util.Map;
 import java.util.LinkedHashMap;
@@ -36,7 +36,7 @@ public class OperationRequest {
         return this.target;
     }
 
-    public ResourceType getResourceType() {
+    public ResourceName getResourceName() {
         return this.resourceType;
     }
 

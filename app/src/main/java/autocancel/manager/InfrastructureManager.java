@@ -9,7 +9,7 @@ import autocancel.infrastructure.AbstractInfrastructure;
 import autocancel.infrastructure.jvm.JavaThreadStatusReader;
 import autocancel.infrastructure.linux.LinuxThreadStatusReader;
 import autocancel.utils.Settings;
-import autocancel.utils.Resource.ResourceType;
+import autocancel.utils.Resource.ResourceName;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.id.JavaThreadID;
 
@@ -29,7 +29,7 @@ public class InfrastructureManager {
                 "Linux", new LinuxThreadStatusReader());
     }
 
-    public Double getSpecifiedTypeResourceLatest(JavaThreadID jid, ResourceType type) {
+    public Double getSpecifiedTypeResourceLatest(JavaThreadID jid, ResourceName type) {
         AbstractInfrastructure infrastructure = this.getInfrastructure(type);
         assert infrastructure != null : String.format("Unsupported resource type: %s", type.toString());
         Double resource = infrastructure.getResource(jid, type, this.version.get());
@@ -40,7 +40,7 @@ public class InfrastructureManager {
         this.version.incrementAndGet();
     }
 
-    private AbstractInfrastructure getInfrastructure(ResourceType type) {
+    private AbstractInfrastructure getInfrastructure(ResourceName type) {
         AbstractInfrastructure infrastructure = this.infrastructures
                 .get((String) ((Map<?, ?>) Settings.getSetting("monitor_physical_resources")).get(type.toString()));
 

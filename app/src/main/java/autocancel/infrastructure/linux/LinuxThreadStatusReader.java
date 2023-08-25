@@ -3,7 +3,7 @@ package autocancel.infrastructure.linux;
 import autocancel.infrastructure.AbstractInfrastructure;
 import autocancel.infrastructure.ResourceBatch;
 import autocancel.infrastructure.ResourceReader;
-import autocancel.utils.Resource.ResourceType;
+import autocancel.utils.Resource.ResourceName;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.id.ID;
 import autocancel.utils.id.JavaThreadID;
@@ -26,36 +26,36 @@ public class LinuxThreadStatusReader extends AbstractInfrastructure {
 
     private Map<JavaThreadID, LinuxThreadID> javaThreadIDToLinuxThreadID;
 
-    private List<ResourceType> resourceTypes;
+    private List<ResourceName> resourceTypes;
 
-    private Map<ResourceType, ResourceReader> resourceReaders;
+    private Map<ResourceName, ResourceReader> resourceReaders;
 
     public LinuxThreadStatusReader() {
         super();
 
         this.javaThreadIDToLinuxThreadID = new HashMap<JavaThreadID, LinuxThreadID>();
 
-        this.resourceTypes = this.getRequiredResourceTypes();
+        this.resourceTypes = this.getRequiredResourceNames();
 
         this.resourceReaders = this.initializeResourceReaders();
 
         // VM.
     }
 
-    public Map<ResourceType, ResourceReader> initializeResourceReaders() {
-        Map<ResourceType, ResourceReader> resourceReaders = new HashMap<ResourceType, ResourceReader>();
-        resourceReaders.put(ResourceType.CPU, new LinuxCPUReader());
-        resourceReaders.put(ResourceType.MEMORY, new LinuxMemoryReader());
+    public Map<ResourceName, ResourceReader> initializeResourceReaders() {
+        Map<ResourceName, ResourceReader> resourceReaders = new HashMap<ResourceName, ResourceReader>();
+        resourceReaders.put(ResourceName.CPU, new LinuxCPUReader());
+        resourceReaders.put(ResourceName.MEMORY, new LinuxMemoryReader());
 
         return resourceReaders;
     }
 
-    public List<ResourceType> getRequiredResourceTypes() {
+    public List<ResourceName> getRequiredResourceNames() {
         Map<?, ?> monitorResources = (Map<?, ?>) Settings.getSetting("monitor_physical_resources");
-        List<ResourceType> requiredResources = new ArrayList<ResourceType>();
+        List<ResourceName> requiredResources = new ArrayList<ResourceName>();
         for (Map.Entry<?, ?> entries : monitorResources.entrySet()) {
             if (((String) entries.getValue()).equals("Linux")) {
-                requiredResources.add(ResourceType.valueOf((String) entries.getKey()));
+                requiredResources.add(ResourceName.valueOf((String) entries.getKey()));
             }
         }
         return requiredResources;
@@ -79,7 +79,7 @@ public class LinuxThreadStatusReader extends AbstractInfrastructure {
 
         if (linuxThreadID.isValid()) {
             ResourceBatch resourceBatch = new ResourceBatch(version);
-            for (ResourceType type : this.resourceTypes) {
+            for (ResourceName type : this.resourceTypes) {
                 Double value = this.resourceReaders.get(type).readResource(linuxThreadID, version);
                 resourceBatch.setResourceValue(type, value);
             }

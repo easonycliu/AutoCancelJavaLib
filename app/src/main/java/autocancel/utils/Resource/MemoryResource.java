@@ -3,12 +3,12 @@ package autocancel.utils.Resource;
 import java.util.Map;
 
 public class MemoryResource extends Resource {
-    
+
     public MemoryResource() {
-        super(ResourceType.MEMORY);
+        super(ResourceName.MEMORY);
     }
 
-    public MemoryResource(ResourceType type) {
+    public MemoryResource(ResourceName type) {
         super(type);
     }
 

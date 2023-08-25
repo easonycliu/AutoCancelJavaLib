@@ -2,7 +2,7 @@ package autocancel.infrastructure.jvm;
 
 import autocancel.infrastructure.AbstractInfrastructure;
 import autocancel.utils.Settings;
-import autocancel.utils.Resource.ResourceType;
+import autocancel.utils.Resource.ResourceName;
 import autocancel.utils.id.JavaThreadID;
 import autocancel.infrastructure.ResourceBatch;
 import autocancel.infrastructure.ResourceReader;
@@ -16,32 +16,32 @@ import java.util.Map;
 
 public class JavaThreadStatusReader extends AbstractInfrastructure {
 
-    private List<ResourceType> resourceTypes;
+    private List<ResourceName> resourceTypes;
 
-    private Map<ResourceType, ResourceReader> resourceReaders;
+    private Map<ResourceName, ResourceReader> resourceReaders;
 
     public JavaThreadStatusReader() {
         super();
 
-        this.resourceTypes = this.getRequiredResourceTypes();
+        this.resourceTypes = this.getRequiredResourceNames();
 
         this.resourceReaders = this.initializeResourceReaders();
     }
 
-    public Map<ResourceType, ResourceReader> initializeResourceReaders() {
-        Map<ResourceType, ResourceReader> resourceReaders = new HashMap<ResourceType, ResourceReader>();
-        resourceReaders.put(ResourceType.CPU, new JavaCPUReader());
-        resourceReaders.put(ResourceType.MEMORY, new JavaMemoryReader());
+    public Map<ResourceName, ResourceReader> initializeResourceReaders() {
+        Map<ResourceName, ResourceReader> resourceReaders = new HashMap<ResourceName, ResourceReader>();
+        resourceReaders.put(ResourceName.CPU, new JavaCPUReader());
+        resourceReaders.put(ResourceName.MEMORY, new JavaMemoryReader());
 
         return resourceReaders;
     }
 
-    private List<ResourceType> getRequiredResourceTypes() {
+    private List<ResourceName> getRequiredResourceNames() {
         Map<?, ?> monitorResources = (Map<?, ?>) Settings.getSetting("monitor_physical_resources");
-        List<ResourceType> requiredResources = new ArrayList<ResourceType>();
+        List<ResourceName> requiredResources = new ArrayList<ResourceName>();
         for (Map.Entry<?, ?> entries : monitorResources.entrySet()) {
             if (((String) entries.getValue()).equals("JVM")) {
-                requiredResources.add(ResourceType.valueOf((String) entries.getKey()));
+                requiredResources.add(ResourceName.valueOf((String) entries.getKey()));
             }
         }
         return requiredResources;
@@ -50,7 +50,7 @@ public class JavaThreadStatusReader extends AbstractInfrastructure {
     @Override
     protected void updateResource(ID id, Integer version) {
         ResourceBatch resourceBatch = new ResourceBatch(version);
-        for (ResourceType type : this.resourceTypes) {
+        for (ResourceName type : this.resourceTypes) {
             Double value = this.resourceReaders.get(type).readResource(id, version);
             resourceBatch.setResourceValue(type, value);
         }
