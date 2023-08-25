@@ -32,12 +32,26 @@ public class OperationRequest {
         return this.operation;
     }
 
-    public CancellableID getTarget() {
-        return this.target;
+    public CancellableID getCancellableID() {
+        CancellableID cid;
+        if (((Map<?, ?>) this.params.get("basic_info")).containsKey("cancellable_id")) {
+            cid = (CancellableID) ((Map<?, ?>) this.params.get("basic_info")).get("cancellable_id");
+        }
+        else {
+            cid = new CancellableID();
+        }
+        return cid;
     }
 
     public ResourceName getResourceName() {
-        return this.resourceName;
+        ResourceName resourceName;
+        if (((Map<?, ?>) this.params.get("basic_info")).containsKey("resource_name")) {
+            resourceName = (ResourceName) ((Map<?, ?>) this.params.get("basic_info")).get("resource_name");
+        }
+        else {
+            resourceName = ResourceName.NULL;
+        }
+        return resourceName;
     }
 
     public Map<String, Object> getParams() {

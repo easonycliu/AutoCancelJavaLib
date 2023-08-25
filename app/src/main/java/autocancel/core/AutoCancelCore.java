@@ -88,8 +88,10 @@ public class AutoCancelCore {
             Set<ResourceName> resourceNames = entries.getValue().getResourceNames();
             for (ResourceName resourceName : resourceNames) {
                 this.logger.log(String.format("Cancellable group with root %s used %s resource %s",
-                        entries.getKey().toString(), resourceName.toString(), entries.getValue().getResourceUsage(resourceName)));
-                OperationRequest request = new OperationRequest(OperationMethod.UPDATE, Map.of("cancellable_id", entries.getKey(), "resource_name", resourceName));
+                        entries.getKey().toString(), resourceName.toString(),
+                        entries.getValue().getResourceUsage(resourceName)));
+                OperationRequest request = new OperationRequest(OperationMethod.UPDATE,
+                        Map.of("cancellable_id", entries.getKey(), "resource_name", resourceName));
                 request.addRequestParam("set_group_resource", 0.0);
                 requestParser.parse(request);
             }
@@ -161,11 +163,11 @@ public class AutoCancelCore {
         private void create(OperationRequest request) {
             assert request.getParams().containsKey("parent_cancellable_id")
                     : "Must set parent_cancellable_id when create cancellable.";
-            assert request.getTarget() != new CancellableID() : "Create operation must have cancellable id set";
+            assert request.getCancellableID() != new CancellableID() : "Create operation must have cancellable id set";
 
             CancellableID parentID = (CancellableID) request.getParams().get("parent_cancellable_id");
             CancellableID rootID = (CancellableID) this.paramHandlers.handle("parent_cancellable_id", request);
-            Cancellable cancellable = new Cancellable(request.getTarget(), parentID, rootID);
+            Cancellable cancellable = new Cancellable(request.getCancellableID(), parentID, rootID);
 
             addCancellable(cancellable);
 
@@ -187,10 +189,10 @@ public class AutoCancelCore {
         }
 
         private void delete(OperationRequest request) {
-            assert request.getTarget() != new CancellableID() : "Delete operation must have cancellable id set";
+            assert request.getCancellableID() != new CancellableID() : "Delete operation must have cancellable id set";
 
-            if (cancellables.containsKey(request.getTarget())) {
-                removeCancellable(cancellables.get(request.getTarget()));
+            if (cancellables.containsKey(request.getCancellableID())) {
+                removeCancellable(cancellables.get(request.getCancellableID()));
 
                 Map<String, Object> params = request.getParams();
                 for (String key : params.keySet()) {
@@ -201,7 +203,7 @@ public class AutoCancelCore {
                 // tasks when root task exit (See removeCancellable())
                 // TODO: Find a method to handle it
                 System.out.println(String.format("Cancellable id not found: Time: %d, %s", System.currentTimeMillis(),
-                        request.getTarget().toString()));
+                        request.getCancellableID().toString()));
             }
         }
 
@@ -250,7 +252,7 @@ public class AutoCancelCore {
         }
 
         private void isCancellable(OperationRequest request) {
-            Cancellable cancellable = cancellables.get(request.getTarget());
+            Cancellable cancellable = cancellables.get(request.getCancellableID());
             if (cancellable.isRoot()) {
                 // This is a root cancellable
                 // Parameter is_cancellable is useful only if this cancellable is a root
@@ -262,7 +264,7 @@ public class AutoCancelCore {
         }
 
         private void setGroupResource(OperationRequest request) {
-            Cancellable cancellable = cancellables.get(request.getTarget());
+            Cancellable cancellable = cancellables.get(request.getCancellableID());
             // TODO: Problematic point: nullptr
             if (cancellable.isRoot()) {
                 Double value = (Double) request.getParams().get("set_group_resource");
@@ -272,7 +274,7 @@ public class AutoCancelCore {
         }
 
         private void monitorResource(OperationRequest request) {
-            Cancellable cancellable = cancellables.get(request.getTarget());
+            Cancellable cancellable = cancellables.get(request.getCancellableID());
             if (cancellable.isRoot()) {
                 // This is a root cancellable
                 // Parameter monitor_resource is useful only if this cancellable is a root
@@ -287,13 +289,13 @@ public class AutoCancelCore {
         }
 
         private void cancellableName(OperationRequest request) {
-            Cancellable cancellable = cancellables.get(request.getTarget());
+            Cancellable cancellable = cancellables.get(request.getCancellableID());
             String name = (String) request.getParams().get("cancellable_name");
             cancellable.setName(name);
         }
 
         private void addGroupResource(OperationRequest request) {
-            Cancellable cancellable = cancellables.get(request.getTarget());
+            Cancellable cancellable = cancellables.get(request.getCancellableID());
             Double value = (Double) request.getParams().get("add_group_resource");
             rootCancellableToCancellableGroup.get(cancellable.getRootID()).addResourceUsage(request.getResourceName(),
                     value);
@@ -304,7 +306,7 @@ public class AutoCancelCore {
             CancellableID rootID = null;
             if (!parentID.isValid()) {
                 // Itself is a root cancellable
-                rootID = request.getTarget();
+                rootID = request.getCancellableID();
             } else {
                 rootID = cancellables.get(parentID).getID();
             }
