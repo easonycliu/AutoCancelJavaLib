@@ -56,7 +56,7 @@ public class Resource {
             }
         }
         else {
-            Logger.systemWarn("Event " + event + "not supported, candidates: " + this.resourceEventStartTime.keySet().toString());
+            Logger.systemWarn("Event " + event + " not supported, candidates: " + this.resourceEventStartTime.keySet().toString());
         }
     }
 
