@@ -1,5 +1,7 @@
 package autocancel.core.monitor;
 
+import java.util.Map;
+
 import autocancel.core.monitor.Monitor;
 import autocancel.core.utils.OperationMethod;
 import autocancel.core.utils.OperationRequest;
@@ -17,7 +19,7 @@ public class CPUMonitor implements Monitor {
     }
 
     public OperationRequest updateResource(CancellableID cid) {
-        OperationRequest request = new OperationRequest(OperationMethod.UPDATE, cid, ResourceName.CPU);
+        OperationRequest request = new OperationRequest(OperationMethod.UPDATE, Map.of("cancellable_id", cid, "resource_name", ResourceName.CPU));
         request.addRequestParam("add_group_resource", this.getResource(cid));
         return request;
     }

@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.Map;
 
 public class MainManager {
 
@@ -81,7 +82,7 @@ public class MainManager {
         CancellableID cid = this.cidGenerator.generate();
         this.idManager.setCancellableIDAndJavaThreadID(cid, jid, IDInfo.Status.RUN);
 
-        OperationRequest request = new OperationRequest(OperationMethod.CREATE, cid);
+        OperationRequest request = new OperationRequest(OperationMethod.CREATE, Map.of("cancellable_id", cid));
         request.addRequestParam("is_cancellable", isCancellable);
         // TODO: According to settings
         request.addRequestParam("monitor_resource",
@@ -141,7 +142,7 @@ public class MainManager {
 
         this.idManager.setCancellableIDAndJavaThreadID(cidReadFromManager, jid, IDInfo.Status.EXIT);
 
-        OperationRequest request = new OperationRequest(OperationMethod.DELETE, cid);
+        OperationRequest request = new OperationRequest(OperationMethod.DELETE, Map.of("cancellable_id", cid));
         this.putManagerRequestToCore(request);
     }
 
@@ -189,7 +190,7 @@ public class MainManager {
         JavaThreadID jid = new JavaThreadID(Thread.currentThread().getId());
         CancellableID cid = this.idManager.getCancellableIDOfJavaThreadID(jid);
         if (cid.isValid()) {
-            OperationRequest request = new OperationRequest(OperationMethod.UPDATE, cid, ResourceName.valueOf(name));
+            OperationRequest request = new OperationRequest(OperationMethod.UPDATE, Map.of("cancellable_id", cid, "resource_name", ResourceName.valueOf(name)));
             request.addRequestParam("add_group_resource", value);
             this.putManagerRequestToCore(request);
         } else {

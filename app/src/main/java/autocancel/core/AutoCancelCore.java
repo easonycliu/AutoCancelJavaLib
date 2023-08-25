@@ -89,7 +89,7 @@ public class AutoCancelCore {
             for (ResourceName resourceName : resourceNames) {
                 this.logger.log(String.format("Cancellable group with root %s used %s resource %s",
                         entries.getKey().toString(), resourceName.toString(), entries.getValue().getResourceUsage(resourceName)));
-                OperationRequest request = new OperationRequest(OperationMethod.UPDATE, entries.getKey(), resourceName);
+                OperationRequest request = new OperationRequest(OperationMethod.UPDATE, Map.of("cancellable_id", entries.getKey(), "resource_name", resourceName));
                 request.addRequestParam("set_group_resource", 0.0);
                 requestParser.parse(request);
             }
