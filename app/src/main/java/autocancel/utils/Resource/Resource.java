@@ -11,7 +11,7 @@ public abstract class Resource {
     private final ResourceName resourceName;
 
     protected static final List<String> acceptedInfoKeywords = Arrays.asList(
-            "wait_time");
+            "wait_time", "occupy_time");
 
     public Resource(ResourceType resourceType, ResourceName resourceName) {
         this.resourceType = resourceType;

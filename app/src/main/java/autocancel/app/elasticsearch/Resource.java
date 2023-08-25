@@ -2,6 +2,7 @@ package autocancel.app.elasticsearch;
 
 import autocancel.manager.MainManager;
 import autocancel.utils.Settings;
+import autocancel.utils.Resource.ResourceType;
 import autocancel.utils.logger.Logger;
 
 import java.util.Map;
@@ -36,7 +37,16 @@ public class Resource {
     }
 
     private void addResourceEventDuration(String name, String event, Double value) {
-
+        switch (event) {
+            case "wait": 
+                this.mainManager.updateResource(ResourceType.LOCK, name, Map.of("wait_time", value));
+                break;
+            case "occupy":
+                this.addResourceUsage(name, value);
+                break;
+            default:
+                break;
+        }
     }
 
     public void startResourceEvent(String name, String event) {
@@ -69,8 +79,8 @@ public class Resource {
                 // TODO: do something more
             }
             else {
-                Long waitingTime = System.nanoTime() - startTime;
-                this.addResourceEventDuration(name, event, Double.valueOf(waitingTime));
+                Long duration = System.nanoTime() - startTime;
+                this.addResourceEventDuration(name, event, Double.valueOf(duration));
             }
         }
         else {
@@ -87,17 +97,28 @@ public class Resource {
         // if want to track the lock waiting time of other types of locks, using startResourceWait(String name)
         if (stackTraceElements.length >= 5) {
             if (this.isMonitorTarget(stackTraceElements[4])) {
-                
+                this.startResourceEvent(name, "wait");
             }
         }
     }
 
     public void onLockGet(String name) {
-
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+        if (stackTraceElements.length >= 5) {
+            if (this.isMonitorTarget(stackTraceElements[4])) {
+                this.endResourceEvent(name, "wait");
+                this.startResourceEvent(name, "occupy");
+            }
+        }
     }
 
     public void onLockRelease(String name) {
-
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+        if (stackTraceElements.length >= 5) {
+            if (this.isMonitorTarget(stackTraceElements[4])) {
+                this.endResourceEvent(name, "occupy");
+            }
+        }
     }
 
     private Boolean isMonitorTarget(StackTraceElement stackTraceElement) {
