@@ -186,8 +186,7 @@ public class AutoCancelCore {
         }
 
         private void delete(OperationRequest request) {
-            assert request.getTarget() != new CancellableID() : "Create operation must have cancellable id set";
-            assert cancellables.containsKey(request.getTarget()) : "Must cancel a existing cancellable.";
+            assert request.getTarget() != new CancellableID() : "Delete operation must have cancellable id set";
             
             if (cancellables.containsKey(request.getTarget())) {
                 removeCancellable(cancellables.get(request.getTarget()));
