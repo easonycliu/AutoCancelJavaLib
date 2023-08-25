@@ -24,6 +24,10 @@ public class ResourcePool {
         }
     }
 
+    public Boolean isResourceExist(ResourceName resourceName) {
+        return this.resources.containsKey(resourceName);
+    }
+
     public Double getContentionLevel(ResourceName resourceName) {
         Double contentionLevel = 0.0;
         if (this.resources.containsKey(resourceName)) {

@@ -5,12 +5,17 @@ import autocancel.utils.id.CancellableID;
 import autocancel.utils.logger.Logger;
 import autocancel.core.monitor.MainMonitor;
 import autocancel.core.utils.OperationRequest;
+import autocancel.core.utils.ResourcePool;
 import autocancel.core.utils.ResourceUsage;
 import autocancel.core.utils.Cancellable;
 import autocancel.core.utils.CancellableGroup;
 import autocancel.core.utils.OperationMethod;
 import autocancel.utils.Settings;
 import autocancel.utils.Resource.ResourceName;
+import autocancel.utils.Resource.ResourceType;
+import autocancel.utils.Resource.CPUResource;
+import autocancel.utils.Resource.MemoryResource;
+import autocancel.utils.Resource.LockResource;
 
 import java.util.Map;
 import java.util.function.Consumer;
@@ -32,6 +37,8 @@ public class AutoCancelCore {
 
     private Map<CancellableID, Cancellable> cancellables;
 
+    private ResourcePool resourcePool;
+
     private RequestParser requestParser;
 
     private Logger logger;
@@ -43,6 +50,10 @@ public class AutoCancelCore {
         this.mainMonitor = new MainMonitor(this.mainManager, this.cancellables, this.rootCancellableToCancellableGroup);
         this.requestParser = new RequestParser();
         this.logger = new Logger("corerequest");
+        this.resourcePool = new ResourcePool();
+
+        this.resourcePool.addResource(new CPUResource());
+        this.resourcePool.addResource(new MemoryResource());
     }
 
     public void start() {
@@ -231,7 +242,7 @@ public class AutoCancelCore {
                 "monitor_resource", request -> this.monitorResource(request),
                 "cancellable_name", request -> this.cancellableName(request),
                 "add_group_resource", request -> this.addGroupResource(request),
-                "update_resource_update_info", request -> this.updateResourceUpdateInfo(request));
+                "resource_update_info", request -> this.resourceUpdateInfo(request));
 
         public ParamHandlers() {
 
@@ -292,8 +303,35 @@ public class AutoCancelCore {
                     value);
         }
 
-        private void updateResourceUpdateInfo(OperationRequest request) {
-
+        private void resourceUpdateInfo(OperationRequest request) {
+            ResourceName resourceName = request.getResourceName();
+            ResourceType resourceType = request.getResourceType();
+            if (!resourceName.equals(ResourceName.NULL) && !resourceType.equals(ResourceType.NULL)) {
+                if (resourcePool.isResourceExist(request.getResourceName())) {
+                    resourcePool.setResourceUpdateInfo(resourceName, (Map<String, Object>) request.getParams().get("resource_update_info"));
+                }
+                else {
+                    switch (resourceType) {
+                        case CPU:
+                            resourcePool.addResource(new CPUResource(resourceName));
+                            break;
+                        case MEMORY:
+                            resourcePool.addResource(new MemoryResource(resourceName));
+                            break;
+                        case LOCK:
+                            resourcePool.addResource(new LockResource(resourceName));
+                            break;
+                        case NULL:
+                            assert false : "Should never be here";
+                            return;
+                    }
+                    
+                    resourcePool.setResourceUpdateInfo(resourceName, (Map<String, Object>) request.getParams().get("resource_update_info"));
+                }
+            }
+            else {
+                Logger.systemWarn("Update resource info should have resource type and name set");
+            }
         }
 
     }
