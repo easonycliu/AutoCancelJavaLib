@@ -47,11 +47,11 @@ public class MainMonitor {
             assert this.rootCancellableToCancellableGroup.containsKey(cancellable.getRootID())
                     : String.format("Ungrouped cancellable %d", cancellable.getID());
             // TODO: Problematic point: nullptr
-            for (ResourceName resourceType : this.rootCancellableToCancellableGroup.get(cancellable.getRootID())
+            for (ResourceName resourceName : this.rootCancellableToCancellableGroup.get(cancellable.getRootID())
                     .getResourceNames()) {
-                if (this.monitors.containsKey(resourceType)) {
+                if (this.monitors.containsKey(resourceName)) {
                     this.monitorUpdateToCoreBuffer
-                            .add(this.monitors.get(resourceType).updateResource(cancellable.getID()));
+                            .add(this.monitors.get(resourceName).updateResource(cancellable.getID()));
                 } else {
                     // Unsupported type in monitor
                     // But may be updated by app

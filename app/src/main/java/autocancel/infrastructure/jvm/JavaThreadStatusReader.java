@@ -16,14 +16,14 @@ import java.util.Map;
 
 public class JavaThreadStatusReader extends AbstractInfrastructure {
 
-    private List<ResourceName> resourceTypes;
+    private List<ResourceName> resourceNames;
 
     private Map<ResourceName, ResourceReader> resourceReaders;
 
     public JavaThreadStatusReader() {
         super();
 
-        this.resourceTypes = this.getRequiredResourceNames();
+        this.resourceNames = this.getRequiredResourceNames();
 
         this.resourceReaders = this.initializeResourceReaders();
     }
@@ -50,7 +50,7 @@ public class JavaThreadStatusReader extends AbstractInfrastructure {
     @Override
     protected void updateResource(ID id, Integer version) {
         ResourceBatch resourceBatch = new ResourceBatch(version);
-        for (ResourceName type : this.resourceTypes) {
+        for (ResourceName type : this.resourceNames) {
             Double value = this.resourceReaders.get(type).readResource(id, version);
             resourceBatch.setResourceValue(type, value);
         }

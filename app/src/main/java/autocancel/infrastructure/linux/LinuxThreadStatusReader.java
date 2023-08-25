@@ -26,7 +26,7 @@ public class LinuxThreadStatusReader extends AbstractInfrastructure {
 
     private Map<JavaThreadID, LinuxThreadID> javaThreadIDToLinuxThreadID;
 
-    private List<ResourceName> resourceTypes;
+    private List<ResourceName> resourceNames;
 
     private Map<ResourceName, ResourceReader> resourceReaders;
 
@@ -35,7 +35,7 @@ public class LinuxThreadStatusReader extends AbstractInfrastructure {
 
         this.javaThreadIDToLinuxThreadID = new HashMap<JavaThreadID, LinuxThreadID>();
 
-        this.resourceTypes = this.getRequiredResourceNames();
+        this.resourceNames = this.getRequiredResourceNames();
 
         this.resourceReaders = this.initializeResourceReaders();
 
@@ -79,7 +79,7 @@ public class LinuxThreadStatusReader extends AbstractInfrastructure {
 
         if (linuxThreadID.isValid()) {
             ResourceBatch resourceBatch = new ResourceBatch(version);
-            for (ResourceName type : this.resourceTypes) {
+            for (ResourceName type : this.resourceNames) {
                 Double value = this.resourceReaders.get(type).readResource(linuxThreadID, version);
                 resourceBatch.setResourceValue(type, value);
             }

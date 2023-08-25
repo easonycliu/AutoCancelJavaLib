@@ -85,8 +85,8 @@ public class AutoCancelCore {
                 continue;
             }
 
-            Set<ResourceName> resourceTypes = entries.getValue().getResourceNames();
-            for (ResourceName type : resourceTypes) {
+            Set<ResourceName> resourceNames = entries.getValue().getResourceNames();
+            for (ResourceName type : resourceNames) {
                 this.logger.log(String.format("Cancellable group with root %s used %s resource %s",
                         entries.getKey().toString(), type.toString(), entries.getValue().getResourceUsage(type)));
                 OperationRequest request = new OperationRequest(OperationMethod.UPDATE, entries.getKey(), type);
@@ -278,10 +278,10 @@ public class AutoCancelCore {
                 // Parameter monitor_resource is useful only if this cancellable is a root
                 // cancellable
                 // TODO: Add a warning if this is not a root cancellable
-                List<?> resourceTypes = (List<?>) request.getParams().get("monitor_resource");
+                List<?> resourceNames = (List<?>) request.getParams().get("monitor_resource");
                 CancellableGroup cancellableGroup = rootCancellableToCancellableGroup.get(cancellable.getID());
-                for (Object resourceType : resourceTypes) {
-                    cancellableGroup.setResourceUsage((ResourceName) resourceType, 0.0);
+                for (Object resourceName : resourceNames) {
+                    cancellableGroup.setResourceUsage((ResourceName) resourceName, 0.0);
                 }
             }
         }

@@ -37,7 +37,7 @@ public class OperationRequest {
     }
 
     public ResourceName getResourceName() {
-        return this.resourceType;
+        return this.resourceName;
     }
 
     public Map<String, Object> getParams() {
