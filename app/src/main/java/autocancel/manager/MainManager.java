@@ -82,13 +82,12 @@ public class MainManager {
         CancellableID cid = this.cidGenerator.generate();
         this.idManager.setCancellableIDAndJavaThreadID(cid, jid, IDInfo.Status.RUN);
 
-        OperationRequest request = new OperationRequest(OperationMethod.CREATE, Map.of("cancellable_id", cid));
+        OperationRequest request = new OperationRequest(OperationMethod.CREATE, Map.of("cancellable_id", cid, "parent_cancellable_id", parentID));
         request.addRequestParam("is_cancellable", isCancellable);
         // TODO: According to settings
         request.addRequestParam("monitor_resource",
                 new ArrayList<ResourceName>(Arrays.asList(ResourceName.CPU, ResourceName.MEMORY)));
         request.addRequestParam("cancellable_name", name);
-        request.addRequestParam("parent_cancellable_id", parentID);
         this.putManagerRequestToCore(request);
 
         return cid;
@@ -186,7 +185,7 @@ public class MainManager {
         return resource;
     }
 
-    public void updateAppResource(String name, Double value) {
+    public void updateCancellableGroup(String name, Double value) {
         JavaThreadID jid = new JavaThreadID(Thread.currentThread().getId());
         CancellableID cid = this.idManager.getCancellableIDOfJavaThreadID(jid);
         if (cid.isValid()) {

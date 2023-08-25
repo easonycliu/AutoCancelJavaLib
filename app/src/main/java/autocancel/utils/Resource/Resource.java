@@ -1,12 +1,18 @@
 package autocancel.utils.Resource;
 
+import java.util.Arrays;
 import java.util.Map;
+import java.util.List;
 
 public abstract class Resource {
 
     private final ResourceType resourceType;
 
     private final ResourceName resourceName;
+
+    protected static final List<String> acceptedInfoKeywords = Arrays.asList(
+        "wait_time"
+    );
 
     public Resource(ResourceType resourceType, ResourceName resourceName) {
         this.resourceType = resourceType;
@@ -24,4 +30,6 @@ public abstract class Resource {
     }
 
     public abstract void setContentionInfo(Map<String, Object> contentionInfo);
+
+    public abstract void reset();
 }

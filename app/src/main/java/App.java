@@ -15,6 +15,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
 import java.util.regex.Matcher;
 
 import autocancel.app.elasticsearch.AutoCancel;
@@ -22,15 +24,6 @@ import autocancel.utils.Syscall;
 
 public class App {
 
-    private static class Test {
-        public void run() {
-            StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
-            for (StackTraceElement stackTraceElement : stackTraceElements) {
-                System.out.println(stackTraceElement.toString());
-            }
-            // System.out.println(stackTraceElements[2].toString());
-        }
-    }
     public String getGreeting() {
         return "Hello world.";
     }
@@ -38,8 +31,8 @@ public class App {
     public static void main(String[] args) {
         AutoCancel.start();
 
-        List<Test> test = Arrays.asList(new Test());
-        test.get(0).run();
+        OperatingSystemMXBean osmxb = ManagementFactory.getOperatingSystemMXBean();
+        System.out.println(osmxb.getSystemLoadAverage());
 
         System.out.println(Syscall.gettid());
 

@@ -1,6 +1,7 @@
 package autocancel.utils.Resource;
 
 import java.util.Map;
+import java.lang.management.ManagementFactory;
 
 public class CPUResource extends Resource {
 
@@ -14,11 +15,16 @@ public class CPUResource extends Resource {
 
     @Override
     public Double getContentionLevel() {
-        return 0.0;
+        return ManagementFactory.getOperatingSystemMXBean().getSystemLoadAverage();
     }
 
     @Override
     public void setContentionInfo(Map<String, Object> contentionInfo) {
+        
+    }
 
+    @Override
+    public void reset() {
+        
     }
 }

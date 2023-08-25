@@ -4,9 +4,9 @@ import java.util.Map;
 
 public class LockResource extends Resource {
 
-    private Integer waitingTasks;
+    private Integer triedTasks;
 
-    private Long totalWaitingTime;
+    private Long totalWaitTime;
 
     public LockResource(ResourceName resourceName) {
         super(ResourceType.LOCK, resourceName);
@@ -19,6 +19,16 @@ public class LockResource extends Resource {
 
     @Override
     public void setContentionInfo(Map<String, Object> contentionInfo) {
+        Long waitTime = (Long) contentionInfo.get("wait_time");
+        if (waitTime != null) {
+            this.triedTasks += 1;
+            this.totalWaitTime += waitTime;
+        }
+    }
 
+    @Override
+    public void reset() {
+        this.triedTasks = 0;
+        this.totalWaitTime = 0L;
     }
 }

@@ -3,18 +3,28 @@ package autocancel.core.utils;
 import autocancel.core.utils.OperationMethod;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.Resource.ResourceName;
+import autocancel.utils.Resource.ResourceType;
 
 import java.util.Map;
+import java.util.List;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 
 // TODO: Find a better representaion
 public class OperationRequest {
 
-    OperationMethod operation;
+    private OperationMethod operation;
 
-    Map<String, Object> params;
+    private Map<String, Object> params;
 
-    Long nanoTime;
+    private final Long nanoTime;
+
+    private static final List<String> acceptedBasicInfoKeywords = Arrays.asList(
+        "cancellable_id",
+        "parent_cancellable_id",
+        "resource_name",
+        "resource_type"
+    );
 
     public OperationRequest(OperationMethod operation, Map<String, Object> basicInfo) {
         this.operation = operation;
@@ -33,25 +43,42 @@ public class OperationRequest {
     }
 
     public CancellableID getCancellableID() {
-        CancellableID cid;
-        if (((Map<?, ?>) this.params.get("basic_info")).containsKey("cancellable_id")) {
-            cid = (CancellableID) ((Map<?, ?>) this.params.get("basic_info")).get("cancellable_id");
-        }
-        else {
+        CancellableID cid = (CancellableID) this.getBasicInfoParam("cancellable_id");
+        if (cid == null) {
             cid = new CancellableID();
         }
         return cid;
     }
 
+    public CancellableID getParentCancellableID() {
+        // This has to be null if the is key is unset because invalid value indicates the cancellable has no parent
+        CancellableID parentCID = (CancellableID) this.getBasicInfoParam("parent_cancellable_id");
+        return parentCID;
+    }
+
     public ResourceName getResourceName() {
-        ResourceName resourceName;
-        if (((Map<?, ?>) this.params.get("basic_info")).containsKey("resource_name")) {
-            resourceName = (ResourceName) ((Map<?, ?>) this.params.get("basic_info")).get("resource_name");
-        }
-        else {
+        ResourceName resourceName = (ResourceName) this.getBasicInfoParam("resource_name");
+        if (resourceName == null) {
             resourceName = ResourceName.NULL;
         }
         return resourceName;
+    }
+
+    public ResourceType getResourceType() {
+        ResourceType resourceType = (ResourceType) this.getBasicInfoParam("resource_type");
+        if (resourceType == null) {
+            resourceType = ResourceType.NULL;
+        }
+        return resourceType;
+    }
+
+    private Object getBasicInfoParam(String key) {
+        assert OperationRequest.acceptedBasicInfoKeywords.contains(key) : key + " is not accepted";
+        Object basicInfoValue = null;
+        if (((Map<?, ?>) this.params.get("basic_info")).containsKey(key)) {
+            basicInfoValue = ((Map<?, ?>) this.params.get("basic_info")).get(key);
+        }
+        return basicInfoValue;
     }
 
     public Map<String, Object> getParams() {

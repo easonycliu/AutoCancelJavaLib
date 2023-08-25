@@ -32,7 +32,7 @@ public class Resource {
     }
     
     public void addResourceUsage(String name, Double value) {
-        this.mainManager.updateAppResource(name, value);
+        this.mainManager.updateCancellableGroup(name, value);
     }
 
     private void addResourceEventDuration(String name, String event, Double value) {

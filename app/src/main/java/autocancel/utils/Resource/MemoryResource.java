@@ -1,5 +1,8 @@
 package autocancel.utils.Resource;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryUsage;
 import java.util.Map;
 
 public class MemoryResource extends Resource {
@@ -14,11 +17,18 @@ public class MemoryResource extends Resource {
 
     @Override
     public Double getContentionLevel() {
-        return 0.0;
+        MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+        MemoryUsage heapMemoryUsage = memoryMXBean.getHeapMemoryUsage();
+        return Double.valueOf(heapMemoryUsage.getUsed()) / heapMemoryUsage.getMax();
     }
 
     @Override
     public void setContentionInfo(Map<String, Object> contentionInfo) {
 
+    }
+
+    @Override
+    public void reset() {
+        
     }
 }
