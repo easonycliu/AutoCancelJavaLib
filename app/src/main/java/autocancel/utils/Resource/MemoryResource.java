@@ -23,12 +23,12 @@ public class MemoryResource extends Resource {
     }
 
     @Override
-    public void setContentionInfo(Map<String, Object> contentionInfo) {
+    public void setResourceUpdateInfo(Map<String, Object> resourceUpdateInfo) {
 
     }
 
     @Override
     public void reset() {
-        
+
     }
 }

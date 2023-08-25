@@ -34,9 +34,9 @@ public class ResourcePool {
         return contentionLevel;
     }
 
-    public void setContentionInfo(ResourceName resourceName, Map<String, Object> contentionInfo) {
+    public void setResourceUpdateInfo(ResourceName resourceName, Map<String, Object> resourceUpdateInfo) {
         if (this.resources.containsKey(resourceName)) {
-            this.resources.get(resourceName).setContentionInfo(contentionInfo);
+            this.resources.get(resourceName).setResourceUpdateInfo(resourceUpdateInfo);
         } else {
             Logger.systemWarn("Cannot find resource " + resourceName.toString());
         }

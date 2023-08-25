@@ -15,6 +15,7 @@ import autocancel.core.utils.OperationMethod;
 import autocancel.core.utils.OperationRequest;
 import autocancel.utils.ReleasableLock;
 import autocancel.utils.Resource.ResourceName;
+import autocancel.utils.Resource.ResourceType;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.id.CancellableIDGenerator;
 import autocancel.utils.id.JavaThreadID;
@@ -82,7 +83,8 @@ public class MainManager {
         CancellableID cid = this.cidGenerator.generate();
         this.idManager.setCancellableIDAndJavaThreadID(cid, jid, IDInfo.Status.RUN);
 
-        OperationRequest request = new OperationRequest(OperationMethod.CREATE, Map.of("cancellable_id", cid, "parent_cancellable_id", parentID));
+        OperationRequest request = new OperationRequest(OperationMethod.CREATE,
+                Map.of("cancellable_id", cid, "parent_cancellable_id", parentID));
         request.addRequestParam("is_cancellable", isCancellable);
         // TODO: According to settings
         request.addRequestParam("monitor_resource",
@@ -189,13 +191,21 @@ public class MainManager {
         JavaThreadID jid = new JavaThreadID(Thread.currentThread().getId());
         CancellableID cid = this.idManager.getCancellableIDOfJavaThreadID(jid);
         if (cid.isValid()) {
-            OperationRequest request = new OperationRequest(OperationMethod.UPDATE, Map.of("cancellable_id", cid, "resource_name", ResourceName.valueOf(name)));
+            OperationRequest request = new OperationRequest(OperationMethod.UPDATE,
+                    Map.of("cancellable_id", cid, "resource_name", ResourceName.valueOf(name)));
             request.addRequestParam("add_group_resource", value);
             this.putManagerRequestToCore(request);
         } else {
             System.out.println("Cannot find cancellable id from current " + jid.toString());
             // TODO: do something more
         }
+    }
+
+    public void updateResource(ResourceType type, String name, Map<String, Object> resourceUpdateInfo) {
+        OperationRequest request = new OperationRequest(OperationMethod.UPDATE,
+                Map.of("resource_type", type, "resource_name", ResourceName.valueOf(name)));
+        request.addRequestParam("update_resource_update_info", resourceUpdateInfo);
+        this.putManagerRequestToCore(request);
     }
 
 }

@@ -18,8 +18,8 @@ public class LockResource extends Resource {
     }
 
     @Override
-    public void setContentionInfo(Map<String, Object> contentionInfo) {
-        Long waitTime = (Long) contentionInfo.get("wait_time");
+    public void setResourceUpdateInfo(Map<String, Object> resourceUpdateInfo) {
+        Long waitTime = (Long) resourceUpdateInfo.get("wait_time");
         if (waitTime != null) {
             this.triedTasks += 1;
             this.totalWaitTime += waitTime;

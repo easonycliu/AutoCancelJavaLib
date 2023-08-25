@@ -11,8 +11,7 @@ public abstract class Resource {
     private final ResourceName resourceName;
 
     protected static final List<String> acceptedInfoKeywords = Arrays.asList(
-        "wait_time"
-    );
+            "wait_time");
 
     public Resource(ResourceType resourceType, ResourceName resourceName) {
         this.resourceType = resourceType;
@@ -25,11 +24,11 @@ public abstract class Resource {
         return this.resourceName;
     }
 
-    public ResourceType getResourceTYpe() {
+    public ResourceType getResourceType() {
         return this.resourceType;
     }
 
-    public abstract void setContentionInfo(Map<String, Object> contentionInfo);
+    public abstract void setResourceUpdateInfo(Map<String, Object> resourceUpdateInfo);
 
     public abstract void reset();
 }

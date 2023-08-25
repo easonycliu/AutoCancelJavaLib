@@ -230,7 +230,8 @@ public class AutoCancelCore {
                 "set_group_resource", request -> this.setGroupResource(request),
                 "monitor_resource", request -> this.monitorResource(request),
                 "cancellable_name", request -> this.cancellableName(request),
-                "add_group_resource", request -> this.addGroupResource(request));
+                "add_group_resource", request -> this.addGroupResource(request),
+                "update_resource_update_info", request -> this.updateResourceUpdateInfo(request));
 
         public ParamHandlers() {
 
@@ -289,6 +290,10 @@ public class AutoCancelCore {
             Double value = (Double) request.getParams().get("add_group_resource");
             rootCancellableToCancellableGroup.get(cancellable.getRootID()).addResourceUsage(request.getResourceName(),
                     value);
+        }
+
+        private void updateResourceUpdateInfo(OperationRequest request) {
+
         }
 
     }
