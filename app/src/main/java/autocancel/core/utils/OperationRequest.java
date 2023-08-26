@@ -87,7 +87,7 @@ public class OperationRequest {
 
     @Override
     public String toString() {
-        String strRequest = String.format("Time: %d, %s %s %s. ", this.nanoTime, this.operation.toString());
+        String strRequest = String.format("Time: %d, %s. ", this.nanoTime, this.operation.toString());
         for (Map.Entry<String, Object> entry : this.params.entrySet()) {
             strRequest = strRequest + String.format("%s: %s; ", entry.getKey(), entry.getValue().toString());
         }

@@ -219,7 +219,7 @@ public class AutoCancelCore {
         }
 
         private CancellableID getRootID(OperationRequest request) {
-            CancellableID parentID = request.getCancellableID();
+            CancellableID parentID = request.getParentCancellableID();
             assert parentID != null : "Must set parent_cancellable_id when create cancellable.";
             CancellableID rootID = null;
             if (!parentID.isValid()) {
@@ -237,6 +237,7 @@ public class AutoCancelCore {
 
         // These parameters' parsing order doesn't matter
         private final Map<String, Consumer<OperationRequest>> paramHandlers = Map.of(
+                "basic_info", (request) -> {},
                 "is_cancellable", request -> this.isCancellable(request),
                 "set_group_resource", request -> this.setGroupResource(request),
                 "monitor_resource", request -> this.monitorResource(request),
@@ -303,6 +304,7 @@ public class AutoCancelCore {
                     value);
         }
 
+        @SuppressWarnings("unchecked")
         private void resourceUpdateInfo(OperationRequest request) {
             ResourceName resourceName = request.getResourceName();
             ResourceType resourceType = request.getResourceType();
