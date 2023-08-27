@@ -10,6 +10,8 @@ public class LockResource extends Resource {
 
     public LockResource(ResourceName resourceName) {
         super(ResourceType.LOCK, resourceName);
+        this.triedTasks = 0;
+        this.totalWaitTime = 0L;
     }
 
     @Override

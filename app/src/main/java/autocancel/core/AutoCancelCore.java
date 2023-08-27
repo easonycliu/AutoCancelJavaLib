@@ -299,9 +299,13 @@ public class AutoCancelCore {
 
         private void addGroupResource(OperationRequest request) {
             Cancellable cancellable = cancellables.get(request.getCancellableID());
-            Double value = (Double) request.getParams().get("add_group_resource");
-            rootCancellableToCancellableGroup.get(cancellable.getRootID()).addResourceUsage(request.getResourceName(),
-                    value);
+            if (cancellable != null) {
+                Double value = (Double) request.getParams().get("add_group_resource");
+                rootCancellableToCancellableGroup.get(cancellable.getRootID()).addResourceUsage(request.getResourceName(), value);
+            }
+            else {
+                System.out.println("Can't find cancellable for cid " + request.getCancellableID());
+            }
         }
 
         @SuppressWarnings("unchecked")

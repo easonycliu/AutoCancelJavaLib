@@ -90,6 +90,9 @@ public class IDManager {
                 else {
                     cancellableID = new CancellableID();
                 }
+                if (cancellableIDList.get(0).isExit()) {
+                    System.out.println("Concurrency Error.");
+                }
             }
             else {
                 cancellableID = new CancellableID();

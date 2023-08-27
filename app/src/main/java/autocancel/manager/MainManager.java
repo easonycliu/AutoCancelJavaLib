@@ -141,7 +141,7 @@ public class MainManager {
         // assert cidEqual : "Input cancellable id is not running on the current java
         // thread id";
 
-        this.idManager.setCancellableIDAndJavaThreadID(cidReadFromManager, jid, IDInfo.Status.EXIT);
+        this.idManager.setCancellableIDAndJavaThreadID(cid, jid, IDInfo.Status.EXIT);
 
         OperationRequest request = new OperationRequest(OperationMethod.DELETE, Map.of("cancellable_id", cid));
         this.putManagerRequestToCore(request);

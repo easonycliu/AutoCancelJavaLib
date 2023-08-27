@@ -116,9 +116,9 @@ public class AutoCancel {
         }
     }
 
-    public static void endResourceWait(String name) {
+    public static void endResourceWait(String name, Long timestamp) {
         if (AutoCancel.started) {
-            AutoCancel.resourceTracker.startResourceEvent(name, "wait");
+            AutoCancel.resourceTracker.endResourceEvent(name, "wait", timestamp);
         }
         else if (warnNotStarted) {
             Logger.systemWarn("You should start lib AutoCancel first.");
@@ -126,29 +126,33 @@ public class AutoCancel {
         }
     }
 
-    public static void onLockWait(String name) {
+    public static Long onLockWait(String name) {
+        Long timestamp = -1L;
         if (AutoCancel.started) {
-            AutoCancel.resourceTracker.onLockWait(name);
+            timestamp = AutoCancel.resourceTracker.onLockWait(name);
         }
         else if (warnNotStarted) {
             Logger.systemWarn("You should start lib AutoCancel first.");
             AutoCancel.warnNotStarted = false;
         }
+        return timestamp;
     }
 
-    public static void onLockGet(String name) {
+    public static Long onLockGet(String name, Long timestamp) {
+        Long nextTimestamp = -1L;
         if (AutoCancel.started) {
-            AutoCancel.resourceTracker.onLockGet(name);
+            nextTimestamp = AutoCancel.resourceTracker.onLockGet(name, timestamp);
         }
         else if (warnNotStarted) {
             Logger.systemWarn("You should start lib AutoCancel first.");
             AutoCancel.warnNotStarted = false;
         }
+        return nextTimestamp;
     }
 
-    public static void onLockRelease(String name) {
+    public static void onLockRelease(String name, Long timestamp) {
         if (AutoCancel.started) {
-            AutoCancel.resourceTracker.onLockRelease(name);
+            AutoCancel.resourceTracker.onLockRelease(name, timestamp);
         }
         else if (warnNotStarted) {
             Logger.systemWarn("You should start lib AutoCancel first.");
