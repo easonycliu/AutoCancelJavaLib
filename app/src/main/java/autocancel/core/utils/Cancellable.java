@@ -78,6 +78,6 @@ public class Cancellable {
 
     @Override
     public String toString() {
-        return this.id.toString() + " Parent " + this.parentID.toString() + " Root " + this.rootID.toString();
+        return this.id.toString() + " Parent " + this.parentID.toString() + " Root " + this.rootID.toString() + " name " + this.name;
     }
 }
