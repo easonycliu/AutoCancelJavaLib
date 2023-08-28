@@ -73,7 +73,7 @@ public class AutoCancelCore {
 
                 this.logger.log(String.format("Current time: %d", timestampMilli));
                 this.performanceMetrix.reset(timestampMilli);
-                
+
                 Integer requestBufferSize = this.mainManager.getManagerRequestToCoreBufferSize();
                 for (Integer ignore = 0; ignore < requestBufferSize; ++ignore) {
                     OperationRequest request = this.mainManager.getManagerRequestToCore();
@@ -147,6 +147,7 @@ public class AutoCancelCore {
             // this.cancellables.remove(childCancellable.getID());
             // }
             this.rootCancellableToCancellableGroup.get(cancellable.getID()).exit();
+            this.performanceMetrix.increaseFinishedTask();
         } else {
             // Nothing to do: In the group, we don't care about whether a cancellable is
             // existing

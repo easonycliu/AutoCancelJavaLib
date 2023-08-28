@@ -23,11 +23,11 @@ public class Performance {
 
     @Override 
     public String toString() {
-        Long currentTime = System.nanoTime();
+        Long currentTime = System.currentTimeMillis();
         return String.format("%d requests has finish since %d to %d the throughput is %f / second", 
         this.finishedTaskNumber, 
         this.timestampMilli, 
         currentTime,
-        100000000 * Double.valueOf(this.finishedTaskNumber) / (currentTime - this.timestampMilli));
+        1000 * Double.valueOf(this.finishedTaskNumber) / (currentTime - this.timestampMilli));
     }
 }
