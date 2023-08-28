@@ -147,7 +147,9 @@ public class AutoCancelCore {
             // this.cancellables.remove(childCancellable.getID());
             // }
             this.rootCancellableToCancellableGroup.get(cancellable.getID()).exit();
-            this.performanceMetrix.increaseFinishedTask();
+            if (((Set<?>) Settings.getSetting("monitor_actions")).contains(cancellable.getAction())) {
+                this.performanceMetrix.increaseFinishedTask();
+            }
         } else {
             // Nothing to do: In the group, we don't care about whether a cancellable is
             // existing
@@ -165,7 +167,7 @@ public class AutoCancelCore {
         }
 
         public void parse(OperationRequest request) {
-            logger.log(request.toString());
+            // logger.log(request.toString());
             switch (request.getOperation()) {
                 case CREATE:
                     create(request);
@@ -255,6 +257,7 @@ public class AutoCancelCore {
                 "set_group_resource", request -> this.setGroupResource(request),
                 "monitor_resource", request -> this.monitorResource(request),
                 "cancellable_name", request -> this.cancellableName(request),
+                "cancellable_action", request -> this.cancellableAction(request),
                 "add_group_resource", request -> this.addGroupResource(request),
                 "resource_update_info", request -> this.resourceUpdateInfo(request));
 
@@ -308,6 +311,12 @@ public class AutoCancelCore {
             Cancellable cancellable = cancellables.get(request.getCancellableID());
             String name = (String) request.getParams().get("cancellable_name");
             cancellable.setName(name);
+        }
+
+        private void cancellableAction(OperationRequest request) {
+            Cancellable cancellable = cancellables.get(request.getCancellableID());
+            String action = (String) request.getParams().get("cancellable_action");
+            cancellable.setAction(action);
         }
 
         private void addGroupResource(OperationRequest request) {

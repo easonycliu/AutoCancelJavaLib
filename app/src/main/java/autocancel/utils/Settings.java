@@ -20,6 +20,9 @@ public class Settings {
         ),
         "monitor_locks", Arrays.asList(
             Map.of("class_name", "Cache...") // use ... to include all classes inside specified task
+        ),
+        "monitor_actions", Set.of(
+            "indices:data/read/search"
         )
     );
 
