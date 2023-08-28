@@ -4,6 +4,7 @@ import autocancel.manager.MainManager;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.logger.Logger;
 import autocancel.core.monitor.MainMonitor;
+import autocancel.core.performance.Performance;
 import autocancel.core.utils.OperationRequest;
 import autocancel.core.utils.ResourcePool;
 import autocancel.core.utils.ResourceUsage;
@@ -39,6 +40,8 @@ public class AutoCancelCore {
 
     private ResourcePool resourcePool;
 
+    private Performance performanceMetrix;
+
     private RequestParser requestParser;
 
     private Logger logger;
@@ -50,6 +53,7 @@ public class AutoCancelCore {
         this.mainMonitor = new MainMonitor(this.mainManager, this.cancellables, this.rootCancellableToCancellableGroup);
         this.requestParser = new RequestParser();
         this.logger = new Logger("corerequest");
+        this.performanceMetrix = new Performance();
         this.resourcePool = new ResourcePool();
 
         this.resourcePool.addResource(new CPUResource());
@@ -63,7 +67,13 @@ public class AutoCancelCore {
 
                 this.resourcePool.refreshResources(this.logger);
 
-                this.logger.log(String.format("Current time: %d", System.currentTimeMillis()));
+                this.logger.log(this.performanceMetrix.toString());
+
+                Long timestampMilli = System.currentTimeMillis();
+
+                this.logger.log(String.format("Current time: %d", timestampMilli));
+                this.performanceMetrix.reset(timestampMilli);
+                
                 Integer requestBufferSize = this.mainManager.getManagerRequestToCoreBufferSize();
                 for (Integer ignore = 0; ignore < requestBufferSize; ++ignore) {
                     OperationRequest request = this.mainManager.getManagerRequestToCore();
