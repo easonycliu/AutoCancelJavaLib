@@ -61,6 +61,8 @@ public class AutoCancelCore {
             try {
                 this.refreshCancellableGroups();
 
+                this.resourcePool.refreshResources(this.logger);
+
                 this.logger.log(String.format("Current time: %d", System.currentTimeMillis()));
                 Integer requestBufferSize = this.mainManager.getManagerRequestToCoreBufferSize();
                 for (Integer ignore = 0; ignore < requestBufferSize; ++ignore) {

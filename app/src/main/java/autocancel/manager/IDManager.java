@@ -91,7 +91,9 @@ public class IDManager {
                     cancellableID = new CancellableID();
                 }
                 if (cancellableIDList.get(0).isExit()) {
-                    System.out.println("Concurrency Error.");
+                    // Exit should not be the first status of the cancellable
+                    // TODO: Find the root cause and fix it
+                    // System.out.println("Concurrency Error.");
                 }
             }
             else {

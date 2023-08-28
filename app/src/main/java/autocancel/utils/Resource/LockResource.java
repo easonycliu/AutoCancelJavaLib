@@ -33,4 +33,13 @@ public class LockResource extends Resource {
         this.triedTasks = 0;
         this.totalWaitTime = 0L;
     }
+
+    @Override
+    public String toString() {
+        return String.format("Resource Type: %s, Name: %s, Tried tasks: %d, Total wait time: %d", 
+        this.getResourceType().toString(),
+        this.getResourceName().toString(),
+        this.triedTasks,
+        this.totalWaitTime);
+    }
 }
