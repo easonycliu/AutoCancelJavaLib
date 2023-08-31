@@ -30,7 +30,7 @@ import java.util.HashSet;
 
 public class AutoCancelCore {
 
-    private MainManager mainManager;
+    private MainManager mainManager = null;
 
     private MainMonitor mainMonitor;
 
@@ -47,10 +47,22 @@ public class AutoCancelCore {
     private Logger logger;
 
     public AutoCancelCore(MainManager mainManager) {
-        this.mainManager = mainManager;
         this.cancellables = new HashMap<CancellableID, Cancellable>();
         this.rootCancellableToCancellableGroup = new HashMap<CancellableID, CancellableGroup>();
-        this.mainMonitor = new MainMonitor(this.mainManager, this.cancellables, this.rootCancellableToCancellableGroup);
+        this.requestParser = new RequestParser();
+        this.logger = new Logger("corerequest");
+        this.performanceMetrix = new Performance();
+        this.resourcePool = new ResourcePool();
+
+        this.resourcePool.addResource(new CPUResource());
+        this.resourcePool.addResource(new MemoryResource());
+
+        this.initialize(mainManager);
+    }
+
+    public AutoCancelCore() {
+        this.cancellables = new HashMap<CancellableID, Cancellable>();
+        this.rootCancellableToCancellableGroup = new HashMap<CancellableID, CancellableGroup>();
         this.requestParser = new RequestParser();
         this.logger = new Logger("corerequest");
         this.performanceMetrix = new Performance();
@@ -60,33 +72,21 @@ public class AutoCancelCore {
         this.resourcePool.addResource(new MemoryResource());
     }
 
+    public void initialize(MainManager mainManager) {
+        if (this.mainManager == null) {
+            this.mainManager = mainManager;
+            this.mainMonitor = new MainMonitor(this.mainManager, this.cancellables, this.rootCancellableToCancellableGroup);
+        }
+    }
+
+    public Boolean isInitialized() {
+        return this.mainManager != null;
+    }
+
     public void start() {
         while (!Thread.interrupted()) {
             try {
-                this.refreshCancellableGroups();
-
-                this.resourcePool.refreshResources(this.logger);
-
-                this.logger.log(this.performanceMetrix.toString());
-
-                Long timestampMilli = System.currentTimeMillis();
-
-                this.logger.log(String.format("Current time: %d", timestampMilli));
-                this.performanceMetrix.reset(timestampMilli);
-
-                Integer requestBufferSize = this.mainManager.getManagerRequestToCoreBufferSize();
-                for (Integer ignore = 0; ignore < requestBufferSize; ++ignore) {
-                    OperationRequest request = this.mainManager.getManagerRequestToCore();
-                    this.requestParser.parse(request);
-                }
-
-                this.mainMonitor.updateTasksResources();
-
-                Integer updateBufferSize = this.mainMonitor.getMonitorUpdateToCoreBufferSizeWithoutLock();
-                for (Integer ignore = 0; ignore < updateBufferSize; ++ignore) {
-                    OperationRequest request = this.mainMonitor.getMonitorUpdateToCoreWithoutLock();
-                    this.requestParser.parse(request);
-                }
+                this.startOneLoop();
 
                 Thread.sleep((Long) Settings.getSetting("core_update_cycle_ms"));
             } catch (InterruptedException e) {
@@ -94,6 +94,36 @@ public class AutoCancelCore {
             }
         }
         this.stop();
+    }
+
+    public void startOneLoop() {
+        if (this.isInitialized()) {
+
+            this.refreshCancellableGroups();
+
+            this.resourcePool.refreshResources(this.logger);
+
+            this.logger.log(this.performanceMetrix.toString());
+
+            Long timestampMilli = System.currentTimeMillis();
+
+            this.logger.log(String.format("Current time: %d", timestampMilli));
+            this.performanceMetrix.reset(timestampMilli);
+
+            Integer requestBufferSize = this.mainManager.getManagerRequestToCoreBufferSize();
+            for (Integer ignore = 0; ignore < requestBufferSize; ++ignore) {
+                OperationRequest request = this.mainManager.getManagerRequestToCore();
+                this.requestParser.parse(request);
+            }
+
+            this.mainMonitor.updateTasksResources();
+
+            Integer updateBufferSize = this.mainMonitor.getMonitorUpdateToCoreBufferSizeWithoutLock();
+            for (Integer ignore = 0; ignore < updateBufferSize; ++ignore) {
+                OperationRequest request = this.mainMonitor.getMonitorUpdateToCoreWithoutLock();
+                this.requestParser.parse(request);
+            }
+        }
     }
 
     private void stop() {
