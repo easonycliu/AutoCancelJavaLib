@@ -1,18 +1,22 @@
 package autocancel.core.policy;
 
+import java.util.Comparator;
+import java.util.Map;
+
 import autocancel.utils.Policy;
 import autocancel.utils.Settings;
 import autocancel.utils.id.CancellableID;
+import autocancel.utils.logger.Logger;
 
 public class BasePolicy extends Policy {
 
-    private static final Integer ABNORMAL_PERFORMANCE_THRESHOLD = 2;
+    private static final Integer ABNORMAL_PERFORMANCE_THRESHOLD = 1;
 
-    private static final Integer MAX_CONTINUOUS_ABNORMAL = 10;
+    private static final Long MAX_CONTINUOUS_ABNORMAL_MILLI = 5000L;
 
     private Boolean started = false;
 
-    private Integer continuousAbnormalTimes = 0;
+    private Long continuousAbnormalTimeMilli = 0L;
     
     public BasePolicy() {
         super();
@@ -21,19 +25,23 @@ public class BasePolicy extends Policy {
     @Override
     public Boolean needCancellation() {
         Boolean need = false;
-        if (!started) {
-            started = (this.infoCenter.getFinishedTaskNumber() != 0);
+        if (!this.started) {
+            this.started = (this.infoCenter.getFinishedTaskNumber() != 0);
+            if (this.started) {
+                Logger.systemInfo("Base policy activated.");
+                this.continuousAbnormalTimeMilli = System.currentTimeMillis();
+            }
         }
         else {
-            if (this.infoCenter.getFinishedTaskNumber() < BasePolicy.ABNORMAL_PERFORMANCE_THRESHOLD) {
-                this.continuousAbnormalTimes += 1;
-            }
-            else {
-                this.continuousAbnormalTimes = 0;
+            Long currentTimeMilli = System.currentTimeMillis();
+            if (this.infoCenter.getFinishedTaskNumber() > BasePolicy.ABNORMAL_PERFORMANCE_THRESHOLD) {
+                this.continuousAbnormalTimeMilli = currentTimeMilli;
             }
 
-            if (this.continuousAbnormalTimes > BasePolicy.MAX_CONTINUOUS_ABNORMAL) {
+            if (currentTimeMilli - this.continuousAbnormalTimeMilli > BasePolicy.MAX_CONTINUOUS_ABNORMAL_MILLI) {
                 need = true;
+                this.started = false;
+                this.continuousAbnormalTimeMilli = 0L;
             }
         }
         
@@ -42,6 +50,20 @@ public class BasePolicy extends Policy {
 
     @Override
     public CancellableID getCancelTarget() {
-        return new CancellableID();
+        Map<CancellableID, Double> cancellableCPUUSageMap = this.infoCenter.getCancellableCPUUsage();
+        Map.Entry<CancellableID, Double> maxUsageCancellable = cancellableCPUUSageMap
+                                                                .entrySet()
+                                                                .stream()
+                                                                .max(Map.Entry.comparingByValue()).orElse(null);
+        CancellableID target = null;
+        if (maxUsageCancellable != null) {
+            target = maxUsageCancellable.getKey();
+        }
+        else {
+            target = new CancellableID();
+        }
+
+        Logger.systemInfo("Detect abnormal performance behaviour, cancel " + target.toString());
+        return target;
     }
 }

@@ -64,13 +64,12 @@ public class MainManager {
 
     public void start(Policy policy) throws AssertionError {
         assert this.autoCancelCoreThread == null : "AutoCancel core thread has been started";
-        Policy actualPolicy = ((policy != null) ? policy : new BasePolicy());
         this.autoCancelCoreThread = new Thread() {
             @Override
             public void run() {
                 AutoCancelCore autoCancelCore = AutoCancelCoreHolder.getAutoCancelCore();
                 autoCancelCore.initialize(MainManager.this);
-                
+                Policy actualPolicy = ((policy != null) ? policy : new BasePolicy());
                 while (!Thread.interrupted()) {
                     try {
                         autoCancelCore.startOneLoop();

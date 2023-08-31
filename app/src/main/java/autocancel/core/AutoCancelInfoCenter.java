@@ -1,12 +1,15 @@
 package autocancel.core;
 
-import java.util.Map;
-
 import autocancel.core.performance.Performance;
 import autocancel.core.utils.Cancellable;
 import autocancel.core.utils.CancellableGroup;
 import autocancel.core.utils.ResourcePool;
+import autocancel.core.utils.ResourceUsage;
+import autocancel.utils.Resource.ResourceName;
 import autocancel.utils.id.CancellableID;
+
+import java.util.Map;
+import java.util.HashMap;
 
 public class AutoCancelInfoCenter {
     
@@ -30,5 +33,15 @@ public class AutoCancelInfoCenter {
 
     public Integer getFinishedTaskNumber() {
         return this.performanceMetrix.getFinishedTaskNumber();
+    }
+
+    public Map<CancellableID, Double> getCancellableCPUUsage() {
+        Map<CancellableID, Double> cancellableCPUUSageMap = new HashMap<CancellableID, Double>();
+        for (Map.Entry<CancellableID, CancellableGroup> entry : this.rootCancellableToCancellableGroup.entrySet()) {
+            if (entry.getValue().getIsCancellable()) {
+                cancellableCPUUSageMap.put(entry.getKey(), entry.getValue().getResourceUsage(ResourceName.CPU));
+            }
+        }
+        return cancellableCPUUSageMap;
     }
 }
