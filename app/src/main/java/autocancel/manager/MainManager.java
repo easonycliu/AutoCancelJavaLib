@@ -15,6 +15,8 @@ import autocancel.core.AutoCancelCoreHolder;
 import autocancel.core.AutoCancelInfoCenter;
 import autocancel.core.utils.OperationMethod;
 import autocancel.core.utils.OperationRequest;
+import autocancel.utils.Policy;
+import autocancel.core.policy.BasePolicy;
 import autocancel.utils.ReleasableLock;
 import autocancel.utils.Settings;
 import autocancel.utils.Resource.ResourceName;
@@ -60,8 +62,9 @@ public class MainManager {
         this.autoCancelCoreThread = null;
     }
 
-    public void start() throws AssertionError {
+    public void start(Policy policy) throws AssertionError {
         assert this.autoCancelCoreThread == null : "AutoCancel core thread has been started";
+        Policy actualPolicy = ((policy != null) ? policy : new BasePolicy());
         this.autoCancelCoreThread = new Thread() {
             @Override
             public void run() {
@@ -71,6 +74,11 @@ public class MainManager {
                 while (!Thread.interrupted()) {
                     try {
                         autoCancelCore.startOneLoop();
+
+                        if (actualPolicy.needCancellation()) {
+                            CancellableID targetCID = actualPolicy.getCancelTarget();
+                            AutoCancel.cancel(targetCID);
+                        }
 
                         Thread.sleep((Long) Settings.getSetting("core_update_cycle_ms"));
                     } catch (InterruptedException e) {

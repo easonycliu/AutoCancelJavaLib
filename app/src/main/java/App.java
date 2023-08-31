@@ -29,7 +29,7 @@ public class App {
     }
 
     public static void main(String[] args) {
-        AutoCancel.start();
+        AutoCancel.start(null);
 
         OperatingSystemMXBean osmxb = ManagementFactory.getOperatingSystemMXBean();
         System.out.println(osmxb.getSystemLoadAverage());

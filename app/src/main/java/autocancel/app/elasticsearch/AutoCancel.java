@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
+import java.util.function.Consumer;
 import java.util.List;
 import java.lang.Thread;
 
@@ -29,8 +29,11 @@ public class AutoCancel {
 
     private static Boolean warnNotStarted = true;
 
-    public static void start() {
-        AutoCancel.mainManager.start();
+    private static Control controller = null;
+
+    public static void start(Consumer<CancellableID> canceller) {
+        AutoCancel.mainManager.start(null);
+        AutoCancel.controller = new Control(AutoCancel.mainManager, canceller);
         started = true;
         Logger.systemWarn("AutoCancel started.");
     }
@@ -153,6 +156,16 @@ public class AutoCancel {
     public static void onLockRelease(String name, Long timestamp) {
         if (AutoCancel.started) {
             AutoCancel.resourceTracker.onLockRelease(name, timestamp);
+        }
+        else if (warnNotStarted) {
+            Logger.systemWarn("You should start lib AutoCancel first.");
+            AutoCancel.warnNotStarted = false;
+        }
+    }
+
+    public static void cancel(CancellableID cid) {
+        if (AutoCancel.started) {
+            AutoCancel.controller.cancel(cid);
         }
         else if (warnNotStarted) {
             Logger.systemWarn("You should start lib AutoCancel first.");

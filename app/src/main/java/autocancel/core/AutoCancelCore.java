@@ -59,6 +59,11 @@ public class AutoCancelCore {
         this.resourcePool.addResource(new CPUResource());
         this.resourcePool.addResource(new MemoryResource());
 
+        this.infoCenter = new AutoCancelInfoCenter(this.rootCancellableToCancellableGroup,
+                                                    this.cancellables,
+                                                    this.resourcePool,
+                                                    this.performanceMetrix);
+
         this.initialize(mainManager);
     }
 
@@ -72,16 +77,17 @@ public class AutoCancelCore {
 
         this.resourcePool.addResource(new CPUResource());
         this.resourcePool.addResource(new MemoryResource());
+
+        this.infoCenter = new AutoCancelInfoCenter(this.rootCancellableToCancellableGroup,
+                                                    this.cancellables,
+                                                    this.resourcePool,
+                                                    this.performanceMetrix);
     }
 
     public void initialize(MainManager mainManager) {
         if (this.mainManager == null) {
             this.mainManager = mainManager;
             this.mainMonitor = new MainMonitor(this.mainManager, this.cancellables, this.rootCancellableToCancellableGroup);
-            this.infoCenter = new AutoCancelInfoCenter(this.rootCancellableToCancellableGroup,
-                                                        this.cancellables,
-                                                        this.resourcePool,
-                                                        this.performanceMetrix);
         }
     }
 
