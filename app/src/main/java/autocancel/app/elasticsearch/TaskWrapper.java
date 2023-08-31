@@ -115,7 +115,7 @@ public class TaskWrapper {
             return TaskID.class.equals(o.getClass()) && this.hashCode() == o.hashCode();
         }
 
-        private Long unwrap() {
+        public Long unwrap() {
             return this.id;
         }
 

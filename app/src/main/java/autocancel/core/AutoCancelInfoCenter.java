@@ -27,4 +27,8 @@ public class AutoCancelInfoCenter {
         this.resourcePool = resourcePool;
         this.performanceMetrix = performanceMetrix;
     }
+
+    public Integer getFinishedTaskNumber() {
+        return this.performanceMetrix.getFinishedTaskNumber();
+    }
 }

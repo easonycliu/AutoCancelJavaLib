@@ -213,6 +213,10 @@ public class TaskTracker {
         this.mainManager.registerCancellableIDOnCurrentJavaThreadID(cid);
     }
 
+    public TaskWrapper.TaskID getTaskIDFromCancellableID(CancellableID cid) {
+        return this.cancellableIDTaskIDBiMap.get(cid);
+    }
+
     private void removeCancellableIDFromMaps(CancellableID cid) {
         this.cancellableIDToAsyncRunnables.remove(cid);
         this.cancellableIDTaskIDBiMap.remove(cid);

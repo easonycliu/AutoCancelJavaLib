@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 import java.util.List;
 import java.lang.Thread;
 
@@ -31,9 +31,9 @@ public class AutoCancel {
 
     private static Control controller = null;
 
-    public static void start(Consumer<CancellableID> canceller) {
+    public static void start(BiConsumer<Long, String> canceller) {
         AutoCancel.mainManager.start(null);
-        AutoCancel.controller = new Control(AutoCancel.mainManager, canceller);
+        AutoCancel.controller = new Control(AutoCancel.mainManager, cid -> AutoCancel.taskTracker.getTaskIDFromCancellableID(cid), canceller);
         started = true;
         Logger.systemWarn("AutoCancel started.");
     }

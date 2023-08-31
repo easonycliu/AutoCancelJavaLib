@@ -3,20 +3,27 @@ package autocancel.app.elasticsearch;
 import autocancel.manager.MainManager;
 import autocancel.utils.id.CancellableID;
 
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 public class Control {
 
     private final MainManager mainManager;
 
-    private final Consumer<CancellableID> canceller;
+    private final Function<CancellableID, TaskWrapper.TaskID> taskIDGetter;
 
-    public Control(MainManager mainManager, Consumer<CancellableID> canceller) {
+    private final BiConsumer<Long, String> canceller;
+
+    public Control(MainManager mainManager, Function<CancellableID, TaskWrapper.TaskID> taskIDGetter, BiConsumer<Long, String> canceller) {
         this.mainManager = mainManager;
+        this.taskIDGetter = taskIDGetter;
         this.canceller = canceller;
     }
 
     public void cancel(CancellableID cid) {
-        this.canceller.accept(cid);
+        TaskWrapper.TaskID taskID = this.taskIDGetter.apply(cid);
+        if (taskID != null) {
+            this.canceller.accept(taskID.unwrap(), "Auto Cancel Library");
+        }
     }
 }

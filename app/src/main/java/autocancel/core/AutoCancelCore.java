@@ -122,6 +122,7 @@ public class AutoCancelCore {
             this.logger.log(String.format("Current time: %d", timestampMilli));
             this.performanceMetrix.reset(timestampMilli);
 
+            // refresh stuff should be done before update
             Integer requestBufferSize = this.mainManager.getManagerRequestToCoreBufferSize();
             for (Integer ignore = 0; ignore < requestBufferSize; ++ignore) {
                 OperationRequest request = this.mainManager.getManagerRequestToCore();

@@ -21,6 +21,10 @@ public class Performance {
         this.timestampMilli = timestampMilli;
     }
 
+    public Integer getFinishedTaskNumber() {
+        return this.finishedTaskNumber;
+    }
+
     @Override 
     public String toString() {
         Long currentTimeMilli = System.currentTimeMillis();
