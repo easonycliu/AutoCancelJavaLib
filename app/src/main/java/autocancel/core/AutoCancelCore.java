@@ -145,9 +145,14 @@ public class AutoCancelCore {
         }
     }
 
-    private void stop() {
-        this.logger.close();
-        System.out.println("Recieve interrupt, exit");
+    public void stop() {
+        if (this.isInitialized()) {
+            this.logger.close();
+            System.out.println("Recieve interrupt, exit");
+        }
+        else {
+            Logger.systemWarn("AutoCancelCore hasn't initialized, use initialize() first");
+        }
     }
 
     private void refreshCancellableGroups() {

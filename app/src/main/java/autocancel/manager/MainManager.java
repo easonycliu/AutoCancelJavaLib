@@ -11,9 +11,12 @@ package autocancel.manager;
 
 import autocancel.app.elasticsearch.AutoCancel;
 import autocancel.core.AutoCancelCore;
+import autocancel.core.AutoCancelCoreHolder;
+import autocancel.core.AutoCancelInfoCenter;
 import autocancel.core.utils.OperationMethod;
 import autocancel.core.utils.OperationRequest;
 import autocancel.utils.ReleasableLock;
+import autocancel.utils.Settings;
 import autocancel.utils.Resource.ResourceName;
 import autocancel.utils.Resource.ResourceType;
 import autocancel.utils.id.CancellableID;
@@ -59,11 +62,22 @@ public class MainManager {
 
     public void start() throws AssertionError {
         assert this.autoCancelCoreThread == null : "AutoCancel core thread has been started";
-        AutoCancelCore autoCancelCore = new AutoCancelCore(this);
         this.autoCancelCoreThread = new Thread() {
             @Override
             public void run() {
-                autoCancelCore.start();
+                AutoCancelCore autoCancelCore = AutoCancelCoreHolder.getAutoCancelCore();
+                autoCancelCore.initialize(MainManager.this);
+                
+                while (!Thread.interrupted()) {
+                    try {
+                        autoCancelCore.startOneLoop();
+
+                        Thread.sleep((Long) Settings.getSetting("core_update_cycle_ms"));
+                    } catch (InterruptedException e) {
+                        break;
+                    }
+                }
+                autoCancelCore.stop();
             }
         };
         this.autoCancelCoreThread.start();
