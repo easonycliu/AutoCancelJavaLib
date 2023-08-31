@@ -46,6 +46,8 @@ public class AutoCancelCore {
 
     private Logger logger;
 
+    private AutoCancelInfoCenter infoCenter;
+
     public AutoCancelCore(MainManager mainManager) {
         this.cancellables = new HashMap<CancellableID, Cancellable>();
         this.rootCancellableToCancellableGroup = new HashMap<CancellableID, CancellableGroup>();
@@ -76,6 +78,10 @@ public class AutoCancelCore {
         if (this.mainManager == null) {
             this.mainManager = mainManager;
             this.mainMonitor = new MainMonitor(this.mainManager, this.cancellables, this.rootCancellableToCancellableGroup);
+            this.infoCenter = new AutoCancelInfoCenter(this.rootCancellableToCancellableGroup,
+                                                        this.cancellables,
+                                                        this.resourcePool,
+                                                        this.performanceMetrix);
         }
     }
 
@@ -123,6 +129,19 @@ public class AutoCancelCore {
                 OperationRequest request = this.mainMonitor.getMonitorUpdateToCoreWithoutLock();
                 this.requestParser.parse(request);
             }
+        }
+        else {
+            Logger.systemWarn("AutoCancelCore hasn't initialized, use initialize() first");
+        }
+    }
+
+    AutoCancelInfoCenter getInfoCenter() {
+        if (this.isInitialized()) {
+            return this.infoCenter;
+        }
+        else {
+            Logger.systemWarn("AutoCancelCore hasn't initialized, use initialize() first");
+            return null;
         }
     }
 
