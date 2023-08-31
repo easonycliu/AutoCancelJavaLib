@@ -57,7 +57,7 @@ public class TaskTracker {
         this.log.stop();
     }
 
-    public void onTaskCreate(Object task) throws AssertionError {        
+    public void onTaskCreate(Object task, Boolean isCancellable) throws AssertionError {        
         TaskWrapper wrappedTask = new TaskWrapper(task);
 
         CancellableID parentCancellableID = null;
@@ -116,7 +116,8 @@ public class TaskTracker {
                 }
                 if (danglingTasks != null) {
                     for (Object danglingTask : danglingTasks) {
-                        AutoCancel.onTaskCreate(danglingTask);
+                        // All children's isCancellable is the same as their parent's
+                        AutoCancel.onTaskCreate(danglingTask, isCancellable);
                     }
                 }
             }

@@ -49,9 +49,9 @@ public class AutoCancel {
         }
     }
 
-    public static void onTaskCreate(Object task) {
+    public static void onTaskCreate(Object task, Boolean isCancellable) {
         if (AutoCancel.started) {
-            AutoCancel.taskTracker.onTaskCreate(task);
+            AutoCancel.taskTracker.onTaskCreate(task, isCancellable);
         }
         else if (warnNotStarted) {
             Logger.systemWarn("You should start lib AutoCancel first.");

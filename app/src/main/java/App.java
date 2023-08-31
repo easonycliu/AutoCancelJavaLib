@@ -44,7 +44,7 @@ public class App {
             }
         };
         System.out.println(t.toString().matches("(.*)(action=')([^\\s]+)(',)(.*)"));
-        AutoCancel.onTaskCreate(t);
+        AutoCancel.onTaskCreate(t, false);
         Runnable r = new Runnable() {
             @Override
             public void run() {
@@ -96,7 +96,7 @@ public class App {
         };
         AutoCancel.onTaskQueueInThread(r1);
         AutoCancel.onTaskStartInThread(r1);
-        AutoCancel.onTaskCreate(t1);
+        AutoCancel.onTaskCreate(t1, false);
         AutoCancel.onTaskExit(t1);
         AutoCancel.onTaskFinishInThread();
         try {
