@@ -16,6 +16,8 @@ public class Resource {
 
     private final MainManager mainManager;
 
+    private ConcurrentMap<String, Boolean> monitoredLock;
+
     private static final Map<String, BiFunction<String, StackTraceElement, Boolean>> lockInfoParser = Map.of(
         "file_name", (name, stackTraceElement) -> stackTraceElement.getFileName().equals(name),
         "line_number", (name, stackTraceElement) -> name.matches("^[0-9]+$") && stackTraceElement.getLineNumber() == Integer.valueOf(name),
@@ -32,6 +34,7 @@ public class Resource {
 
     public Resource(MainManager mainManager) {
         this.mainManager = mainManager;
+        this.monitoredLock = new ConcurrentHashMap<String, Boolean>();
     }
     
     public void addResourceUsage(String name, Double value) {
@@ -63,23 +66,29 @@ public class Resource {
     }
 
     public Long onLockWait(String name) {
-        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
-        // getStackTrace() <-- Resource.onLockWait() <-- Autocancel.onLockWait() <-- ReleasableLock.acquire() <-- Target <-- ...
-        // to reach the target, it must have at least 5 elements
-        // position sensitive! Do not use it in the plase other than ReleasableLock.acquire()
-        // if want to track the lock waiting time of other types of locks, using startResourceWait(String name)
-
         Long timestamp = -1L;
 
-        if (stackTraceElements.length >= 5) {
-            // System.out.println("Classname: " + stackTraceElements[4].getClassName() + 
-            // " Filename: " + stackTraceElements[4].getFileName() + 
-            // " Methodname: " + stackTraceElements[4].getMethodName() +
-            // " Linenumber: " + stackTraceElements[4].getLineNumber());
-            if (this.isMonitorTarget(stackTraceElements[4])) {
-                // System.out.println("Find lock at " + stackTraceElements[4].toString());
-                timestamp = this.startResourceEvent(name, "wait");
+        if (!this.monitoredLock.containsKey(name)) {
+            StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+            // getStackTrace() <-- Resource.onLockWait() <-- Autocancel.onLockWait() <-- ReleasableLock.acquire() <-- Target <-- ...
+            // to reach the target, it must have at least 5 elements
+            // position sensitive! Do not use it in the plase other than ReleasableLock.acquire()
+            // if want to track the lock waiting time of other types of locks, using startResourceWait(String name)
+
+            if (stackTraceElements.length >= 5) {
+                // System.out.println("Classname: " + stackTraceElements[4].getClassName() + 
+                // " Filename: " + stackTraceElements[4].getFileName() + 
+                // " Methodname: " + stackTraceElements[4].getMethodName() +
+                // " Linenumber: " + stackTraceElements[4].getLineNumber());
+                if (this.isMonitorTarget(stackTraceElements[4])) {
+                    // System.out.println("Find lock at " + stackTraceElements[4].toString());
+                    timestamp = this.startResourceEvent(name, "wait");
+                    this.monitoredLock.put(name, true);
+                }
             }
+        }
+        else {
+            timestamp = this.startResourceEvent(name, "wait");
         }
 
         return timestamp;

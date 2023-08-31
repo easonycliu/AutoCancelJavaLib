@@ -19,7 +19,7 @@ public class Settings {
             "MEMORY", "Linux"
         ),
         "monitor_locks", Arrays.asList(
-            Map.of("class_name", "Cache...") // use ... to include all classes inside specified task
+            Map.of("class_name", "Cache...") // use ... to include all classes inside specified class
         ),
         "monitor_actions", Set.of(
             "indices:data/read/search"
