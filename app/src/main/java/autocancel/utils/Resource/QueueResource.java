@@ -2,16 +2,24 @@ package autocancel.utils.Resource;
 
 import java.util.Map;
 
+import autocancel.utils.logger.Logger;
+
 public class QueueResource extends Resource {
 
     private Integer triedTasks;
 
     private Long totalWaitTime;
 
+    private Long totalOccupyTime;
+
+    private Long prevNanoTime;
+
     public QueueResource(ResourceName resourceName) {
         super(ResourceType.QUEUE, resourceName);
         this.triedTasks = 0;
         this.totalWaitTime = 0L;
+        this.totalOccupyTime = 0L;
+        this.prevNanoTime = System.nanoTime();
     }
 
     @Override
@@ -21,10 +29,19 @@ public class QueueResource extends Resource {
 
     @Override
     public void setResourceUpdateInfo(Map<String, Object> resourceUpdateInfo) {
-        Long waitTime = (Long) resourceUpdateInfo.get("wait_time");
-        if (waitTime != null) {
-            this.triedTasks += 1;
-            this.totalWaitTime += waitTime;
+        for (Map.Entry<String, Object> entry : resourceUpdateInfo.entrySet()) {
+            switch (entry.getKey()) {
+                case "wait_time":
+                    this.triedTasks += 1;
+                    this.totalWaitTime += (Long) entry.getValue();
+                    break;
+                case "occupy_time":
+                    this.totalOccupyTime += (Long) entry.getValue();
+                    break;
+                default:
+                    Logger.systemWarn("Invalid info name " + entry.getKey());
+                    break;
+            }
         }
     }
 
@@ -32,6 +49,8 @@ public class QueueResource extends Resource {
     public void reset() {
         this.triedTasks = 0;
         this.totalWaitTime = 0L;
+        this.totalOccupyTime = 0L;
+        this.prevNanoTime = System.nanoTime();
     }
 
     @Override
