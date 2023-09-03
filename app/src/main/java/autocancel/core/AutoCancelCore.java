@@ -16,7 +16,7 @@ import autocancel.utils.Resource.ResourceName;
 import autocancel.utils.Resource.ResourceType;
 import autocancel.utils.Resource.CPUResource;
 import autocancel.utils.Resource.MemoryResource;
-import autocancel.utils.Resource.LockResource;
+import autocancel.utils.Resource.QueueResource;
 
 import java.util.Map;
 import java.util.function.Consumer;
@@ -407,8 +407,8 @@ public class AutoCancelCore {
                         case MEMORY:
                             resourcePool.addResource(new MemoryResource(resourceName));
                             break;
-                        case LOCK:
-                            resourcePool.addResource(new LockResource(resourceName));
+                        case QUEUE:
+                            resourcePool.addResource(new QueueResource(resourceName));
                             break;
                         case NULL:
                             assert false : "Should never be here";

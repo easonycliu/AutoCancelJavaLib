@@ -2,13 +2,13 @@ package autocancel.utils.Resource;
 
 import java.util.Map;
 
-public class LockResource extends Resource {
+public class QueueResource extends Resource {
 
     private Integer triedTasks;
 
     private Long totalWaitTime;
 
-    public LockResource(ResourceName resourceName) {
+    public QueueResource(ResourceName resourceName) {
         super(ResourceType.QUEUE, resourceName);
         this.triedTasks = 0;
         this.totalWaitTime = 0L;
