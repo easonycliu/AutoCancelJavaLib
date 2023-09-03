@@ -44,7 +44,7 @@ public class Resource {
     private void addResourceEventDuration(String name, String event, Long value) {
         switch (event) {
             case "wait": 
-                this.mainManager.updateResource(ResourceType.LOCK, name, Map.of("wait_time", value));
+                this.mainManager.updateResource(ResourceType.QUEUE, name, Map.of("wait_time", value));
                 break;
             case "occupy":
                 this.addResourceUsage(name, Double.valueOf(value));

@@ -9,7 +9,7 @@ public class LockResource extends Resource {
     private Long totalWaitTime;
 
     public LockResource(ResourceName resourceName) {
-        super(ResourceType.LOCK, resourceName);
+        super(ResourceType.QUEUE, resourceName);
         this.triedTasks = 0;
         this.totalWaitTime = 0L;
     }
