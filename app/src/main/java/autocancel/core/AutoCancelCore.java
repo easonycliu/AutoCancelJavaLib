@@ -60,9 +60,9 @@ public class AutoCancelCore {
         this.resourcePool.addResource(new MemoryResource());
 
         this.infoCenter = new AutoCancelInfoCenter(this.rootCancellableToCancellableGroup,
-                                                    this.cancellables,
-                                                    this.resourcePool,
-                                                    this.performanceMetrix);
+                this.cancellables,
+                this.resourcePool,
+                this.performanceMetrix);
 
         this.initialize(mainManager);
     }
@@ -79,15 +79,16 @@ public class AutoCancelCore {
         this.resourcePool.addResource(new MemoryResource());
 
         this.infoCenter = new AutoCancelInfoCenter(this.rootCancellableToCancellableGroup,
-                                                    this.cancellables,
-                                                    this.resourcePool,
-                                                    this.performanceMetrix);
+                this.cancellables,
+                this.resourcePool,
+                this.performanceMetrix);
     }
 
     public void initialize(MainManager mainManager) {
         if (this.mainManager == null) {
             this.mainManager = mainManager;
-            this.mainMonitor = new MainMonitor(this.mainManager, this.cancellables, this.rootCancellableToCancellableGroup);
+            this.mainMonitor = new MainMonitor(this.mainManager, this.cancellables,
+                    this.rootCancellableToCancellableGroup);
         }
     }
 
@@ -136,8 +137,7 @@ public class AutoCancelCore {
                 OperationRequest request = this.mainMonitor.getMonitorUpdateToCoreWithoutLock();
                 this.requestParser.parse(request);
             }
-        }
-        else {
+        } else {
             Logger.systemWarn("AutoCancelCore hasn't initialized, use initialize() first");
         }
     }
@@ -145,8 +145,7 @@ public class AutoCancelCore {
     AutoCancelInfoCenter getInfoCenter() {
         if (this.isInitialized()) {
             return this.infoCenter;
-        }
-        else {
+        } else {
             Logger.systemWarn("AutoCancelCore hasn't initialized, use initialize() first");
             return null;
         }
@@ -156,8 +155,7 @@ public class AutoCancelCore {
         if (this.isInitialized()) {
             this.logger.close();
             System.out.println("Recieve interrupt, exit");
-        }
-        else {
+        } else {
             Logger.systemWarn("AutoCancelCore hasn't initialized, use initialize() first");
         }
     }
@@ -313,13 +311,14 @@ public class AutoCancelCore {
 
         // These parameters' parsing order doesn't matter
         private final Map<String, Consumer<OperationRequest>> paramHandlers = Map.of(
-                "basic_info", (request) -> {},
+                "basic_info", (request) -> {
+                },
                 "is_cancellable", request -> this.isCancellable(request),
                 "set_group_resource", request -> this.setGroupResource(request),
                 "monitor_resource", request -> this.monitorResource(request),
                 "cancellable_name", request -> this.cancellableName(request),
                 "cancellable_action", request -> this.cancellableAction(request),
-                "add_group_resource", request -> this.addGroupResource(request),
+                "update_group_resource", request -> this.addGroupResource(request),
                 "resource_update_info", request -> this.resourceUpdateInfo(request));
 
         public ParamHandlers() {
@@ -380,13 +379,13 @@ public class AutoCancelCore {
             cancellable.setAction(action);
         }
 
-        private void addGroupResource(OperationRequest request) {
+        private void updateGroupResource(OperationRequest request) {
             Cancellable cancellable = cancellables.get(request.getCancellableID());
             if (cancellable != null) {
-                Double value = (Double) request.getParams().get("add_group_resource");
-                rootCancellableToCancellableGroup.get(cancellable.getRootID()).addResourceUsage(request.getResourceName(), value);
-            }
-            else {
+                Double value = (Double) request.getParams().get("update_group_resource");
+                rootCancellableToCancellableGroup.get(cancellable.getRootID())
+                        .addResourceUsage(request.getResourceName(), value);
+            } else {
                 System.out.println("Can't find cancellable for cid " + request.getCancellableID());
             }
         }
@@ -397,9 +396,9 @@ public class AutoCancelCore {
             ResourceType resourceType = request.getResourceType();
             if (!resourceName.equals(ResourceName.NULL) && !resourceType.equals(ResourceType.NULL)) {
                 if (resourcePool.isResourceExist(request.getResourceName())) {
-                    resourcePool.setResourceUpdateInfo(resourceName, (Map<String, Object>) request.getParams().get("resource_update_info"));
-                }
-                else {
+                    resourcePool.setResourceUpdateInfo(resourceName,
+                            (Map<String, Object>) request.getParams().get("resource_update_info"));
+                } else {
                     switch (resourceType) {
                         case CPU:
                             resourcePool.addResource(new CPUResource(resourceName));
@@ -414,11 +413,11 @@ public class AutoCancelCore {
                             assert false : "Should never be here";
                             return;
                     }
-                    
-                    resourcePool.setResourceUpdateInfo(resourceName, (Map<String, Object>) request.getParams().get("resource_update_info"));
+
+                    resourcePool.setResourceUpdateInfo(resourceName,
+                            (Map<String, Object>) request.getParams().get("resource_update_info"));
                 }
-            }
-            else {
+            } else {
                 Logger.systemWarn("Update resource info should have resource type and name set");
             }
         }

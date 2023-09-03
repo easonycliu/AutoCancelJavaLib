@@ -19,8 +19,9 @@ public class CPUMonitor implements Monitor {
     }
 
     public OperationRequest updateResource(CancellableID cid) {
-        OperationRequest request = new OperationRequest(OperationMethod.UPDATE, Map.of("cancellable_id", cid, "resource_name", ResourceName.CPU));
-        request.addRequestParam("add_group_resource", this.getResource(cid));
+        OperationRequest request = new OperationRequest(OperationMethod.UPDATE,
+                Map.of("cancellable_id", cid, "resource_name", ResourceName.CPU));
+        request.addRequestParam("update_group_resource", this.getResource(cid));
         return request;
     }
 
