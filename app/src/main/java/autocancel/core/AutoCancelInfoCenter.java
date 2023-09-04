@@ -49,11 +49,11 @@ public class AutoCancelInfoCenter {
         return resourceContentionLevel;
     }
 
-    public Map<CancellableID, Double> getCancellableGroupResourceSlowdown(ResourceName resourceName) {
-        Map<CancellableID, Double> cancellableGroupSlowdown = new HashMap<CancellableID, Double>();
+    public Map<CancellableID, Double> getCancellableGroupResourceUsage(ResourceName resourceName) {
+        Map<CancellableID, Double> cancellableGroupResourceUsage = new HashMap<CancellableID, Double>();
         for (Map.Entry<CancellableID, CancellableGroup> entry : this.rootCancellableToCancellableGroup.entrySet()) {
-            cancellableGroupSlowdown.put(entry.getKey(), entry.getValue().getResourceSlowdown(resourceName));
+            cancellableGroupResourceUsage.put(entry.getKey(), entry.getValue().getResourceUsage(resourceName));
         }
-        return cancellableGroupSlowdown;
+        return cancellableGroupResourceUsage;
     }
 }

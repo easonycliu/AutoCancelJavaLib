@@ -55,6 +55,17 @@ public class ResourcePool {
         return slowDown;
     }
 
+    public Double getResourceUsage(ResourceName resourceName) {
+        Double resourceUsage = 0.0;
+        if (this.resources.containsKey(resourceName)) {
+            resourceUsage = this.resources.get(resourceName).getResourceUsage();
+        }
+        else {
+            Logger.systemWarn("Cannot find resource " + resourceName.toString());
+        }
+        return resourceUsage;
+    }
+
     public void setResourceUpdateInfo(ResourceName resourceName, Map<String, Object> resourceUpdateInfo) {
         if (this.resources.containsKey(resourceName)) {
             this.resources.get(resourceName).setResourceUpdateInfo(resourceUpdateInfo);

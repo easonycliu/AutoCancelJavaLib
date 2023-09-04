@@ -64,13 +64,13 @@ public class BasePolicy extends Policy {
         CancellableID target = null;
 
         if (resourceName != null) {
-            Map<CancellableID, Double> cancellableGroupResourceSlowdown = this.infoCenter.getCancellableGroupResourceSlowdown(resourceName);
-            Map.Entry<CancellableID, Double> minSlowdown = cancellableGroupResourceSlowdown
+            Map<CancellableID, Double> cancellableGroupResourceResourceUsage = this.infoCenter.getCancellableGroupResourceUsage(resourceName);
+            Map.Entry<CancellableID, Double> maxResourceUsage = cancellableGroupResourceResourceUsage
                                                                     .entrySet()
                                                                     .stream()
-                                                                    .min(Map.Entry.comparingByValue()).orElse(null);
-            if (minSlowdown != null) {
-                target = minSlowdown.getKey();
+                                                                    .max(Map.Entry.comparingByValue()).orElse(null);
+            if (maxResourceUsage != null) {
+                target = maxResourceUsage.getKey();
             }
         }
 
