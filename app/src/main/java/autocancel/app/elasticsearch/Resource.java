@@ -37,8 +37,8 @@ public class Resource {
         this.monitoredLock = new ConcurrentHashMap<String, Boolean>();
     }
     
-    public void addResourceUsage(String name, Double value) {
-        this.mainManager.updateCancellableGroup(name, value);
+    public void addResourceUsage(ResourceType type, String name, Map<String, Object> resourceUpdateInfo) {
+        this.mainManager.updateCancellableGroup(type, name, resourceUpdateInfo);
     }
 
     private void addResourceEventDuration(String name, String event, Long value) {
@@ -47,7 +47,7 @@ public class Resource {
                 this.mainManager.updateResource(ResourceType.QUEUE, name, Map.of("wait_time", value));
                 break;
             case "occupy":
-                this.addResourceUsage(name, Double.valueOf(value));
+                this.mainManager.updateCancellableGroup(ResourceType.QUEUE, name, Map.of("occupy_time", value));
                 break;
             default:
                 break;
