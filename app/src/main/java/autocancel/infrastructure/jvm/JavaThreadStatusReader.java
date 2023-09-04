@@ -51,8 +51,8 @@ public class JavaThreadStatusReader extends AbstractInfrastructure {
     protected void updateResource(ID id, Integer version) {
         ResourceBatch resourceBatch = new ResourceBatch(version);
         for (ResourceName resourceName : this.resourceNames) {
-            Double value = this.resourceReaders.get(resourceName).readResource(id, version);
-            resourceBatch.setResourceValue(resourceName, value);
+            Map<String, Object> resourceUpdateInfo = this.resourceReaders.get(resourceName).readResource(id, version);
+            resourceBatch.setResourceValue(resourceName, resourceUpdateInfo);
         }
 
         this.setResourceBatch(id, resourceBatch);
