@@ -64,6 +64,7 @@ public class BasePolicy extends Policy {
         CancellableID target = null;
 
         if (resourceName != null) {
+            System.out.println("Find contention resource " + resourceName);
             Map<CancellableID, Double> cancellableGroupResourceResourceUsage = this.infoCenter.getCancellableGroupResourceUsage(resourceName);
             Map.Entry<CancellableID, Double> maxResourceUsage = cancellableGroupResourceResourceUsage
                                                                     .entrySet()

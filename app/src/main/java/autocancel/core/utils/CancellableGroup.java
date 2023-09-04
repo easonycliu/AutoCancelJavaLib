@@ -1,7 +1,9 @@
 package autocancel.core.utils;
 
+import autocancel.app.elasticsearch.AutoCancel;
 import autocancel.core.utils.Cancellable;
 import autocancel.utils.id.CancellableID;
+import autocancel.utils.logger.Logger;
 import autocancel.utils.resource.CPUResource;
 import autocancel.utils.resource.MemoryResource;
 import autocancel.utils.resource.Resource;
@@ -16,6 +18,8 @@ import java.util.Set;
 import java.util.List;
 
 public class CancellableGroup {
+
+    private static final Logger logger = new Logger("cancellable_group");
 
     private final Cancellable root;
 
@@ -57,7 +61,8 @@ public class CancellableGroup {
     }
 
     public void refreshResourcePool() {
-        this.resourcePool.refreshResources(null);
+        CancellableGroup.logger.log("Root " + this.root.toString() + " used resource:");
+        this.resourcePool.refreshResources(CancellableGroup.logger);
     }
 
     public void updateResource(ResourceType resourceType, ResourceName resourceName,
