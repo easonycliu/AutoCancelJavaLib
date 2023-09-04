@@ -51,17 +51,30 @@ public class BasePolicy extends Policy {
 
     @Override
     public CancellableID getCancelTarget() {
-        Map<CancellableID, Double> cancellableCPUUSageMap = this.infoCenter.getCancellableCPUUsage();
         Map<ResourceName, Double> resourceContentionLevel = this.infoCenter.getContentionLevel();
-        Map.Entry<CancellableID, Double> maxUsageCancellable = cancellableCPUUSageMap
+        Map.Entry<ResourceName, Double> maxContentionLevel = resourceContentionLevel
                                                                 .entrySet()
                                                                 .stream()
                                                                 .max(Map.Entry.comparingByValue()).orElse(null);
-        CancellableID target = null;
-        if (maxUsageCancellable != null) {
-            target = maxUsageCancellable.getKey();
+        ResourceName resourceName = null;
+        if (maxContentionLevel != null) {
+            resourceName = maxContentionLevel.getKey();
         }
-        else {
+
+        CancellableID target = null;
+
+        if (resourceName != null) {
+            Map<CancellableID, Double> cancellableGroupResourceSlowdown = this.infoCenter.getCancellableGroupResourceSlowdown(resourceName);
+            Map.Entry<CancellableID, Double> minSlowdown = cancellableGroupResourceSlowdown
+                                                                    .entrySet()
+                                                                    .stream()
+                                                                    .min(Map.Entry.comparingByValue()).orElse(null);
+            if (minSlowdown != null) {
+                target = minSlowdown.getKey();
+            }
+        }
+
+        if (target == null) {
             target = new CancellableID();
         }
 
