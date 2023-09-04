@@ -30,6 +30,9 @@ public class MemoryResource extends Resource {
         return Double.valueOf(this.heapMemoryUsed) / this.heapMemoryMax;
     }
 
+    // Memory resource update info has keys:
+    // total_memory
+    // using_memory
     @Override
     public void setResourceUpdateInfo(Map<String, Object> resourceUpdateInfo) {
         this.heapMemoryUsed = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed();
