@@ -27,6 +27,9 @@ public class QueueResource extends Resource {
         return 0.0;
     }
 
+    // Queue resource update info has keys:
+    // wait_time
+    // occupy_time
     @Override
     public void setResourceUpdateInfo(Map<String, Object> resourceUpdateInfo) {
         for (Map.Entry<String, Object> entry : resourceUpdateInfo.entrySet()) {
@@ -39,7 +42,7 @@ public class QueueResource extends Resource {
                     this.totalOccupyTime += (Long) entry.getValue();
                     break;
                 default:
-                    Logger.systemWarn("Invalid info name " + entry.getKey());
+                Logger.systemWarn("Invalid info name " + entry.getKey() + " in resource type " + this.resourceType + " ,name " + this.resourceName);
                     break;
             }
         }

@@ -41,7 +41,7 @@ public class CPUResource extends Resource {
                     this.usedSystemTime += (Long) entry.getValue();
                     break;
                 default:
-                    Logger.systemWarn("Invalid info name " + entry.getKey());
+                Logger.systemWarn("Invalid info name " + entry.getKey() + " in resource type " + this.resourceType + " ,name " + this.resourceName);
                     break;
             }
         }

@@ -6,9 +6,9 @@ import java.util.List;
 
 public abstract class Resource {
 
-    private final ResourceType resourceType;
+    protected final ResourceType resourceType;
 
-    private final ResourceName resourceName;
+    protected final ResourceName resourceName;
 
     protected static final List<String> acceptedInfoKeywords = Arrays.asList(
             "wait_time", "occupy_time");
