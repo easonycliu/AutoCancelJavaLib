@@ -219,12 +219,4 @@ public class MainManager {
             // TODO: do something more
         }
     }
-
-    public void updateResource(ResourceType type, String name, Map<String, Object> resourceUpdateInfo) {
-        OperationRequest request = new OperationRequest(OperationMethod.UPDATE,
-                Map.of("resource_type", type, "resource_name", ResourceName.valueOf(name)));
-        request.addRequestParam("resource_update_info", resourceUpdateInfo);
-        this.putManagerRequestToCore(request);
-    }
-
 }

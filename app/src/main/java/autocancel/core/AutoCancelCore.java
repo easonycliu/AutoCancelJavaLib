@@ -302,13 +302,11 @@ public class AutoCancelCore {
 
         // These parameters' parsing order doesn't matter
         private final Map<String, Consumer<OperationRequest>> paramHandlers = Map.of(
-                "basic_info", (request) -> {
-                },
+                "basic_info", request -> {},
                 "is_cancellable", request -> this.isCancellable(request),
                 "cancellable_name", request -> this.cancellableName(request),
                 "cancellable_action", request -> this.cancellableAction(request),
-                "update_group_resource", request -> this.updateGroupResource(request),
-                "resource_update_info", request -> this.resourceUpdateInfo(request));
+                "update_group_resource", request -> this.updateGroupResource(request));
 
         public ParamHandlers() {
 
@@ -347,26 +345,20 @@ public class AutoCancelCore {
         private void updateGroupResource(OperationRequest request) {
             Cancellable cancellable = cancellables.get(request.getCancellableID());
             if (cancellable != null) {
-                rootCancellableToCancellableGroup.get(cancellable.getRootID())
-                        .updateResource(request.getResourceType(), request.getResourceName(), (Map<String, Object>) request.getParams().get("update_group_resource"));
+                ResourceType resourceType = request.getResourceType();
+                ResourceName resourceName = request.getResourceName();
+                if (!resourceName.equals(ResourceName.NULL) && !resourceType.equals(ResourceType.NULL)) {
+                    Map<String, Object> resourceUpdateInfo = (Map<String, Object>) request.getParams().get("update_group_resource");
+                    rootCancellableToCancellableGroup.get(cancellable.getRootID()).updateResource(resourceType, resourceName, resourceUpdateInfo);
+                    if (!resourcePool.isResourceExist(request.getResourceName())) {
+                        resourcePool.addResource(resourceType, resourceName);
+                    }
+                    resourcePool.setResourceUpdateInfo(resourceName, resourceUpdateInfo);
+                }
+
             } else {
                 System.out.println("Can't find cancellable for cid " + request.getCancellableID());
             }
         }
-
-        @SuppressWarnings("unchecked")
-        private void resourceUpdateInfo(OperationRequest request) {
-            ResourceName resourceName = request.getResourceName();
-            ResourceType resourceType = request.getResourceType();
-            if (!resourceName.equals(ResourceName.NULL) && !resourceType.equals(ResourceType.NULL)) {
-                if (!resourcePool.isResourceExist(request.getResourceName())) {
-                    resourcePool.addResource(resourceType, resourceName);
-                }
-                resourcePool.setResourceUpdateInfo(resourceName, (Map<String, Object>) request.getParams().get("resource_update_info"));
-            } else {
-                Logger.systemWarn("Update resource info should have resource type and name set");
-            }
-        }
-
     }
 }
