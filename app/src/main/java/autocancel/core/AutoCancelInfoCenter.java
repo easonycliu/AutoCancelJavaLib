@@ -34,14 +34,4 @@ public class AutoCancelInfoCenter {
     public Integer getFinishedTaskNumber() {
         return this.performanceMetrix.getFinishedTaskNumber();
     }
-
-    public Map<CancellableID, Double> getCancellableCPUUsage() {
-        Map<CancellableID, Double> cancellableCPUUSageMap = new HashMap<CancellableID, Double>();
-        for (Map.Entry<CancellableID, CancellableGroup> entry : this.rootCancellableToCancellableGroup.entrySet()) {
-            if (entry.getValue().getIsCancellable()) {
-                cancellableCPUUSageMap.put(entry.getKey(), entry.getValue().getResourceUsage(ResourceName.CPU));
-            }
-        }
-        return cancellableCPUUSageMap;
-    }
 }
