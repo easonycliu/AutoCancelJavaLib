@@ -6,25 +6,42 @@ import autocancel.utils.logger.Logger;
 
 public class CPUResource extends Resource {
 
+    public Long absoluteSystemTime;
+
     public Long totalSystemTime;
 
     public Long usedSystemTime;
 
     public CPUResource() {
         super(ResourceType.CPU, ResourceName.CPU);
+        this.absoluteSystemTime = 0L;
         this.totalSystemTime = 0L;
         this.usedSystemTime = 0L;
     }
 
     public CPUResource(ResourceName resourceName) {
         super(ResourceType.CPU, resourceName);
+        this.absoluteSystemTime = 0L;
         this.totalSystemTime = 0L;
         this.usedSystemTime = 0L;
     }
 
     @Override
     public Double getSlowdown() {
-        return 1.0 - Double.valueOf(this.usedSystemTime) / this.totalSystemTime;
+        Double slowdown = 0.0;
+        if (this.totalSystemTime != 0L) {
+            slowdown = 1.0 - Double.valueOf(this.usedSystemTime) / this.totalSystemTime;
+        }
+        return slowdown;
+    }
+
+    @Override
+    public Double getResourceUsage() {
+        Double resourceUsage = 0.0;
+        if (this.absoluteSystemTime != 0L) {
+            resourceUsage = Double.valueOf(this.usedSystemTime) / this.absoluteSystemTime;
+        }
+        return resourceUsage;
     }
 
     // CPU resource update info has keys:
@@ -35,7 +52,8 @@ public class CPUResource extends Resource {
         for (Map.Entry<String, Object> entry : resourceUpdateInfo.entrySet()) {
             switch (entry.getKey()) {
                 case "cpu_time_system":
-                    this.totalSystemTime += (Long) entry.getValue();
+                    this.absoluteSystemTime = (Long) entry.getValue();
+                    this.totalSystemTime += this.absoluteSystemTime;
                     break;
                 case "cpu_time_thread":
                     this.usedSystemTime += (Long) entry.getValue();
@@ -50,15 +68,17 @@ public class CPUResource extends Resource {
 
     @Override
     public void reset() {
+        this.absoluteSystemTime = 0L;
         this.totalSystemTime = 0L;
         this.usedSystemTime = 0L;
     }
 
     @Override
     public String toString() {
-        return String.format("Resource Type: %s, name: %s, total system time: %d, used system time: %d",
+        return String.format("Resource Type: %s, name: %s, absolute, total, used system time: %d, %d, %d",
                 this.getResourceType().toString(),
                 this.getResourceName().toString(),
+                this.absoluteSystemTime,
                 this.totalSystemTime,
                 this.usedSystemTime);
     }

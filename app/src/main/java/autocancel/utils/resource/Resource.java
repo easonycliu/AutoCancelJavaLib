@@ -20,6 +20,8 @@ public abstract class Resource {
 
     public abstract Double getSlowdown();
 
+    public abstract Double getResourceUsage();
+
     public ResourceName getResourceName() {
         return this.resourceName;
     }

@@ -27,6 +27,11 @@ public class QueueResource extends Resource {
         return Double.valueOf(totalWaitTime) / (System.nanoTime() - this.prevNanoTime);
     }
 
+    @Override
+    public Double getResourceUsage() {
+        return Double.valueOf(totalOccupyTime) / (System.nanoTime() - this.prevNanoTime);
+    }
+
     // Queue resource update info has keys:
     // wait_time
     // occupy_time

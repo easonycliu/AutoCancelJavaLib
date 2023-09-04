@@ -32,6 +32,15 @@ public class MemoryResource extends Resource {
         return 0.0;
     }
 
+    @Override
+    public Double getResourceUsage() {
+        Double resourceUsage = 0.0;
+        if (this.totalMemory != 0L) {
+            resourceUsage = Double.valueOf(this.totalMemory) / this.totalMemory;
+        }
+        return resourceUsage;
+    }
+
     // Memory resource update info has keys:
     // total_memory
     // using_memory
