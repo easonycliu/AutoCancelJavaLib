@@ -2,8 +2,8 @@ package autocancel.core.utils;
 
 import autocancel.core.utils.OperationMethod;
 import autocancel.utils.id.CancellableID;
-import autocancel.utils.Resource.ResourceName;
-import autocancel.utils.Resource.ResourceType;
+import autocancel.utils.resource.ResourceName;
+import autocancel.utils.resource.ResourceType;
 
 import java.util.Map;
 import java.util.List;

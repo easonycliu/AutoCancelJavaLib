@@ -1,4 +1,4 @@
-package autocancel.utils.Resource;
+package autocancel.utils.resource;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;

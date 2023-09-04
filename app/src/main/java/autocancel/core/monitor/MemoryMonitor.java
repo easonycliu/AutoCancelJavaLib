@@ -8,9 +8,9 @@ import autocancel.core.monitor.Monitor;
 import autocancel.core.utils.OperationRequest;
 import autocancel.core.utils.OperationMethod;
 import autocancel.manager.MainManager;
-import autocancel.utils.Resource.ResourceName;
-import autocancel.utils.Resource.ResourceType;
 import autocancel.utils.id.CancellableID;
+import autocancel.utils.resource.ResourceName;
+import autocancel.utils.resource.ResourceType;
 
 public class MemoryMonitor implements Monitor {
 

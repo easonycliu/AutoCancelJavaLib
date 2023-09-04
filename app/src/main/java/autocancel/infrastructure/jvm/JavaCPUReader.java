@@ -2,9 +2,9 @@ package autocancel.infrastructure.jvm;
 
 import autocancel.infrastructure.ResourceReader;
 import autocancel.infrastructure.CPUTimeInfo;
-import autocancel.utils.Resource.ResourceName;
 import autocancel.utils.id.ID;
 import autocancel.utils.id.JavaThreadID;
+import autocancel.utils.resource.ResourceName;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;

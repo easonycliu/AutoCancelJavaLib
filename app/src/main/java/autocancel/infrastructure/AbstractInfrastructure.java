@@ -3,8 +3,8 @@ package autocancel.infrastructure;
 import java.util.HashMap;
 import java.util.Map;
 
-import autocancel.utils.Resource.ResourceName;
 import autocancel.utils.id.ID;
+import autocancel.utils.resource.ResourceName;
 
 public abstract class AbstractInfrastructure {
     private Map<ID, ResourceBatch> resourceMap;

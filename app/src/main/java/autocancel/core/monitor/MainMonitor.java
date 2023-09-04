@@ -7,8 +7,8 @@ import autocancel.core.utils.OperationRequest;
 import autocancel.core.monitor.CPUMonitor;
 import autocancel.core.monitor.MemoryMonitor;
 import autocancel.manager.MainManager;
-import autocancel.utils.Resource.ResourceName;
 import autocancel.utils.id.CancellableID;
+import autocancel.utils.resource.ResourceName;
 
 import java.util.HashMap;
 import java.util.LinkedList;

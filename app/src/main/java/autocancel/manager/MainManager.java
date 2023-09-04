@@ -19,12 +19,12 @@ import autocancel.utils.Policy;
 import autocancel.core.policy.BasePolicy;
 import autocancel.utils.ReleasableLock;
 import autocancel.utils.Settings;
-import autocancel.utils.Resource.ResourceName;
-import autocancel.utils.Resource.ResourceType;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.id.CancellableIDGenerator;
 import autocancel.utils.id.JavaThreadID;
 import autocancel.utils.logger.Logger;
+import autocancel.utils.resource.ResourceName;
+import autocancel.utils.resource.ResourceType;
 import autocancel.utils.id.IDInfo;
 
 import java.io.File;

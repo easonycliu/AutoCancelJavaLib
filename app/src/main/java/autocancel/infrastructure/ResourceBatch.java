@@ -1,7 +1,7 @@
 package autocancel.infrastructure;
 
 import autocancel.core.utils.ResourceUsage;
-import autocancel.utils.Resource.ResourceName;
+import autocancel.utils.resource.ResourceName;
 
 import java.util.Map;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package autocancel.utils.Resource;
+package autocancel.utils.resource;
 
 import java.util.Arrays;
 import java.util.Map;

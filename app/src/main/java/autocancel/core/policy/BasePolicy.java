@@ -7,6 +7,7 @@ import autocancel.utils.Policy;
 import autocancel.utils.Settings;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.logger.Logger;
+import autocancel.utils.resource.ResourceName;
 
 public class BasePolicy extends Policy {
 
@@ -51,6 +52,7 @@ public class BasePolicy extends Policy {
     @Override
     public CancellableID getCancelTarget() {
         Map<CancellableID, Double> cancellableCPUUSageMap = this.infoCenter.getCancellableCPUUsage();
+        Map<ResourceName, Double> resourceContentionLevel = this.infoCenter.getContentionLevel();
         Map.Entry<CancellableID, Double> maxUsageCancellable = cancellableCPUUSageMap
                                                                 .entrySet()
                                                                 .stream()

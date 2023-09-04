@@ -1,12 +1,12 @@
 package autocancel.core.utils;
 
-import autocancel.utils.Resource.ResourceName;
-import autocancel.utils.Resource.ResourceType;
 import autocancel.utils.logger.Logger;
-import autocancel.utils.Resource.CPUResource;
-import autocancel.utils.Resource.MemoryResource;
-import autocancel.utils.Resource.QueueResource;
-import autocancel.utils.Resource.Resource;
+import autocancel.utils.resource.CPUResource;
+import autocancel.utils.resource.MemoryResource;
+import autocancel.utils.resource.QueueResource;
+import autocancel.utils.resource.Resource;
+import autocancel.utils.resource.ResourceName;
+import autocancel.utils.resource.ResourceType;
 
 import java.util.Map;
 import java.util.HashMap;

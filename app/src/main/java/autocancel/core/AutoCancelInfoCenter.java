@@ -5,8 +5,8 @@ import autocancel.core.utils.Cancellable;
 import autocancel.core.utils.CancellableGroup;
 import autocancel.core.utils.ResourcePool;
 import autocancel.core.utils.ResourceUsage;
-import autocancel.utils.Resource.ResourceName;
 import autocancel.utils.id.CancellableID;
+import autocancel.utils.resource.ResourceName;
 
 import java.util.Map;
 import java.util.HashMap;

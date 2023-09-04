@@ -3,10 +3,10 @@ package autocancel.app.elasticsearch;
 import autocancel.manager.MainManager;
 import autocancel.app.elasticsearch.TaskWrapper;
 import autocancel.utils.ReleasableLock;
-import autocancel.utils.Resource.ResourceType;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.id.JavaThreadID;
 import autocancel.utils.logger.Logger;
+import autocancel.utils.resource.ResourceType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
