@@ -161,22 +161,13 @@ public class AutoCancelCore {
     }
 
     private void refreshCancellableGroups() {
-        for (Map.Entry<CancellableID, CancellableGroup> entries : this.rootCancellableToCancellableGroup.entrySet()) {
+        for (Map.Entry<CancellableID, CancellableGroup> entry : this.rootCancellableToCancellableGroup.entrySet()) {
 
-            if (entries.getValue().isExit()) {
+            if (entry.getValue().isExit()) {
                 continue;
             }
 
-            Set<ResourceName> resourceNames = entries.getValue().getResourceNames();
-            for (ResourceName resourceName : resourceNames) {
-                this.logger.log(String.format("Cancellable group with root %s used %s resource %s",
-                        entries.getKey().toString(), resourceName.toString(),
-                        entries.getValue().getResourceUsage(resourceName)));
-                OperationRequest request = new OperationRequest(OperationMethod.UPDATE,
-                        Map.of("cancellable_id", entries.getKey(), "resource_name", resourceName));
-                request.addRequestParam("set_group_resource", 0.0);
-                requestParser.parse(request);
-            }
+            entry.getValue().refreshResourcePool();
         }
     }
 
@@ -384,7 +375,7 @@ public class AutoCancelCore {
             Cancellable cancellable = cancellables.get(request.getCancellableID());
             if (cancellable != null) {
                 rootCancellableToCancellableGroup.get(cancellable.getRootID())
-                        .updateResource(request.getResourceName(), (Map<String, Object>) request.getParams().get("update_group_resource"));
+                        .updateResource(request.getResourceType(), request.getResourceName(), (Map<String, Object>) request.getParams().get("update_group_resource"));
             } else {
                 System.out.println("Can't find cancellable for cid " + request.getCancellableID());
             }
@@ -395,14 +386,10 @@ public class AutoCancelCore {
             ResourceName resourceName = request.getResourceName();
             ResourceType resourceType = request.getResourceType();
             if (!resourceName.equals(ResourceName.NULL) && !resourceType.equals(ResourceType.NULL)) {
-                if (resourcePool.isResourceExist(request.getResourceName())) {
-                    resourcePool.setResourceUpdateInfo(resourceName,
-                            (Map<String, Object>) request.getParams().get("resource_update_info"));
-                } else {
+                if (!resourcePool.isResourceExist(request.getResourceName())) {
                     resourcePool.addResource(resourceType, resourceName);
-                    resourcePool.setResourceUpdateInfo(resourceName,
-                            (Map<String, Object>) request.getParams().get("resource_update_info"));
                 }
+                resourcePool.setResourceUpdateInfo(resourceName, (Map<String, Object>) request.getParams().get("resource_update_info"));
             } else {
                 Logger.systemWarn("Update resource info should have resource type and name set");
             }

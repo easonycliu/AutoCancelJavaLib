@@ -9,8 +9,8 @@ import autocancel.utils.Resource.QueueResource;
 import autocancel.utils.Resource.Resource;
 
 import java.util.Map;
-import java.security.InvalidKeyException;
 import java.util.HashMap;
+import java.util.Set;
 
 public class ResourcePool {
 
@@ -70,6 +70,10 @@ public class ResourcePool {
             }
             entries.getValue().reset();
         }
+    }
+
+    public Set<ResourceName> getResourceNames() {
+        return this.resources.keySet();
     }
 
     private Resource createResource(ResourceType type, ResourceName name) {

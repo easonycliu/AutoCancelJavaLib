@@ -5,6 +5,7 @@ import autocancel.utils.Resource.CPUResource;
 import autocancel.utils.Resource.MemoryResource;
 import autocancel.utils.Resource.Resource;
 import autocancel.utils.Resource.ResourceName;
+import autocancel.utils.Resource.ResourceType;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.Settings;
 
@@ -20,7 +21,7 @@ public class CancellableGroup {
 
     private Map<CancellableID, Cancellable> cancellables;
 
-    private Map<ResourceName, Resource> resourceMap;
+    private ResourcePool resourcePool;
 
     private Boolean isCancellable;
 
@@ -32,11 +33,11 @@ public class CancellableGroup {
 
         this.cancellables = new HashMap<CancellableID, Cancellable>();
         this.cancellables.put(root.getID(), root);
-        this.resourceMap = new HashMap<ResourceName, Resource>();
+        this.resourcePool = new ResourcePool();
 
         // These are "built-in" monitored resources
-        this.resourceMap.put(ResourceName.CPU, new CPUResource());
-        this.resourceMap.put(ResourceName.MEMORY, new MemoryResource());
+        this.resourcePool.addResource(new CPUResource());
+        this.resourcePool.addResource(new MemoryResource());
 
         this.isCancellable = null;
 
@@ -52,24 +53,18 @@ public class CancellableGroup {
     }
 
     public Set<ResourceName> getResourceNames() {
-        return this.resourceMap.keySet();
+        return this.resourcePool.getResourceNames();
     }
 
-    public void setResourceUsage(ResourceName resourceName, Double usage) {
-        if (this.resourceMap.containsKey(resourceName)) {
-            this.resourceMap.get(resourceName).setUsage(usage);
-        } else {
-            this.resourceMap.put(resourceName, new ResourceUsage(usage));
-        }
+    public void refreshResourcePool() {
+        this.resourcePool.refreshResources(null);
     }
 
-    public void updateResource(ResourceName resourceName, Map<String, Object> resourceUpdateInfo) {
-        if (this.resourceMap.containsKey(resourceName)) {
-            this.resourceMap.get(resourceName).setResourceUpdateInfo(resourceUpdateInfo);
-        } else {
-            Resource resource = this.create
-            this.resourceMap.put(resourceName, new ResourceUsage(usageAdd));
+    public void updateResource(ResourceType resourceType, ResourceName resourceName, Map<String, Object> resourceUpdateInfo) {
+        if (!this.resourcePool.isResourceExist(resourceName)) {
+            this.resourcePool.addResource(resourceType, resourceName);
         }
+        this.resourcePool.setResourceUpdateInfo(resourceName, resourceUpdateInfo);
     }
 
     public Double getResourceUsage(ResourceName resourceName) {
@@ -130,7 +125,4 @@ public class CancellableGroup {
 
         return level;
     }
-
-    private Integer
-
 }
