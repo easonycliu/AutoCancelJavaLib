@@ -10,25 +10,25 @@ public class ResourceBatch {
 
     private Integer version;
 
-    private Map<ResourceName, ResourceUsage> resourceMap;
+    private Map<ResourceName, Map<String, Object>> resourceUpdateInfos;
 
     public ResourceBatch(Integer version) {
         this.version = version;
-        this.resourceMap = new HashMap<ResourceName, ResourceUsage>();
+        this.resourceUpdateInfos = new HashMap<ResourceName, Map<String, Object>>();
     }
 
-    public void setResourceValue(ResourceName resourceName, Double value) {
-        this.resourceMap.put(resourceName, new ResourceUsage(value));
+    public void setResourceValue(ResourceName resourceName, Map<String, Object> resourceUpdateInfo) {
+        this.resourceUpdateInfos.put(resourceName, resourceUpdateInfo);
     }
 
-    public Double getResourceValue(ResourceName resourceName) {
-        Double resource;
-        if (this.resourceMap.containsKey(resourceName)) {
-            resource = this.resourceMap.get(resourceName).getUsage();
+    public Map<String, Object> getResourceValue(ResourceName resourceName) {
+        Map<String, Object> resourceUpdateInfo;
+        if (this.resourceUpdateInfos.containsKey(resourceName)) {
+            resourceUpdateInfo = this.resourceUpdateInfos.get(resourceName);
         } else {
-            resource = 0.0;
+            resourceUpdateInfo = Map.of();
         }
-        return resource;
+        return resourceUpdateInfo;
     }
 
     public Integer getVersion() {

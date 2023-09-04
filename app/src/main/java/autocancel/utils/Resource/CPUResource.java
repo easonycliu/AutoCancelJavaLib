@@ -7,6 +7,10 @@ public class CPUResource extends Resource {
 
     public Double systemLoadAverage;
 
+    public Long totalSystemTime;
+
+    public Long usedSystemTime;
+
     public CPUResource() {
         super(ResourceType.CPU, ResourceName.CPU);
         this.systemLoadAverage = 0.0;
