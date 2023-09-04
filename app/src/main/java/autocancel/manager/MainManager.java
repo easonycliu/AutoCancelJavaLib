@@ -107,9 +107,6 @@ public class MainManager {
         OperationRequest request = new OperationRequest(OperationMethod.CREATE,
                 Map.of("cancellable_id", cid, "parent_cancellable_id", parentID));
         request.addRequestParam("is_cancellable", isCancellable);
-        // TODO: According to settings
-        request.addRequestParam("monitor_resource",
-                new ArrayList<ResourceName>(Arrays.asList(ResourceName.CPU, ResourceName.MEMORY)));
         request.addRequestParam("cancellable_name", name);
         request.addRequestParam("cancellable_action", action);
         this.putManagerRequestToCore(request);
