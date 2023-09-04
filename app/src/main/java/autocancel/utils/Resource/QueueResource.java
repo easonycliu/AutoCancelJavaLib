@@ -23,8 +23,8 @@ public class QueueResource extends Resource {
     }
 
     @Override
-    public Double getContentionLevel() {
-        return 0.0;
+    public Double getSlowDown() {
+        return Double.valueOf(totalWaitTime) / (System.nanoTime() - this.prevNanoTime);
     }
 
     // Queue resource update info has keys:

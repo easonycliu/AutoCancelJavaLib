@@ -45,14 +45,14 @@ public class ResourcePool {
         return this.resources.containsKey(resourceName);
     }
 
-    public Double getContentionLevel(ResourceName resourceName) {
-        Double contentionLevel = 0.0;
+    public Double getSlowDown(ResourceName resourceName) {
+        Double slowDown = 0.0;
         if (this.resources.containsKey(resourceName)) {
-            contentionLevel = this.resources.get(resourceName).getContentionLevel();
+            slowDown = this.resources.get(resourceName).getSlowDown();
         } else {
             Logger.systemWarn("Cannot find resource " + resourceName.toString());
         }
-        return contentionLevel;
+        return slowDown;
     }
 
     public void setResourceUpdateInfo(ResourceName resourceName, Map<String, Object> resourceUpdateInfo) {

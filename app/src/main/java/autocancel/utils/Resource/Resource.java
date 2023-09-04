@@ -18,7 +18,7 @@ public abstract class Resource {
         this.resourceName = resourceName;
     }
 
-    public abstract Double getContentionLevel();
+    public abstract Double getSlowDown();
 
     public ResourceName getResourceName() {
         return this.resourceName;

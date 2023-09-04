@@ -67,6 +67,10 @@ public class CancellableGroup {
         this.resourcePool.setResourceUpdateInfo(resourceName, resourceUpdateInfo);
     }
 
+    public Double getResourceSlowdown(ResourceName resourceName) {
+        return this.resourcePool.getSlowDown(resourceName);
+    }
+
     public Boolean getIsCancellable() {
         assert this.isCancellable != null : "this.isCancellable hasn't been set yet";
         return this.isCancellable;

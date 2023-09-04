@@ -23,8 +23,8 @@ public class CPUResource extends Resource {
     }
 
     @Override
-    public Double getContentionLevel() {
-        return 0.0;
+    public Double getSlowDown() {
+        return 1.0 - Double.valueOf(this.usedSystemTime) / this.totalSystemTime;
     }
 
     // CPU resource update info has keys:

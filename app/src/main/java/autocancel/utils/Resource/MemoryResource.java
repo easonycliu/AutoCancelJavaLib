@@ -28,7 +28,7 @@ public class MemoryResource extends Resource {
     }
 
     @Override
-    public Double getContentionLevel() {
+    public Double getSlowDown() {
         return 0.0;
     }
 

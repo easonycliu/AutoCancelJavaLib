@@ -10,6 +10,7 @@ import autocancel.utils.id.CancellableID;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Set;
 
 public class AutoCancelInfoCenter {
     
@@ -17,21 +18,42 @@ public class AutoCancelInfoCenter {
 
     private final Map<CancellableID, Cancellable> cancellables;
 
-    private final ResourcePool resourcePool;
+    private final ResourcePool systemResourcePool;
 
     private final Performance performanceMetrix;
 
     public AutoCancelInfoCenter(Map<CancellableID, CancellableGroup> rootCancellableToCancellableGroup,
                                 Map<CancellableID, Cancellable> cancellables,
-                                ResourcePool resourcePool,
+                                ResourcePool systemResourcePool,
                                 Performance performanceMetrix) {
         this.rootCancellableToCancellableGroup = rootCancellableToCancellableGroup;
         this.cancellables = cancellables;
-        this.resourcePool = resourcePool;
+        this.systemResourcePool = systemResourcePool;
         this.performanceMetrix = performanceMetrix;
     }
 
     public Integer getFinishedTaskNumber() {
         return this.performanceMetrix.getFinishedTaskNumber();
+    }
+
+    public Double getResourceContentionLevel(ResourceName resourceName) {
+        return this.systemResourcePool.getSlowDown(resourceName);
+    }
+
+    public Map<ResourceName, Double> getContentionLevel() {
+        Set<ResourceName> resourceNames = this.systemResourcePool.getResourceNames();
+        Map<ResourceName, Double> resourceContentionLevel = new HashMap<ResourceName, Double>();
+        for (ResourceName resourceName : resourceNames) {
+            resourceContentionLevel.put(resourceName, this.systemResourcePool.getSlowDown(resourceName));
+        }
+        return resourceContentionLevel;
+    }
+
+    public Map<CancellableID, Double> getCancellableGroupResourceSlowdown(ResourceName resourceName) {
+        Map<CancellableID, Double> cancellableGroupSlowdown = new HashMap<CancellableID, Double>();
+        for (Map.Entry<CancellableID, CancellableGroup> entry : this.rootCancellableToCancellableGroup.entrySet()) {
+            cancellableGroupSlowdown.put(entry.getKey(), entry.getValue().getResourceSlowdown(resourceName));
+        }
+        return cancellableGroupSlowdown;
     }
 }
