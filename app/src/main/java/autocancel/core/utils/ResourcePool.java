@@ -1,10 +1,15 @@
 package autocancel.core.utils;
 
 import autocancel.utils.Resource.ResourceName;
+import autocancel.utils.Resource.ResourceType;
 import autocancel.utils.logger.Logger;
+import autocancel.utils.Resource.CPUResource;
+import autocancel.utils.Resource.MemoryResource;
+import autocancel.utils.Resource.QueueResource;
 import autocancel.utils.Resource.Resource;
 
 import java.util.Map;
+import java.security.InvalidKeyException;
 import java.util.HashMap;
 
 public class ResourcePool {
@@ -21,6 +26,18 @@ public class ResourcePool {
         } else {
             Logger.systemWarn(
                     "Resource " + resource.getResourceName().toString() + " has added to resource pool, skip");
+        }
+    }
+
+    public void addResource(ResourceType type, ResourceName name) {
+        if (!this.resources.containsKey(name)) {
+            Resource resource = this.createResource(type, name);
+            if (resource != null) {
+                this.resources.put(name, resource);
+            }
+        } else {
+            Logger.systemWarn(
+                    "Resource " + name + " has added to resource pool, skip");
         }
     }
 
@@ -53,5 +70,24 @@ public class ResourcePool {
             }
             entries.getValue().reset();
         }
+    }
+
+    private Resource createResource(ResourceType type, ResourceName name) {
+        Resource resource = null;
+        switch (type) {
+            case CPU:
+                resource = new CPUResource(name);
+                break;
+            case MEMORY:
+                resource = new MemoryResource(name);
+                break;
+            case QUEUE:
+                resource = new QueueResource(name);
+                break;
+            case NULL:
+            default:
+                Logger.systemWarn("Invalid resource type " + type + " when creating resource");
+        }
+        return resource;
     }
 }

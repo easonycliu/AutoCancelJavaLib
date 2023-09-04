@@ -1,6 +1,9 @@
 package autocancel.core.utils;
 
 import autocancel.core.utils.Cancellable;
+import autocancel.utils.Resource.CPUResource;
+import autocancel.utils.Resource.MemoryResource;
+import autocancel.utils.Resource.Resource;
 import autocancel.utils.Resource.ResourceName;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.Settings;
@@ -17,7 +20,7 @@ public class CancellableGroup {
 
     private Map<CancellableID, Cancellable> cancellables;
 
-    private Map<ResourceName, ResourceUsage> resourceMap;
+    private Map<ResourceName, Resource> resourceMap;
 
     private Boolean isCancellable;
 
@@ -29,11 +32,11 @@ public class CancellableGroup {
 
         this.cancellables = new HashMap<CancellableID, Cancellable>();
         this.cancellables.put(root.getID(), root);
-        this.resourceMap = new HashMap<ResourceName, ResourceUsage>();
+        this.resourceMap = new HashMap<ResourceName, Resource>();
 
         // These are "built-in" monitored resources
-        this.resourceMap.put(ResourceName.CPU, new ResourceUsage());
-        this.resourceMap.put(ResourceName.MEMORY, new ResourceUsage());
+        this.resourceMap.put(ResourceName.CPU, new CPUResource());
+        this.resourceMap.put(ResourceName.MEMORY, new MemoryResource());
 
         this.isCancellable = null;
 
@@ -60,11 +63,11 @@ public class CancellableGroup {
         }
     }
 
-    public void addResourceUsage(ResourceName resourceName, Double usageAdd) {
+    public void updateResource(ResourceName resourceName, Map<String, Object> resourceUpdateInfo) {
         if (this.resourceMap.containsKey(resourceName)) {
-            Double previousUsage = this.resourceMap.get(resourceName).getUsage();
-            this.resourceMap.get(resourceName).setUsage(previousUsage + usageAdd);
+            this.resourceMap.get(resourceName).setResourceUpdateInfo(resourceUpdateInfo);
         } else {
+            Resource resource = this.create
             this.resourceMap.put(resourceName, new ResourceUsage(usageAdd));
         }
     }
@@ -127,5 +130,7 @@ public class CancellableGroup {
 
         return level;
     }
+
+    private Integer
 
 }

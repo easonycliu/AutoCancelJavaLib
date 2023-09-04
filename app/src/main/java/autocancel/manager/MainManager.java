@@ -215,7 +215,7 @@ public class MainManager {
         if (cid.isValid()) {
             OperationRequest request = new OperationRequest(OperationMethod.UPDATE,
                     Map.of("cancellable_id", cid, "resource_name", ResourceName.valueOf(name)));
-            request.addRequestParam("update_group_resource", value);
+            request.addRequestParam("update_group_resource", cancellableGroupUpdateInfo);
             this.putManagerRequestToCore(request);
         } else {
             System.out.println("Cannot find cancellable id from current " + jid.toString());

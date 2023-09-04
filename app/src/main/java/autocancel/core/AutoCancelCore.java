@@ -318,7 +318,7 @@ public class AutoCancelCore {
                 "monitor_resource", request -> this.monitorResource(request),
                 "cancellable_name", request -> this.cancellableName(request),
                 "cancellable_action", request -> this.cancellableAction(request),
-                "update_group_resource", request -> this.addGroupResource(request),
+                "update_group_resource", request -> this.updateGroupResource(request),
                 "resource_update_info", request -> this.resourceUpdateInfo(request));
 
         public ParamHandlers() {
@@ -379,12 +379,12 @@ public class AutoCancelCore {
             cancellable.setAction(action);
         }
 
+        @SuppressWarnings("unchecked")
         private void updateGroupResource(OperationRequest request) {
             Cancellable cancellable = cancellables.get(request.getCancellableID());
             if (cancellable != null) {
-                Double value = (Double) request.getParams().get("update_group_resource");
                 rootCancellableToCancellableGroup.get(cancellable.getRootID())
-                        .addResourceUsage(request.getResourceName(), value);
+                        .updateResource(request.getResourceName(), (Map<String, Object>) request.getParams().get("update_group_resource"));
             } else {
                 System.out.println("Can't find cancellable for cid " + request.getCancellableID());
             }
@@ -399,21 +399,7 @@ public class AutoCancelCore {
                     resourcePool.setResourceUpdateInfo(resourceName,
                             (Map<String, Object>) request.getParams().get("resource_update_info"));
                 } else {
-                    switch (resourceType) {
-                        case CPU:
-                            resourcePool.addResource(new CPUResource(resourceName));
-                            break;
-                        case MEMORY:
-                            resourcePool.addResource(new MemoryResource(resourceName));
-                            break;
-                        case QUEUE:
-                            resourcePool.addResource(new QueueResource(resourceName));
-                            break;
-                        case NULL:
-                            assert false : "Should never be here";
-                            return;
-                    }
-
+                    resourcePool.addResource(resourceType, resourceName);
                     resourcePool.setResourceUpdateInfo(resourceName,
                             (Map<String, Object>) request.getParams().get("resource_update_info"));
                 }
