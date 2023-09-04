@@ -30,7 +30,7 @@ public class InfrastructureManager {
                 "Linux", new LinuxThreadStatusReader());
     }
 
-    public xc getSpecifiedResourceLatest(JavaThreadID jid, ResourceName resourceName) {
+    public Map<String, Object> getSpecifiedResourceLatest(JavaThreadID jid, ResourceName resourceName) {
         AbstractInfrastructure infrastructure = this.getInfrastructure(resourceName);
         assert infrastructure != null : String.format("Unsupported resource name: %s", resourceName.toString());
         Map<String, Object> resourceUpdateInfo = infrastructure.getResource(jid, resourceName, this.version.get());

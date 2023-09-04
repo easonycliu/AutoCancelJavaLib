@@ -51,7 +51,7 @@ public class MainMonitor {
                     .getResourceNames()) {
                 if (this.monitors.containsKey(resourceName)) {
                     this.monitorUpdateToCoreBuffer
-                            .add(this.monitors.get(resourceName).updateResource(cancellable.getID()));
+                            .addAll(this.monitors.get(resourceName).updateResource(cancellable.getID()));
                 } else {
                     // Unsupported name in monitor
                     // But may be updated by app

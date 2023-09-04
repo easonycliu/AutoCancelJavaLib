@@ -195,15 +195,15 @@ public class MainManager {
         return size;
     }
 
-    public Double getSpecifiedResource(CancellableID cid, ResourceName resourceName) {
-        Double resource = 0.0;
+    public List<Map<String, Object>> getSpecifiedResource(CancellableID cid, ResourceName resourceName) {
+        List<Map<String, Object>> resourceUpdateInfos = new ArrayList<Map<String, Object>>();
         List<JavaThreadID> javaThreadIDs = this.idManager.getJavaThreadIDOfCancellableID(cid);
         for (JavaThreadID javaThreadID : javaThreadIDs) {
             if (javaThreadID.isValid()) {
-                resource += this.infrastructureManager.getSpecifiedResourceLatest(javaThreadID, resourceName);
+                resourceUpdateInfos.add(this.infrastructureManager.getSpecifiedResourceLatest(javaThreadID, resourceName));
             }
         }
-        return resource;
+        return resourceUpdateInfos;
     }
 
     public void updateCancellableGroup(String name, Map<String, Object> cancellableGroupUpdateInfo) {
