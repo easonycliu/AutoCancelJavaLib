@@ -26,6 +26,9 @@ public class CPUResource extends Resource {
         return systemLoadAverage;
     }
 
+    // CPU resource update info has keys:
+    // cpu_time_system
+    // cpu_time_thread
     @Override
     public void setResourceUpdateInfo(Map<String, Object> resourceUpdateInfo) {
         this.systemLoadAverage = ManagementFactory.getOperatingSystemMXBean().getSystemLoadAverage();
