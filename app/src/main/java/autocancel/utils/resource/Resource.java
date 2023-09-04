@@ -18,7 +18,7 @@ public abstract class Resource {
         this.resourceName = resourceName;
     }
 
-    public abstract Double getSlowDown();
+    public abstract Double getSlowdown();
 
     public ResourceName getResourceName() {
         return this.resourceName;

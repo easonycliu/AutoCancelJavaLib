@@ -45,10 +45,10 @@ public class ResourcePool {
         return this.resources.containsKey(resourceName);
     }
 
-    public Double getSlowDown(ResourceName resourceName) {
+    public Double getSlowdown(ResourceName resourceName) {
         Double slowDown = 0.0;
         if (this.resources.containsKey(resourceName)) {
-            slowDown = this.resources.get(resourceName).getSlowDown();
+            slowDown = this.resources.get(resourceName).getSlowdown();
         } else {
             Logger.systemWarn("Cannot find resource " + resourceName.toString());
         }

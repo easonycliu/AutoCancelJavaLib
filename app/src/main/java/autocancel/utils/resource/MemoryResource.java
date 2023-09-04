@@ -28,7 +28,7 @@ public class MemoryResource extends Resource {
     }
 
     @Override
-    public Double getSlowDown() {
+    public Double getSlowdown() {
         return 0.0;
     }
 
@@ -46,7 +46,8 @@ public class MemoryResource extends Resource {
                     this.usingMemory += (Long) entry.getValue();
                     break;
                 default:
-                    Logger.systemWarn("Invalid info name " + entry.getKey() + " in resource type " + this.resourceType + " ,name " + this.resourceName);
+                    Logger.systemWarn("Invalid info name " + entry.getKey() + " in resource type " + this.resourceType
+                            + " ,name " + this.resourceName);
                     break;
             }
         }
@@ -60,10 +61,10 @@ public class MemoryResource extends Resource {
 
     @Override
     public String toString() {
-        return String.format("Resource Type: %s, name: %s, total memory: %d, using memory: %d", 
-        this.getResourceType().toString(),
-        this.getResourceName().toString(),
-        this.totalMemory,
-        this.usingMemory);
+        return String.format("Resource Type: %s, name: %s, total memory: %d, using memory: %d",
+                this.getResourceType().toString(),
+                this.getResourceName().toString(),
+                this.totalMemory,
+                this.usingMemory);
     }
 }

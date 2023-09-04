@@ -37,14 +37,14 @@ public class AutoCancelInfoCenter {
     }
 
     public Double getResourceContentionLevel(ResourceName resourceName) {
-        return this.systemResourcePool.getSlowDown(resourceName);
+        return this.systemResourcePool.getSlowdown(resourceName);
     }
 
     public Map<ResourceName, Double> getContentionLevel() {
         Set<ResourceName> resourceNames = this.systemResourcePool.getResourceNames();
         Map<ResourceName, Double> resourceContentionLevel = new HashMap<ResourceName, Double>();
         for (ResourceName resourceName : resourceNames) {
-            resourceContentionLevel.put(resourceName, this.systemResourcePool.getSlowDown(resourceName));
+            resourceContentionLevel.put(resourceName, this.systemResourcePool.getSlowdown(resourceName));
         }
         return resourceContentionLevel;
     }

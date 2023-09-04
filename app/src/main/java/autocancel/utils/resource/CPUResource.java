@@ -23,7 +23,7 @@ public class CPUResource extends Resource {
     }
 
     @Override
-    public Double getSlowDown() {
+    public Double getSlowdown() {
         return 1.0 - Double.valueOf(this.usedSystemTime) / this.totalSystemTime;
     }
 
@@ -41,7 +41,8 @@ public class CPUResource extends Resource {
                     this.usedSystemTime += (Long) entry.getValue();
                     break;
                 default:
-                Logger.systemWarn("Invalid info name " + entry.getKey() + " in resource type " + this.resourceType + " ,name " + this.resourceName);
+                    Logger.systemWarn("Invalid info name " + entry.getKey() + " in resource type " + this.resourceType
+                            + " ,name " + this.resourceName);
                     break;
             }
         }
@@ -55,10 +56,10 @@ public class CPUResource extends Resource {
 
     @Override
     public String toString() {
-        return String.format("Resource Type: %s, name: %s, total system time: %d, used system time: %d", 
-        this.getResourceType().toString(),
-        this.getResourceName().toString(),
-        this.totalSystemTime,
-        this.usedSystemTime);
+        return String.format("Resource Type: %s, name: %s, total system time: %d, used system time: %d",
+                this.getResourceType().toString(),
+                this.getResourceName().toString(),
+                this.totalSystemTime,
+                this.usedSystemTime);
     }
 }

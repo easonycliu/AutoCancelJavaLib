@@ -23,7 +23,7 @@ public class QueueResource extends Resource {
     }
 
     @Override
-    public Double getSlowDown() {
+    public Double getSlowdown() {
         return Double.valueOf(totalWaitTime) / (System.nanoTime() - this.prevNanoTime);
     }
 
@@ -42,7 +42,8 @@ public class QueueResource extends Resource {
                     this.totalOccupyTime += (Long) entry.getValue();
                     break;
                 default:
-                Logger.systemWarn("Invalid info name " + entry.getKey() + " in resource type " + this.resourceType + " ,name " + this.resourceName);
+                    Logger.systemWarn("Invalid info name " + entry.getKey() + " in resource type " + this.resourceType
+                            + " ,name " + this.resourceName);
                     break;
             }
         }
@@ -58,10 +59,10 @@ public class QueueResource extends Resource {
 
     @Override
     public String toString() {
-        return String.format("Resource Type: %s, Name: %s, Tried tasks: %d, Total wait time: %d", 
-        this.getResourceType().toString(),
-        this.getResourceName().toString(),
-        this.triedTasks,
-        this.totalWaitTime);
+        return String.format("Resource Type: %s, Name: %s, Tried tasks: %d, Total wait time: %d",
+                this.getResourceType().toString(),
+                this.getResourceName().toString(),
+                this.triedTasks,
+                this.totalWaitTime);
     }
 }

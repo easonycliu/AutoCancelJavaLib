@@ -60,7 +60,8 @@ public class CancellableGroup {
         this.resourcePool.refreshResources(null);
     }
 
-    public void updateResource(ResourceType resourceType, ResourceName resourceName, Map<String, Object> resourceUpdateInfo) {
+    public void updateResource(ResourceType resourceType, ResourceName resourceName,
+            Map<String, Object> resourceUpdateInfo) {
         if (!this.resourcePool.isResourceExist(resourceName)) {
             this.resourcePool.addResource(resourceType, resourceName);
         }
@@ -68,7 +69,7 @@ public class CancellableGroup {
     }
 
     public Double getResourceSlowdown(ResourceName resourceName) {
-        return this.resourcePool.getSlowDown(resourceName);
+        return this.resourcePool.getSlowdown(resourceName);
     }
 
     public Boolean getIsCancellable() {
