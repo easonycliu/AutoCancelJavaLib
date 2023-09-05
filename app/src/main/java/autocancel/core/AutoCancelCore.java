@@ -217,7 +217,7 @@ public class AutoCancelCore {
         }
 
         public void parse(OperationRequest request) {
-            // logger.log(request.toString());
+            logger.log(request.toString());
             switch (request.getOperation()) {
                 case CREATE:
                     create(request);
@@ -291,7 +291,7 @@ public class AutoCancelCore {
                 // Itself is a root cancellable
                 rootID = request.getCancellableID();
             } else {
-                rootID = cancellables.get(parentID).getID();
+                rootID = cancellables.get(parentID).getRootID();
             }
             return rootID;
         }
