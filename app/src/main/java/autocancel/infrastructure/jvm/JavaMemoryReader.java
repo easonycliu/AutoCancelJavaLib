@@ -45,12 +45,5 @@ public class JavaMemoryReader extends ResourceReader {
             usingMemory = this.sunThreadMXBean.getThreadAllocatedBytes(((JavaThreadID) id).unwrap());
         }
         return Map.of("total_memory", totalMemory, "using_memory", usingMemory);
-        // MemoryMXBean m = ManagementFactory.getMemoryMXBean();
-        // RuntimeMXBean r = ManagementFactory.getRuntimeMXBean();
-        // r.getVmName();
-        // ManagementFactory.getMemoryPoolMXBeans().get(0);
-        // ManagementFactory.getMemoryManagerMXBeans().get(0);
-        // ManagementFactory.getGarbageCollectorMXBeans().get(0);
-        // ManagementFactory.getPlatformMBeanServer();
     }
 }
