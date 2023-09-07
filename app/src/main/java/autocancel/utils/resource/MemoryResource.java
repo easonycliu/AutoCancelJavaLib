@@ -7,7 +7,7 @@ import java.util.Map;
 
 import autocancel.utils.logger.Logger;
 
-public class MemoryResource extends Resource {
+public abstract class MemoryResource extends Resource {
 
     public Long usingMemory;
 
@@ -25,11 +25,6 @@ public class MemoryResource extends Resource {
 
         this.totalMemory = 0L;
         this.usingMemory = 0L;
-    }
-
-    @Override
-    public Double getSlowdown() {
-        return 0.0;
     }
 
     @Override
