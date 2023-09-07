@@ -6,6 +6,7 @@ public class ResourceName {
 
     public static final ResourceName CPU = new ResourceName("CPU");
     public static final ResourceName MEMORY = new ResourceName("MEMORY");
+    public static final ResourceName JVMHEAP = new ResourceName("JVMHEAP");
     public static final ResourceName NULL = new ResourceName("NULL");
 
     private static final Map<String, ResourceName> builtinNames = Map.of(

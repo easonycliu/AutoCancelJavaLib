@@ -2,6 +2,9 @@ package autocancel.utils.resource;
 
 import java.util.Arrays;
 import java.util.Map;
+
+import autocancel.utils.logger.Logger;
+
 import java.util.List;
 
 public abstract class Resource {
@@ -28,6 +31,30 @@ public abstract class Resource {
 
     public ResourceType getResourceType() {
         return this.resourceType;
+    }
+
+    final public static Resource createResource(ResourceType type, ResourceName name) {
+        Resource resource = null;
+        switch (type) {
+            case CPU:
+                resource = new CPUResource(name);
+                break;
+            case MEMORY:
+                if (name.equals(ResourceName.JVMHEAP)) {
+                    resource = new JVMHeapResource();
+                }
+                else {
+                    resource = new EvictableMemoryResource(name);
+                }
+                break;
+            case QUEUE:
+                resource = new QueueResource(name);
+                break;
+            case NULL:
+            default:
+                Logger.systemWarn("Invalid resource type " + type + " when creating resource");
+        }
+        return resource;
     }
 
     public abstract void setResourceUpdateInfo(Map<String, Object> resourceUpdateInfo);

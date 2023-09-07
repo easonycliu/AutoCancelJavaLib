@@ -31,7 +31,7 @@ public class ResourcePool {
 
     public void addResource(ResourceType type, ResourceName name) {
         if (!this.resources.containsKey(name)) {
-            Resource resource = this.createResource(type, name);
+            Resource resource = Resource.createResource(type, name);
             if (resource != null) {
                 this.resources.put(name, resource);
             }
@@ -85,24 +85,5 @@ public class ResourcePool {
 
     public Set<ResourceName> getResourceNames() {
         return this.resources.keySet();
-    }
-
-    private Resource createResource(ResourceType type, ResourceName name) {
-        Resource resource = null;
-        switch (type) {
-            case CPU:
-                resource = new CPUResource(name);
-                break;
-            case MEMORY:
-                resource = new MemoryResource(name);
-                break;
-            case QUEUE:
-                resource = new QueueResource(name);
-                break;
-            case NULL:
-            default:
-                Logger.systemWarn("Invalid resource type " + type + " when creating resource");
-        }
-        return resource;
     }
 }
