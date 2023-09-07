@@ -40,8 +40,8 @@ public class CancellableGroup {
         this.resourcePool = new ResourcePool();
 
         // These are "built-in" monitored resources
-        this.resourcePool.addResource(new CPUResource());
-        this.resourcePool.addResource(new MemoryResource());
+        this.resourcePool.addResource(Resource.createResource(ResourceType.CPU, ResourceName.CPU));
+        this.resourcePool.addResource(Resource.createResource(ResourceType.MEMORY, ResourceName.MEMORY));
 
         this.isCancellable = null;
 

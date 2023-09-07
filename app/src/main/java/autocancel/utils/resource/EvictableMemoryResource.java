@@ -2,6 +2,10 @@ package autocancel.utils.resource;
 
 public class EvictableMemoryResource extends MemoryResource {
 
+    public EvictableMemoryResource() {
+        super();
+    }
+
     public EvictableMemoryResource(ResourceName name) {
         super(name);
     }

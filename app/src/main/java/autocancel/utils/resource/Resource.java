@@ -3,6 +3,7 @@ package autocancel.utils.resource;
 import java.util.Arrays;
 import java.util.Map;
 
+import autocancel.utils.Settings;
 import autocancel.utils.logger.Logger;
 
 import java.util.List;
@@ -40,8 +41,13 @@ public abstract class Resource {
                 resource = new CPUResource(name);
                 break;
             case MEMORY:
-                if (name.equals(ResourceName.JVMHEAP)) {
-                    resource = new JVMHeapResource();
+                if (name.equals(ResourceName.MEMORY)) {
+                    if ((String)((Map<?, ?>)Settings.getSetting("monitor_physical_resources")).get("MEMORY") == "JVM") {
+                        resource = new JVMHeapResource();
+                    }
+                    else {
+                        resource = new EvictableMemoryResource();
+                    }
                 }
                 else {
                     resource = new EvictableMemoryResource(name);

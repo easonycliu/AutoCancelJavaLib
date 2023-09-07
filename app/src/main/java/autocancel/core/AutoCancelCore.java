@@ -6,6 +6,7 @@ import autocancel.utils.logger.Logger;
 import autocancel.utils.resource.CPUResource;
 import autocancel.utils.resource.MemoryResource;
 import autocancel.utils.resource.QueueResource;
+import autocancel.utils.resource.Resource;
 import autocancel.utils.resource.ResourceName;
 import autocancel.utils.resource.ResourceType;
 import autocancel.core.monitor.MainMonitor;
@@ -56,8 +57,8 @@ public class AutoCancelCore {
         this.performanceMetrix = new Performance();
         this.resourcePool = new ResourcePool();
 
-        this.resourcePool.addResource(new CPUResource());
-        this.resourcePool.addResource(new MemoryResource());
+        this.resourcePool.addResource(Resource.createResource(ResourceType.CPU, ResourceName.CPU));
+        this.resourcePool.addResource(Resource.createResource(ResourceType.MEMORY, ResourceName.MEMORY));
 
         this.infoCenter = new AutoCancelInfoCenter(this.rootCancellableToCancellableGroup,
                 this.cancellables,
@@ -75,8 +76,8 @@ public class AutoCancelCore {
         this.performanceMetrix = new Performance();
         this.resourcePool = new ResourcePool();
 
-        this.resourcePool.addResource(new CPUResource());
-        this.resourcePool.addResource(new MemoryResource());
+        this.resourcePool.addResource(Resource.createResource(ResourceType.CPU, ResourceName.CPU));
+        this.resourcePool.addResource(Resource.createResource(ResourceType.MEMORY, ResourceName.MEMORY));
 
         this.infoCenter = new AutoCancelInfoCenter(this.rootCancellableToCancellableGroup,
                 this.cancellables,

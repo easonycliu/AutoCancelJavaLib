@@ -3,7 +3,7 @@ package autocancel.utils.resource;
 public class JVMHeapResource extends MemoryResource {
     
     public JVMHeapResource() {
-        super(ResourceName.JVMHEAP);
+        super();
     }
 
     @Override
