@@ -28,7 +28,7 @@ public abstract class MemoryResource extends Resource {
     public Double getResourceUsage() {
         Double resourceUsage = 0.0;
         if (this.totalMemory != 0L) {
-            resourceUsage = Double.valueOf(this.totalMemory) / this.totalMemory;
+            resourceUsage = Double.valueOf(this.usingMemory) / this.totalMemory;
         }
         return resourceUsage;
     }

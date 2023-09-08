@@ -74,11 +74,19 @@ public class CancellableGroup {
     }
 
     public Double getResourceSlowdown(ResourceName resourceName) {
-        return this.resourcePool.getSlowdown(resourceName);
+        Double slowdown = 0.0;
+        if (!this.isExit()) {
+            slowdown = this.resourcePool.getSlowdown(resourceName);
+        }
+        return slowdown;
     }
 
     public Double getResourceUsage(ResourceName resourceName) {
-        return this.resourcePool.getResourceUsage(resourceName);
+        Double resourceUsage = 0.0;
+        if (!this.isExit()) {
+            resourceUsage = this.resourcePool.getResourceUsage(resourceName);
+        }
+        return resourceUsage;
     }
 
     public Boolean getIsCancellable() {

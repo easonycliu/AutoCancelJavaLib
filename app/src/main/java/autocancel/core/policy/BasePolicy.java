@@ -75,6 +75,8 @@ public class BasePolicy extends Policy {
                                                                     .max(Map.Entry.comparingByValue()).orElse(null);
             if (maxResourceUsage != null) {
                 target = maxResourceUsage.getKey();
+                System.out.println(String.format("Detect abnormal performance behaviour, cancel %s, %s usage %f", 
+                target.toString(), resourceName.toString(), maxResourceUsage.getValue()));
             }
         }
 
@@ -82,7 +84,6 @@ public class BasePolicy extends Policy {
             target = new CancellableID();
         }
 
-        Logger.systemInfo("Detect abnormal performance behaviour, cancel " + target.toString());
         return target;
     }
 }
