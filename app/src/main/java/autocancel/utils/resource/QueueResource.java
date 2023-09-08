@@ -14,8 +14,8 @@ public class QueueResource extends Resource {
 
     private Long prevNanoTime;
 
-    public QueueResource(ResourceName resourceName, Boolean global) {
-        super(ResourceType.QUEUE, resourceName, global);
+    public QueueResource(ResourceName resourceName) {
+        super(ResourceType.QUEUE, resourceName);
         this.triedTasks = 0;
         this.totalWaitTime = 0L;
         this.totalOccupyTime = 0L;
@@ -25,24 +25,16 @@ public class QueueResource extends Resource {
     @Override
     public Double getSlowdown() {
         Double slowdown = 0.0;
-        if (!this.global) {
-            slowdown = Double.valueOf(totalWaitTime) / (System.nanoTime() - this.prevNanoTime);
-        }
-        else {
-            Logger.systemWarn("Global resource shouldn't use get slowdown, use getContionLevel instead");
-        }
+        slowdown = Double.valueOf(totalWaitTime) / (System.nanoTime() - this.prevNanoTime);
+
         return slowdown;
     }
 
     @Override
     public Double getContentionLevel() {
         Double contentionLevel = 0.0;
-        if (this.global) {
-            contentionLevel = Double.valueOf(totalWaitTime) / (System.nanoTime() - this.prevNanoTime);
-        }
-        else {
-            Logger.systemWarn("Only global resource can call getContionLevel");
-        }
+        contentionLevel = Double.valueOf(totalWaitTime) / (System.nanoTime() - this.prevNanoTime);
+
         return contentionLevel;
     }
 

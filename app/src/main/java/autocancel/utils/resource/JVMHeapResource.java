@@ -18,8 +18,8 @@ public class JVMHeapResource extends MemoryResource {
 
     private Long cpuTime;
     
-    public JVMHeapResource(Boolean global) {
-        super(global);
+    public JVMHeapResource() {
+        super();
         this.gcMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
         this.prevGCTime = 0L;
         this.gcTime = this.getTotalGCTime();
@@ -36,12 +36,8 @@ public class JVMHeapResource extends MemoryResource {
     @Override
     public Double getContentionLevel() {
         Double contentionLevel = 0.0;
-        if (this.global) {
-            contentionLevel = Double.valueOf(gcTime - prevGCTime) / (cpuTime - prevCPUTime);
-        }
-        else {
-            Logger.systemWarn("Only global resource can call getContionLevel");
-        }
+        contentionLevel = Double.valueOf(gcTime - prevGCTime) / (cpuTime - prevCPUTime);
+
         return contentionLevel;
     }
 

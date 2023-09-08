@@ -17,12 +17,9 @@ public abstract class Resource {
     protected static final List<String> acceptedInfoKeywords = Arrays.asList(
             "wait_time", "occupy_time");
 
-    protected final Boolean global;
-
-    public Resource(ResourceType resourceType, ResourceName resourceName, Boolean global) {
+    public Resource(ResourceType resourceType, ResourceName resourceName) {
         this.resourceType = resourceType;
         this.resourceName = resourceName;
-        this.global = global;
     }
 
     public abstract Double getSlowdown();
@@ -39,27 +36,27 @@ public abstract class Resource {
         return this.resourceType;
     }
 
-    final public static Resource createResource(ResourceType type, ResourceName name, Boolean global) {
+    final public static Resource createResource(ResourceType type, ResourceName name) {
         Resource resource = null;
         switch (type) {
             case CPU:
-                resource = new CPUResource(name, global);
+                resource = new CPUResource(name);
                 break;
             case MEMORY:
                 if (name.equals(ResourceName.MEMORY)) {
                     if ((String)((Map<?, ?>)Settings.getSetting("monitor_physical_resources")).get("MEMORY") == "JVM") {
-                        resource = new JVMHeapResource(global);
+                        resource = new JVMHeapResource();
                     }
                     else {
-                        resource = new EvictableMemoryResource(global);
+                        resource = new EvictableMemoryResource();
                     }
                 }
                 else {
-                    resource = new EvictableMemoryResource(name, global);
+                    resource = new EvictableMemoryResource(name);
                 }
                 break;
             case QUEUE:
-                resource = new QueueResource(name, global);
+                resource = new QueueResource(name);
                 break;
             case NULL:
             default:

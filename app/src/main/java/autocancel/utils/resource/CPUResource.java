@@ -17,16 +17,16 @@ public class CPUResource extends Resource {
 
     private List<Double> cpuUsageThreads;
 
-    public CPUResource(Boolean global) {
-        super(ResourceType.CPU, ResourceName.CPU, global);
+    public CPUResource() {
+        super(ResourceType.CPU, ResourceName.CPU);
         this.absoluteSystemTime = 0L;
         this.totalSystemTime = 0L;
         this.usedSystemTime = 0L;
         this.cpuUsageThreads = new ArrayList<Double>();
     }
 
-    public CPUResource(ResourceName resourceName, Boolean global) {
-        super(ResourceType.CPU, resourceName, global);
+    public CPUResource(ResourceName resourceName) {
+        super(ResourceType.CPU, resourceName);
         this.absoluteSystemTime = 0L;
         this.totalSystemTime = 0L;
         this.usedSystemTime = 0L;
@@ -36,13 +36,8 @@ public class CPUResource extends Resource {
     @Override
     public Double getSlowdown() {
         Double slowdown = 0.0;
-        if (!this.global) {
-            if (this.totalSystemTime != 0L) {
-                slowdown = 1.0 - Double.valueOf(this.usedSystemTime) / this.totalSystemTime;
-            }
-        }
-        else {
-            Logger.systemWarn("Global resource shouldn't use get slowdown, use getContionLevel instead");
+        if (this.totalSystemTime != 0L) {
+            slowdown = 1.0 - Double.valueOf(this.usedSystemTime) / this.totalSystemTime;
         }
         return slowdown;
     }
@@ -50,18 +45,13 @@ public class CPUResource extends Resource {
     @Override
     public Double getContentionLevel() {
         Double standard = 0.0;
-        if (this.global) {
-            Double meanCPUUsage = this.cpuUsageThreads.stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
-            Double sumOfPow = this.cpuUsageThreads.stream().mapToDouble((item) -> { 
-                return Math.pow(item - meanCPUUsage, 2);
-            }).sum();
-            
-            if (this.cpuUsageThreads.size() > 1) {
-                standard = Math.sqrt(sumOfPow / (this.cpuUsageThreads.size() - 1));
-            }
-        }
-        else {
-            Logger.systemWarn("Only global resource can call getContionLevel");
+        Double meanCPUUsage = this.cpuUsageThreads.stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
+        Double sumOfPow = this.cpuUsageThreads.stream().mapToDouble((item) -> { 
+            return Math.pow(item - meanCPUUsage, 2);
+        }).sum();
+        
+        if (this.cpuUsageThreads.size() > 1) {
+            standard = Math.sqrt(sumOfPow / (this.cpuUsageThreads.size() - 1));
         }
         
         return standard;

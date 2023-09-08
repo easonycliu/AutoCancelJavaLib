@@ -10,15 +10,15 @@ public abstract class MemoryResource extends Resource {
 
     public Long totalMemory;
 
-    public MemoryResource(Boolean global) {
-        super(ResourceType.MEMORY, ResourceName.MEMORY, global);
+    public MemoryResource() {
+        super(ResourceType.MEMORY, ResourceName.MEMORY);
 
         this.totalMemory = 0L;
         this.usingMemory = 0L;
     }
 
-    public MemoryResource(ResourceName resourceName, Boolean global) {
-        super(ResourceType.MEMORY, resourceName, global);
+    public MemoryResource(ResourceName resourceName) {
+        super(ResourceType.MEMORY, resourceName);
 
         this.totalMemory = 0L;
         this.usingMemory = 0L;
