@@ -38,20 +38,30 @@ public class ResourcePool {
 
     public Double getSlowdown(ResourceName resourceName) {
         Double slowDown = 0.0;
-        if (this.resources.containsKey(resourceName)) {
-            slowDown = this.resources.get(resourceName).getSlowdown();
-        } else {
-            Logger.systemWarn("Cannot find resource " + resourceName.toString());
+        if (!this.global) {
+            if (this.resources.containsKey(resourceName)) {
+                slowDown = this.resources.get(resourceName).getSlowdown();
+            } else {
+                Logger.systemWarn("Cannot find resource " + resourceName.toString());
+            }
+        }
+        else {
+            Logger.systemWarn("Global resource pool should use getContentionLevel instead of getSlowdown");
         }
         return slowDown;
     }
 
     public Double getContentionLevel(ResourceName resourceName) {
         Double contentionLevel = 0.0;
-        if (this.resources.containsKey(resourceName)) {
-            contentionLevel = this.resources.get(resourceName).getContentionLevel();
-        } else {
-            Logger.systemWarn("Cannot find resource " + resourceName.toString());
+        if (this.global) {
+            if (this.resources.containsKey(resourceName)) {
+                contentionLevel = this.resources.get(resourceName).getContentionLevel();
+            } else {
+                Logger.systemWarn("Cannot find resource " + resourceName.toString());
+            }
+        }
+        else {
+            Logger.systemWarn("Only global resource pool can use getContentionLevel, use getSlowdown instead");
         }
         return contentionLevel;
     }
