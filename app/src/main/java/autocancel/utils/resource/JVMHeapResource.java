@@ -4,6 +4,8 @@ import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.util.List;
 
+import autocancel.utils.logger.Logger;
+
 public class JVMHeapResource extends MemoryResource {
 
     private List<GarbageCollectorMXBean> gcMXBeans;
@@ -16,8 +18,8 @@ public class JVMHeapResource extends MemoryResource {
 
     private Long cpuTime;
     
-    public JVMHeapResource() {
-        super();
+    public JVMHeapResource(Boolean global) {
+        super(global);
         this.gcMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
         this.prevGCTime = 0L;
         this.gcTime = this.getTotalGCTime();
@@ -27,7 +29,20 @@ public class JVMHeapResource extends MemoryResource {
 
     @Override
     public Double getSlowdown() {
-        return Double.valueOf(gcTime - prevGCTime) / (cpuTime - prevCPUTime);
+        Logger.systemWarn("JVM heap resource can't calculate slowdown for a single cancellable group");
+        return 0.0;
+    }
+
+    @Override
+    public Double getContentionLevel() {
+        Double contentionLevel = 0.0;
+        if (this.global) {
+            contentionLevel = Double.valueOf(gcTime - prevGCTime) / (cpuTime - prevCPUTime);
+        }
+        else {
+            Logger.systemWarn("Only global resource can call getContionLevel");
+        }
+        return contentionLevel;
     }
 
     private Long getTotalGCTime() {
