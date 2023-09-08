@@ -1,8 +1,5 @@
 package autocancel.utils.resource;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryMXBean;
-import java.lang.management.MemoryUsage;
 import java.util.Map;
 
 import autocancel.utils.logger.Logger;

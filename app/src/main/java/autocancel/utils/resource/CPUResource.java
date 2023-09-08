@@ -1,6 +1,8 @@
 package autocancel.utils.resource;
 
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import autocancel.utils.logger.Logger;
@@ -20,6 +22,7 @@ public class CPUResource extends Resource {
         this.absoluteSystemTime = 0L;
         this.totalSystemTime = 0L;
         this.usedSystemTime = 0L;
+        this.cpuUsageThreads = new ArrayList<Double>();
     }
 
     public CPUResource(ResourceName resourceName, Boolean global) {
@@ -27,6 +30,7 @@ public class CPUResource extends Resource {
         this.absoluteSystemTime = 0L;
         this.totalSystemTime = 0L;
         this.usedSystemTime = 0L;
+        this.cpuUsageThreads = new ArrayList<Double>();
     }
 
     @Override

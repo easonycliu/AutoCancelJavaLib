@@ -29,18 +29,6 @@ public class ResourcePool {
         }
     }
 
-    public void addResource(ResourceType type, ResourceName name) {
-        if (!this.resources.containsKey(name)) {
-            Resource resource = Resource.createResource(type, name);
-            if (resource != null) {
-                this.resources.put(name, resource);
-            }
-        } else {
-            Logger.systemWarn(
-                    "Resource " + name + " has added to resource pool, skip");
-        }
-    }
-
     public Boolean isResourceExist(ResourceName resourceName) {
         return this.resources.containsKey(resourceName);
     }
