@@ -37,7 +37,7 @@ public class CancellableGroup {
 
         this.cancellables = new HashMap<CancellableID, Cancellable>();
         this.cancellables.put(root.getID(), root);
-        this.resourcePool = new ResourcePool();
+        this.resourcePool = new ResourcePool(false);
 
         // These are "built-in" monitored resources
         this.resourcePool.addResource(Resource.createResource(ResourceType.CPU, ResourceName.CPU, false));

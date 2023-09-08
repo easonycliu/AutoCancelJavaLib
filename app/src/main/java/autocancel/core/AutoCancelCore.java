@@ -55,7 +55,7 @@ public class AutoCancelCore {
         this.requestParser = new RequestParser();
         this.logger = new Logger("corerequest");
         this.performanceMetrix = new Performance();
-        this.resourcePool = new ResourcePool();
+        this.resourcePool = new ResourcePool(true);
 
         this.resourcePool.addResource(Resource.createResource(ResourceType.CPU, ResourceName.CPU, true));
         this.resourcePool.addResource(Resource.createResource(ResourceType.MEMORY, ResourceName.MEMORY, true));
@@ -74,7 +74,7 @@ public class AutoCancelCore {
         this.requestParser = new RequestParser();
         this.logger = new Logger("corerequest");
         this.performanceMetrix = new Performance();
-        this.resourcePool = new ResourcePool();
+        this.resourcePool = new ResourcePool(true);
 
         this.resourcePool.addResource(Resource.createResource(ResourceType.CPU, ResourceName.CPU, true));
         this.resourcePool.addResource(Resource.createResource(ResourceType.MEMORY, ResourceName.MEMORY, true));

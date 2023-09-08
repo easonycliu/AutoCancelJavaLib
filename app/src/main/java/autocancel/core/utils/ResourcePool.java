@@ -16,8 +16,11 @@ public class ResourcePool {
 
     private Map<ResourceName, Resource> resources;
 
-    public ResourcePool() {
+    private final Boolean global;
+
+    public ResourcePool(Boolean global) {
         this.resources = new HashMap<ResourceName, Resource>();
+        this.global = global;
     }
 
     public void addResource(Resource resource) {
