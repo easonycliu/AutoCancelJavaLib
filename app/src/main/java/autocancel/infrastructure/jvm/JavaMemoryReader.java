@@ -4,7 +4,13 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.RuntimeMXBean;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 
+import autocancel.infrastructure.CPUTimeInfo;
 import autocancel.infrastructure.ResourceReader;
 import autocancel.utils.id.ID;
 import autocancel.utils.id.JavaThreadID;
@@ -14,7 +20,11 @@ public class JavaMemoryReader extends ResourceReader {
 
     private com.sun.management.ThreadMXBean sunThreadMXBean;
 
+    private Map<JavaThreadID, Long> javaThreadHeapUsing;
+
     private Long totalMemory;
+
+    private Integer version;
 
     public JavaMemoryReader() {
         java.lang.management.ThreadMXBean javaThreadMXBean = ManagementFactory.getThreadMXBean();
@@ -33,17 +43,53 @@ public class JavaMemoryReader extends ResourceReader {
             this.sunThreadMXBean = null;
             Logger.systemWarn("Unsupported class com.sun.management.ThreadMXBean");
         }
+        this.javaThreadHeapUsing = new HashMap<JavaThreadID, Long>();
         this.totalMemory = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getMax();
+        this.version = 0;
     }
 
     @Override
     public Map<String, Object> readResource(ID id, Integer version) {
-        Long totalMemory = 0L;
-        Long usingMemory = 0L;
-        if (this.sunThreadMXBean != null) {
-            totalMemory = this.totalMemory;
-            usingMemory = this.sunThreadMXBean.getThreadAllocatedBytes(((JavaThreadID) id).unwrap());
+        assert id instanceof JavaThreadID : "Java Memory reader must recieve java thread id";
+        if (this.outOfDate(version)) {
+            this.refresh(version);
         }
-        return Map.of("total_memory", Math.max(0, totalMemory), "using_memory", Math.max(0, usingMemory));
+        Long usingMemory = 0L;
+        if (this.javaThreadHeapUsing.containsKey((JavaThreadID) id)) {
+            usingMemory = this.javaThreadHeapUsing.get((JavaThreadID) id);
+        }
+        return Map.of("total_memory", this.totalMemory, "using_memory", usingMemory);
+    }
+
+    private Boolean outOfDate(Integer version) {
+        return !this.version.equals(version);
+    }
+
+    private void refresh(Integer version) {
+        // update version
+        this.version = version;
+
+        // update all working threads
+        long[] threads = this.sunThreadMXBean.getAllThreadIds();
+        TreeSet<Long> threadSet = new TreeSet<Long>(Arrays.stream(threads).boxed().toList());
+
+        this.javaThreadHeapUsing.replaceAll((key, value) -> {
+            if (threadSet.contains(key.unwrap())) {
+                return value;
+            }
+            else {
+                return 0L;
+            }
+        });
+        
+        for (long thread : threads) {
+            JavaThreadID jid = new JavaThreadID(thread);
+            if (this.javaThreadHeapUsing.containsKey(jid)) {
+                Long heapUsing = this.sunThreadMXBean.getThreadAllocatedBytes(jid.unwrap());
+                this.javaThreadHeapUsing.computeIfPresent(jid, (key, value) -> { return Math.max(0, heapUsing - value); });
+            } else {
+                this.javaThreadHeapUsing.put(jid, Math.max(0, this.sunThreadMXBean.getThreadAllocatedBytes(jid.unwrap())));
+            }
+        }
     }
 }

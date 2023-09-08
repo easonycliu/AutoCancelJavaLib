@@ -41,9 +41,28 @@ public class JVMHeapResource extends MemoryResource {
     @Override
     public void reset() {
         super.reset();
-        this.prevGCTime = this.gcTime;
-        this.gcTime = this.getTotalGCTime();
-        this.prevCPUTime = this.cpuTime;
-        this.cpuTime = System.currentTimeMillis();
+        Long tmpGCTime = this.getTotalGCTime();
+
+        // GC is not triggered frequently, so most of the time this.gcTime == tmpGCTime
+        // Then it's slowdown is zero
+        // sometime this.gcTime get updated, then at that moment the slowdown appoarches 1
+        if (tmpGCTime.equals(this.gcTime)) {
+            this.cpuTime = System.currentTimeMillis();
+        }
+        else {
+            this.prevGCTime = this.gcTime;
+            this.gcTime = tmpGCTime;
+            this.prevCPUTime = this.cpuTime;
+            this.cpuTime = System.currentTimeMillis();
+        }
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + String.format(", prevGCTime %d, gcTime: %d, prevCPUTime: %d, cpuTime: %d", 
+                                                this.prevGCTime,
+                                                this.gcTime,
+                                                this.prevCPUTime,
+                                                this.cpuTime);
     }
 }
