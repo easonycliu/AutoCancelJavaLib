@@ -44,6 +44,6 @@ public class JavaMemoryReader extends ResourceReader {
             totalMemory = this.totalMemory;
             usingMemory = this.sunThreadMXBean.getThreadAllocatedBytes(((JavaThreadID) id).unwrap());
         }
-        return Map.of("total_memory", totalMemory, "using_memory", usingMemory);
+        return Map.of("total_memory", Math.max(0, totalMemory), "using_memory", Math.max(0, usingMemory));
     }
 }
