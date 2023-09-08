@@ -121,8 +121,11 @@ public class AutoCancelCore {
 
             Long timestampMilli = System.currentTimeMillis();
 
-            this.logger.log(String.format("Current time: %d", timestampMilli));
             this.performanceMetrix.reset(timestampMilli);
+
+            this.logger.log(String.format("Current time: %d", timestampMilli));
+
+            CancellableGroup.cancellableGroupLog(String.format("Current time: %d", timestampMilli));
 
             // refresh stuff should be done before update
             Integer requestBufferSize = this.mainManager.getManagerRequestToCoreBufferSize();

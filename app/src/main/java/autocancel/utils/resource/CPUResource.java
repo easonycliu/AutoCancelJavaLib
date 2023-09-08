@@ -1,6 +1,7 @@
 package autocancel.utils.resource;
 
 import java.util.Map;
+import java.util.List;
 
 import autocancel.utils.logger.Logger;
 
@@ -11,6 +12,10 @@ public class CPUResource extends Resource {
     public Long totalSystemTime;
 
     public Long usedSystemTime;
+
+    private List<Double> cpuUsageThreads;
+
+    private Boolean global;
 
     public CPUResource() {
         super(ResourceType.CPU, ResourceName.CPU);
@@ -36,6 +41,19 @@ public class CPUResource extends Resource {
     }
 
     @Override
+    public Double getContentionLevel() {
+        Double meanCPUUsage = this.cpuUsageThreads.stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
+        Double sumOfPow = this.cpuUsageThreads.stream().mapToDouble((item) -> { 
+            return Math.pow(item - meanCPUUsage, 2);
+        }).sum();
+        Double std = 0.0;
+        if (this.cpuUsageThreads.size() > 1) {
+            std = Math.sqrt(sumOfPow / (this.cpuUsageThreads.size() - 1));
+        }
+        return std;
+    }
+
+    @Override
     public Double getResourceUsage() {
         Double resourceUsage = 0.0;
         if (this.absoluteSystemTime != 0L) {
@@ -47,6 +65,7 @@ public class CPUResource extends Resource {
     // CPU resource update info has keys:
     // cpu_time_system
     // cpu_time_thread
+    // cpu_usage_thread
     @Override
     public void setResourceUpdateInfo(Map<String, Object> resourceUpdateInfo) {
         for (Map.Entry<String, Object> entry : resourceUpdateInfo.entrySet()) {
@@ -57,6 +76,9 @@ public class CPUResource extends Resource {
                     break;
                 case "cpu_time_thread":
                     this.usedSystemTime += (Long) entry.getValue();
+                    break;
+                case "cpu_usage_thread":
+                    this.cpuUsageThreads.add((Double) entry.getValue());
                     break;
                 default:
                     Logger.systemWarn("Invalid info name " + entry.getKey() + " in resource type " + this.resourceType
@@ -71,6 +93,7 @@ public class CPUResource extends Resource {
         this.absoluteSystemTime = 0L;
         this.totalSystemTime = 0L;
         this.usedSystemTime = 0L;
+        this.cpuUsageThreads.clear();
     }
 
     @Override

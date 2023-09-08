@@ -129,4 +129,8 @@ public class CancellableGroup {
 
         return level;
     }
+
+    public static void cancellableGroupLog(String message) {
+        CancellableGroup.logger.log(message);
+    }
 }
