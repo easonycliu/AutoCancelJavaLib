@@ -57,8 +57,8 @@ public class AutoCancelCore {
         this.performanceMetrix = new Performance();
         this.resourcePool = new ResourcePool(true);
 
-        this.resourcePool.addResource(Resource.createResource(ResourceType.CPU, ResourceName.CPU, true));
-        this.resourcePool.addResource(Resource.createResource(ResourceType.MEMORY, ResourceName.MEMORY, true));
+        this.resourcePool.addResource(Resource.createResource(ResourceType.CPU, ResourceName.CPU));
+        this.resourcePool.addResource(Resource.createResource(ResourceType.MEMORY, ResourceName.MEMORY));
 
         this.infoCenter = new AutoCancelInfoCenter(this.rootCancellableToCancellableGroup,
                 this.cancellables,
@@ -76,8 +76,8 @@ public class AutoCancelCore {
         this.performanceMetrix = new Performance();
         this.resourcePool = new ResourcePool(true);
 
-        this.resourcePool.addResource(Resource.createResource(ResourceType.CPU, ResourceName.CPU, true));
-        this.resourcePool.addResource(Resource.createResource(ResourceType.MEMORY, ResourceName.MEMORY, true));
+        this.resourcePool.addResource(Resource.createResource(ResourceType.CPU, ResourceName.CPU));
+        this.resourcePool.addResource(Resource.createResource(ResourceType.MEMORY, ResourceName.MEMORY));
 
         this.infoCenter = new AutoCancelInfoCenter(this.rootCancellableToCancellableGroup,
                 this.cancellables,
@@ -355,7 +355,7 @@ public class AutoCancelCore {
                     Map<String, Object> resourceUpdateInfo = (Map<String, Object>) request.getParams().get("update_group_resource");
                     rootCancellableToCancellableGroup.get(cancellable.getRootID()).updateResource(resourceType, resourceName, resourceUpdateInfo);
                     if (!resourcePool.isResourceExist(request.getResourceName())) {
-                        resourcePool.addResource(Resource.createResource(resourceType, resourceName, true));
+                        resourcePool.addResource(Resource.createResource(resourceType, resourceName));
                     }
                     resourcePool.setResourceUpdateInfo(resourceName, resourceUpdateInfo);
                 }
