@@ -22,8 +22,6 @@ import java.util.regex.Matcher;
 import autocancel.app.elasticsearch.AutoCancel;
 import autocancel.utils.Syscall;
 
-import net.openhft.affinity.AffinityLock;
-
 public class App {
 
     public String getGreeting() {
@@ -33,22 +31,12 @@ public class App {
     public static void main(String[] args) {
         AutoCancel.start(null);
 
-        Thread bindedThread = new Thread() {
-            @Override
-            public void run() {
-                try (AffinityLock lock = AffinityLock.acquireLock(15)) {
-                    while (!Thread.currentThread().isInterrupted()) {
-
-                    }
-                }
-            }
-        };
-        bindedThread.start();
+        System.out.println("CPU core number: " + Runtime.getRuntime().availableProcessors());
 
         OperatingSystemMXBean osmxb = ManagementFactory.getOperatingSystemMXBean();
         System.out.println(osmxb.getSystemLoadAverage());
 
-        System.out.println(Syscall.gettid());
+        // System.out.println(Syscall.gettid());
 
         System.out.println(new App().getGreeting());
         Object t = new Object() {
@@ -121,14 +109,6 @@ public class App {
         }
         AutoCancel.stop();
         System.out.println("Finish 1");
-
-        bindedThread.interrupt();
-        try {
-            bindedThread.join();
-        }
-        catch (InterruptedException e) {
-
-        }
         
 
         ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
