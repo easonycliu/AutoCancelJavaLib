@@ -35,9 +35,9 @@ public class CPUResource extends Resource {
     @Override
     public Double getSlowdown(Map<String, Object> slowdownInfo) {
         Double slowdown = 0.0;
-        Long startTime = (Long) slowdownInfo.get("start_time");
-        if (startTime != null) {
-            slowdown = 1.0 - Double.valueOf(this.usedSystemTime) / ((System.nanoTime() - startTime) * this.existedThreadID.size());
+        Long startTimeNano = (Long) slowdownInfo.get("start_time_nano");
+        if (startTimeNano != null && this.existedThreadID.size() > 0) {
+            slowdown = 1.0 - Double.valueOf(this.usedSystemTime) / ((System.nanoTime() - startTimeNano) * this.existedThreadID.size());
         }
         return slowdown;
     }

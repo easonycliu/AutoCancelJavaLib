@@ -24,7 +24,7 @@ public class JVMHeapResource extends MemoryResource {
         Double slowdown = 0.0;
         Long startTime = (Long) slowdownInfo.get("start_time");
         if (startTime != null) {
-            slowdown = Double.valueOf(this.getTotalGCTime() - this.startGCTime) / (System.nanoTime() - startTime);
+            slowdown = Double.valueOf(this.getTotalGCTime() - this.startGCTime) / (System.currentTimeMillis() - startTime);
         }
         return slowdown;
     }
