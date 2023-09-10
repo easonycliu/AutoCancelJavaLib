@@ -4,8 +4,11 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 import autocancel.utils.logger.Logger;
+import autocancel.utils.id.ID;
 
 public class CPUResource extends Resource {
 
@@ -17,12 +20,15 @@ public class CPUResource extends Resource {
 
     private List<Double> cpuUsageThreads;
 
+    private Set<ID> existedThreadID;
+
     public CPUResource() {
         super(ResourceType.CPU, ResourceName.CPU);
         this.absoluteSystemTime = 0L;
         this.totalSystemTime = 0L;
         this.usedSystemTime = 0L;
         this.cpuUsageThreads = new ArrayList<Double>();
+        this.existedThreadID = new HashSet<ID>();
     }
 
     public CPUResource(ResourceName resourceName) {
@@ -31,6 +37,7 @@ public class CPUResource extends Resource {
         this.totalSystemTime = 0L;
         this.usedSystemTime = 0L;
         this.cpuUsageThreads = new ArrayList<Double>();
+        this.existedThreadID = new HashSet<ID>();
     }
 
     @Override
@@ -38,7 +45,7 @@ public class CPUResource extends Resource {
         Double slowdown = 0.0;
         Long startTime = (Long) slowdownInfo.get("start_time");
         if (startTime != null) {
-            slowdown = 1.0 - Double.valueOf(this.usedSystemTime) / (System.nanoTime() - startTime);
+            slowdown = 1.0 - Double.valueOf(this.usedSystemTime) / ((System.nanoTime() - startTime) * this.existedThreadID.size());
         }
         return slowdown;
     }
@@ -66,6 +73,7 @@ public class CPUResource extends Resource {
     // CPU resource update info has keys:
     // cpu_time_system
     // cpu_time_thread
+    // thread_id
     // cpu_usage_thread
     @Override
     public void setResourceUpdateInfo(Map<String, Object> resourceUpdateInfo) {
@@ -77,6 +85,11 @@ public class CPUResource extends Resource {
                     break;
                 case "cpu_time_thread":
                     this.usedSystemTime += (Long) entry.getValue();
+                    break;
+                case "thread_id":
+                    if (!this.existedThreadID.contains((ID) entry.getValue())) {
+                        this.existedThreadID.add((ID) entry.getValue());
+                    }
                     break;
                 case "cpu_usage_thread":
                     this.cpuUsageThreads.add((Double) entry.getValue());
