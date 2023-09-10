@@ -88,8 +88,8 @@ public class CancellableGroup {
         return slowdown;
     }
 
-    public Double getResourceUsage(ResourceName resourceName) {
-        Double resourceUsage = 0.0;
+    public Long getResourceUsage(ResourceName resourceName) {
+        Long resourceUsage = 0L;
         if (!this.isExit()) {
             resourceUsage = this.resourcePool.getResourceUsage(resourceName);
         }

@@ -68,14 +68,14 @@ public class BasePolicy extends Policy {
             for (Map.Entry<ResourceName, Double> entry : resourceContentionLevel.entrySet()) {
                 System.out.println(entry.getKey() + "'s contention level is " + entry.getValue());
             }
-            Map<CancellableID, Double> cancellableGroupResourceResourceUsage = this.infoCenter.getCancellableGroupResourceUsage(resourceName);
-            Map.Entry<CancellableID, Double> maxResourceUsage = cancellableGroupResourceResourceUsage
+            Map<CancellableID, Long> cancellableGroupResourceResourceUsage = this.infoCenter.getCancellableGroupResourceUsage(resourceName);
+            Map.Entry<CancellableID, Long> maxResourceUsage = cancellableGroupResourceResourceUsage
                                                                     .entrySet()
                                                                     .stream()
                                                                     .max(Map.Entry.comparingByValue()).orElse(null);
             if (maxResourceUsage != null) {
                 target = maxResourceUsage.getKey();
-                System.out.println(String.format("Detect abnormal performance behaviour, cancel %s, %s usage %f", 
+                System.out.println(String.format("Detect abnormal performance behaviour, cancel %s, %s usage %d", 
                 target.toString(), resourceName.toString(), maxResourceUsage.getValue()));
             }
         }

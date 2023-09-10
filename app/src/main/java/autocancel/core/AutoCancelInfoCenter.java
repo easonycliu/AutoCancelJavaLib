@@ -58,8 +58,8 @@ public class AutoCancelInfoCenter {
         return resourceContentionLevel;
     }
 
-    public Map<CancellableID, Double> getCancellableGroupResourceUsage(ResourceName resourceName) {
-        Map<CancellableID, Double> cancellableGroupResourceUsage = new HashMap<CancellableID, Double>();
+    public Map<CancellableID, Long> getCancellableGroupResourceUsage(ResourceName resourceName) {
+        Map<CancellableID, Long> cancellableGroupResourceUsage = new HashMap<CancellableID, Long>();
         for (Map.Entry<CancellableID, CancellableGroup> entry : this.rootCancellableToCancellableGroup.entrySet()) {
             cancellableGroupResourceUsage.put(entry.getKey(), entry.getValue().getResourceUsage(resourceName));
         }

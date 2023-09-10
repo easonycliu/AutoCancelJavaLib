@@ -59,12 +59,8 @@ public class CPUResource extends Resource {
     // }
 
     @Override
-    public Double getResourceUsage() {
-        Double resourceUsage = 0.0;
-        if (this.absoluteSystemTime != 0L) {
-            resourceUsage = Double.valueOf(this.usedSystemTime) / this.absoluteSystemTime;
-        }
-        return resourceUsage;
+    public Long getResourceUsage() {
+        return this.usedSystemTime;
     }
 
     // CPU resource update info has keys:

@@ -51,8 +51,8 @@ public class ResourcePool {
         return slowDown;
     }
 
-    public Double getResourceUsage(ResourceName resourceName) {
-        Double resourceUsage = 0.0;
+    public Long getResourceUsage(ResourceName resourceName) {
+        Long resourceUsage = 0L;
         if (this.resources.containsKey(resourceName)) {
             resourceUsage = this.resources.get(resourceName).getResourceUsage();
         }
