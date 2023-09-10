@@ -117,7 +117,9 @@ public class MainManager {
             false, 
             "Autocancel Thread", 
             "null", 
-            new CancellableID());
+            new CancellableID(),
+            System.nanoTime(),
+            System.currentTimeMillis());
         }
     }
 
