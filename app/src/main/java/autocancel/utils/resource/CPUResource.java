@@ -115,6 +115,8 @@ public class CPUResource extends Resource {
                 this.usedSystemTime);
     }
 
+    // This is exactly the same method as JVMHeapResource
+    // TODO: Don't right the same code twice
     private Long getTotalGCTime() {
         Long totalGCTime = 0L;
         for (GarbageCollectorMXBean gcMXBean : this.gcMXBeans) {
