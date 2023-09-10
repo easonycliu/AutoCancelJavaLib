@@ -12,10 +12,6 @@ import autocancel.utils.id.ID;
 
 public class CPUResource extends Resource {
 
-    private Long absoluteSystemTime;
-
-    private Long totalSystemTime;
-
     private Long usedSystemTime;
 
     private List<Double> cpuUsageThreads;
@@ -24,8 +20,6 @@ public class CPUResource extends Resource {
 
     public CPUResource() {
         super(ResourceType.CPU, ResourceName.CPU);
-        this.absoluteSystemTime = 0L;
-        this.totalSystemTime = 0L;
         this.usedSystemTime = 0L;
         this.cpuUsageThreads = new ArrayList<Double>();
         this.existedThreadID = new HashSet<ID>();
@@ -33,8 +27,6 @@ public class CPUResource extends Resource {
 
     public CPUResource(ResourceName resourceName) {
         super(ResourceType.CPU, resourceName);
-        this.absoluteSystemTime = 0L;
-        this.totalSystemTime = 0L;
         this.usedSystemTime = 0L;
         this.cpuUsageThreads = new ArrayList<Double>();
         this.existedThreadID = new HashSet<ID>();
@@ -80,8 +72,6 @@ public class CPUResource extends Resource {
         for (Map.Entry<String, Object> entry : resourceUpdateInfo.entrySet()) {
             switch (entry.getKey()) {
                 case "cpu_time_system":
-                    this.absoluteSystemTime = (Long) entry.getValue();
-                    this.totalSystemTime += this.absoluteSystemTime;
                     break;
                 case "cpu_time_thread":
                     this.usedSystemTime += (Long) entry.getValue();
@@ -104,18 +94,14 @@ public class CPUResource extends Resource {
 
     @Override
     public void reset() {
-        this.absoluteSystemTime = 0L;
-        this.totalSystemTime = 0L;
         this.cpuUsageThreads.clear();
     }
 
     @Override
     public String toString() {
-        return String.format("Resource Type: %s, name: %s, absolute, total, used system time: %d, %d, %d",
+        return String.format("Resource Type: %s, name: %s, used system time: %d",
                 this.getResourceType().toString(),
                 this.getResourceName().toString(),
-                this.absoluteSystemTime,
-                this.totalSystemTime,
                 this.usedSystemTime);
     }
 }
