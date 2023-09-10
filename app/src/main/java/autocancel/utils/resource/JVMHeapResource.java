@@ -30,8 +30,12 @@ public class JVMHeapResource extends MemoryResource {
 
     @Override
     public Double getSlowdown(Map<String, Object> slowdownInfo) {
-        Logger.systemWarn("JVM heap resource can't calculate slowdown for a single cancellable group");
-        return 0.0;
+        Double slowdown = 0.0;
+        Long startTime = (Long) slowdownInfo.get("start_time");
+        if (startTime != null) {
+            slowdown = Double.valueOf(gcTime - prevGCTime) / (System.nanoTime() - startTime);
+        }
+        return slowdown;
     }
 
     private Long getTotalGCTime() {
