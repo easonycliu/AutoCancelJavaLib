@@ -63,7 +63,6 @@ public class QueueResource extends Resource {
     @Override
     public void reset() {
         this.triedTasks = 0;
-        this.totalWaitTime = 0L;
         this.totalOccupyTime = 0L;
         this.prevNanoTime = System.nanoTime();
     }

@@ -97,7 +97,6 @@ public class CPUResource extends Resource {
     public void reset() {
         this.absoluteSystemTime = 0L;
         this.totalSystemTime = 0L;
-        this.usedSystemTime = 0L;
         this.cpuUsageThreads.clear();
     }
 
