@@ -47,6 +47,9 @@ public class Cancellable {
         this.action = "Unknown";
 
         this.exited = false;
+        
+        this.startTime = 0L;
+        this.startTimeNano = 0L;
 
         this.resourcePool = new ResourcePool(false);
 
