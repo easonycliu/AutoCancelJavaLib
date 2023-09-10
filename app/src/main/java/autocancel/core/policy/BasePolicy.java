@@ -81,6 +81,11 @@ public class BasePolicy extends Policy {
         }
 
         if (target == null) {
+            System.out.println("Failed to find a target to cancel for unknown reason");
+            target = new CancellableID();
+        }
+        else if (!this.infoCenter.isCancellable(target)) {
+            System.out.println(target.toString() + " is not cancellable");
             target = new CancellableID();
         }
 
