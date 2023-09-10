@@ -25,7 +25,7 @@ public class QueueResource extends Resource {
     @Override
     public Double getSlowdown() {
         Double slowdown = 0.0;
-        slowdown = Double.valueOf(totalWaitTime) / (System.nanoTime() - this.prevNanoTime);
+        slowdown = Double.valueOf(this.totalWaitTime) / (System.nanoTime() - this.prevNanoTime);
 
         return slowdown;
     }
@@ -33,14 +33,14 @@ public class QueueResource extends Resource {
     @Override
     public Double getContentionLevel() {
         Double contentionLevel = 0.0;
-        contentionLevel = Double.valueOf(totalWaitTime) / (System.nanoTime() - this.prevNanoTime);
+        contentionLevel = Double.valueOf(this.totalWaitTime) / ((System.nanoTime() - this.prevNanoTime) * this.triedTasks);
 
         return contentionLevel;
     }
 
     @Override
     public Double getResourceUsage() {
-        return Double.valueOf(totalOccupyTime) / (System.nanoTime() - this.prevNanoTime);
+        return Double.valueOf(this.totalOccupyTime) / (System.nanoTime() - this.prevNanoTime);
     }
 
     // Queue resource update info has keys:
