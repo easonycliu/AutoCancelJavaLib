@@ -1,6 +1,8 @@
 package autocancel.utils.resource;
 
 import java.util.Map;
+import java.lang.management.GarbageCollectorMXBean;
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,11 +20,17 @@ public class CPUResource extends Resource {
 
     private Set<ID> existedThreadID;
 
+    private List<GarbageCollectorMXBean> gcMXBeans;
+
+    private Long startGCTime;
+
     public CPUResource() {
         super(ResourceType.CPU, ResourceName.CPU);
         this.usedSystemTime = 0L;
         this.cpuUsageThreads = new ArrayList<Double>();
         this.existedThreadID = new HashSet<ID>();
+        this.gcMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
+        this.startGCTime = this.getTotalGCTime();
     }
 
     public CPUResource(ResourceName resourceName) {
@@ -30,6 +38,8 @@ public class CPUResource extends Resource {
         this.usedSystemTime = 0L;
         this.cpuUsageThreads = new ArrayList<Double>();
         this.existedThreadID = new HashSet<ID>();
+        this.gcMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
+        this.startGCTime = this.getTotalGCTime();
     }
 
     @Override
@@ -37,7 +47,7 @@ public class CPUResource extends Resource {
         Double slowdown = 0.0;
         Long startTimeNano = (Long) slowdownInfo.get("start_time_nano");
         if (startTimeNano != null && this.existedThreadID.size() > 0) {
-            slowdown = 1.0 - Double.valueOf(this.usedSystemTime) / ((System.nanoTime() - startTimeNano) * this.existedThreadID.size());
+            slowdown = 1.0 - Double.valueOf(this.usedSystemTime + (this.getTotalGCTime() - this.startGCTime) * 1000000 * this.existedThreadID.size()) / ((System.nanoTime() - startTimeNano) * this.existedThreadID.size());
         }
         return slowdown;
     }
@@ -103,5 +113,13 @@ public class CPUResource extends Resource {
                 this.getResourceType().toString(),
                 this.getResourceName().toString(),
                 this.usedSystemTime);
+    }
+
+    private Long getTotalGCTime() {
+        Long totalGCTime = 0L;
+        for (GarbageCollectorMXBean gcMXBean : this.gcMXBeans) {
+            totalGCTime += gcMXBean.getCollectionTime();
+        }
+        return totalGCTime;
     }
 }
