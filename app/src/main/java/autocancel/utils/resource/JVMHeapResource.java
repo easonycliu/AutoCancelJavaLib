@@ -33,14 +33,6 @@ public class JVMHeapResource extends MemoryResource {
         return 0.0;
     }
 
-    @Override
-    public Double getContentionLevel() {
-        Double contentionLevel = 0.0;
-        contentionLevel = Double.valueOf(gcTime - prevGCTime) / (cpuTime - prevCPUTime);
-
-        return contentionLevel;
-    }
-
     private Long getTotalGCTime() {
         Long totalGCTime = 0L;
         for (GarbageCollectorMXBean gcMXBean : this.gcMXBeans) {

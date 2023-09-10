@@ -42,20 +42,20 @@ public class CPUResource extends Resource {
         return slowdown;
     }
 
-    @Override
-    public Double getContentionLevel() {
-        Double standard = 0.0;
-        Double meanCPUUsage = this.cpuUsageThreads.stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
-        Double sumOfPow = this.cpuUsageThreads.stream().mapToDouble((item) -> { 
-            return Math.pow(item - meanCPUUsage, 2);
-        }).sum();
+    // @Override
+    // public Double getContentionLevel() {
+    //     Double standard = 0.0;
+    //     Double meanCPUUsage = this.cpuUsageThreads.stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
+    //     Double sumOfPow = this.cpuUsageThreads.stream().mapToDouble((item) -> { 
+    //         return Math.pow(item - meanCPUUsage, 2);
+    //     }).sum();
         
-        if (this.cpuUsageThreads.size() > 1) {
-            standard = Math.sqrt(sumOfPow / (this.cpuUsageThreads.size() - 1));
-        }
+    //     if (this.cpuUsageThreads.size() > 1) {
+    //         standard = Math.sqrt(sumOfPow / (this.cpuUsageThreads.size() - 1));
+    //     }
         
-        return standard;
-    }
+    //     return standard;
+    // }
 
     @Override
     public Double getResourceUsage() {

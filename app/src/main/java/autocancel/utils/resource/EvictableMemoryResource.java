@@ -20,12 +20,4 @@ public class EvictableMemoryResource extends MemoryResource {
         return slowdown;
     }
 
-    @Override
-    public Double getContentionLevel() {
-        Double contentionLevel = 0.0;
-        // TODO: implement it
-
-        return contentionLevel;
-    }
-
 }

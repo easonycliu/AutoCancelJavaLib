@@ -31,14 +31,6 @@ public class QueueResource extends Resource {
     }
 
     @Override
-    public Double getContentionLevel() {
-        Double contentionLevel = 0.0;
-        contentionLevel = Double.valueOf(this.totalWaitTime) / ((System.nanoTime() - this.prevNanoTime) * this.triedTasks);
-
-        return contentionLevel;
-    }
-
-    @Override
     public Double getResourceUsage() {
         return Double.valueOf(this.totalOccupyTime) / (System.nanoTime() - this.prevNanoTime);
     }
