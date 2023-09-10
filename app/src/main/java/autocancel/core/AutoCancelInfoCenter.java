@@ -65,4 +65,15 @@ public class AutoCancelInfoCenter {
         }
         return cancellableGroupResourceUsage;
     }
+
+    public Boolean isCancellable(CancellableID cid) {
+        Boolean isCancellable = false;
+        if (cid != null) {
+            CancellableGroup cancellableGroup = this.rootCancellableToCancellableGroup.get(cid);
+            if (cancellableGroup != null) {
+                isCancellable = cancellableGroup.getIsCancellable() && !cancellableGroup.isExit();
+            }
+        }
+        return isCancellable;
+    }
 }

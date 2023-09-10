@@ -32,6 +32,8 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -79,7 +81,9 @@ public class MainManager {
 
                             if (actualPolicy.needCancellation()) {
                                 CancellableID targetCID = actualPolicy.getCancelTarget();
-                                AutoCancel.cancel(targetCID);
+                                if (targetCID.isValid()) {
+                                    AutoCancel.cancel(targetCID);
+                                }
                             }
 
                             Thread.sleep((Long) Settings.getSetting("core_update_cycle_ms"));
@@ -91,6 +95,7 @@ public class MainManager {
                 }
             }
         };
+        this.activateAutoCancelThreadMonitor(true);
         this.autoCancelCoreThread.start();
     }
 
@@ -103,6 +108,16 @@ public class MainManager {
         }
         catch (InterruptedException e) {
             System.out.println("Giving up waiting for autocancel lib thread to join");
+        }
+    }
+
+    public void activateAutoCancelThreadMonitor(Boolean activate) {
+        if (activate) {
+            this.createCancellable(new JavaThreadID(this.autoCancelCoreThread.getId()), 
+            false, 
+            "Autocancel Thread", 
+            "null", 
+            new CancellableID());
         }
     }
 
