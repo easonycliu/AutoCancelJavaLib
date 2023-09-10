@@ -205,11 +205,7 @@ public class AutoCancelCore {
                 this.performanceMetrix.increaseFinishedTask();
             }
         } else {
-            // Nothing to do: In the group, we don't care about whether a cancellable is
-            // existing
-            // because we update cancellables according to this.cancellables
-            // TODO: find a more robust way to handle it
-
+            cancellable.exit();
         }
     }
 
@@ -368,6 +364,7 @@ public class AutoCancelCore {
                 if (!resourceName.equals(ResourceName.NULL) && !resourceType.equals(ResourceType.NULL)) {
                     Map<String, Object> resourceUpdateInfo = (Map<String, Object>) request.getParams().get("update_group_resource");
                     rootCancellableToCancellableGroup.get(cancellable.getRootID()).updateResource(resourceType, resourceName, resourceUpdateInfo);
+                    cancellable.updateResource(resourceType, resourceName, resourceUpdateInfo);
                     if (!resourcePool.isResourceExist(request.getResourceName())) {
                         resourcePool.addResource(Resource.createResource(resourceType, resourceName));
                     }

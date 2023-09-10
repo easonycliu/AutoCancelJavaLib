@@ -123,6 +123,10 @@ public class Cancellable {
         this.startTimeNano = startTimeNano;
     }
 
+    public void refreshResourcePool() {
+        this.resourcePool.refreshResources(null);
+    }
+
     public void updateResource(ResourceType resourceType, ResourceName resourceName,
             Map<String, Object> resourceUpdateInfo) {
         if (!this.resourcePool.isResourceExist(resourceName)) {
