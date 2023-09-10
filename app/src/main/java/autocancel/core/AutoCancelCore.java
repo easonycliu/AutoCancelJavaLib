@@ -310,6 +310,7 @@ public class AutoCancelCore {
                 "is_cancellable", request -> this.isCancellable(request),
                 "cancellable_name", request -> this.cancellableName(request),
                 "cancellable_action", request -> this.cancellableAction(request),
+                "cancellable_start_time", request -> this.cancellableStartTime(request),
                 "update_group_resource", request -> this.updateGroupResource(request));
 
         public ParamHandlers() {
@@ -343,6 +344,17 @@ public class AutoCancelCore {
             Cancellable cancellable = cancellables.get(request.getCancellableID());
             String action = (String) request.getParams().get("cancellable_action");
             cancellable.setAction(action);
+        }
+
+        private void cancellableStartTime(OperationRequest request) {
+            Cancellable cancellable = cancellables.get(request.getCancellableID());
+            if (cancellable.isRoot()) {
+                // This is a root cancellable
+                // Parameter cancellable_start_time is useful only if this cancellable is a root cancellable
+                // TODO: Add a warning if this is not a root cancellable
+                Long startTime = (Long) request.getParams().get("cancellable_start_time");
+                rootCancellableToCancellableGroup.get(cancellable.getID()).setStartTime(startTime);
+            }
         }
 
         @SuppressWarnings("unchecked")

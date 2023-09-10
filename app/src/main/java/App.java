@@ -45,7 +45,7 @@ public class App {
                 return "Task{id=1180, type='transport', action='indices:data/read/search', description='null', parentTask=unset, startTime=1691498694671, startTimeNanos=1118293583160794}";
             }
         };
-        System.out.println(t.toString().matches("(.*)(action=')([^\\s]+)(',)(.*)"));
+        System.out.println(t.toString().matches("(.*)(startTimeNanos=)([^\\s]+)(\\})(.*)"));
         AutoCancel.onTaskCreate(t, false);
         Runnable r = new Runnable() {
             @Override

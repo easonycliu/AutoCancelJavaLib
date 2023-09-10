@@ -14,6 +14,8 @@ public class TaskWrapper {
     private static final Pattern taskPattern = Pattern.compile("(.*)(Task\\{id=)([0-9]+)(,)(.*)");
 
     private static final Pattern actionPattern = Pattern.compile("(.*)(action=')([^\\s]+)(',)(.*)");
+
+    private static final Pattern startTimePattern = Pattern.compile("(.*)(startTimeNanos=)([^\\s]+)(\\})(.*)");
     
     private Object task;
 
@@ -22,6 +24,8 @@ public class TaskWrapper {
     private TaskID parentID;
 
     private String action;
+
+    private Long startTime;
 
     public TaskWrapper(Object task) throws AssertionError {
         assert task.toString().contains("Task") : "Input is not a class Task.";
@@ -63,6 +67,15 @@ public class TaskWrapper {
             assert false : "Illegal task name format " + this.task.toString();
         }
 
+        Matcher startTimeMatcher = startTimePattern.matcher(this.task.toString());
+
+        if (startTimeMatcher.find()) {
+            this.startTime = Long.valueOf(startTimeMatcher.group(3));
+        }
+        else {
+            assert false : "Illegal task name format " + this.task.toString();
+        }
+
     }
 
     public TaskID getParentTaskID() {
@@ -75,6 +88,10 @@ public class TaskWrapper {
 
     public String getAction() {
         return this.action;
+    }
+
+    public Long getStartTime() {
+        return this.startTime;
     }
 
     @Override
