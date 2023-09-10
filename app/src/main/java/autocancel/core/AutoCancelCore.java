@@ -349,24 +349,14 @@ public class AutoCancelCore {
 
         private void cancellableStartTime(OperationRequest request) {
             Cancellable cancellable = cancellables.get(request.getCancellableID());
-            if (cancellable.isRoot()) {
-                // This is a root cancellable
-                // Parameter cancellable_start_time is useful only if this cancellable is a root cancellable
-                // TODO: Add a warning if this is not a root cancellable
-                Long startTime = (Long) request.getParams().get("cancellable_start_time");
-                rootCancellableToCancellableGroup.get(cancellable.getID()).setStartTime(startTime);
-            }
+            Long startTime = (Long) request.getParams().get("cancellable_start_time");
+            cancellable.setStartTime(startTime);
         }
 
         private void cancellableStartTimeNano(OperationRequest request) {
             Cancellable cancellable = cancellables.get(request.getCancellableID());
-            if (cancellable.isRoot()) {
-                // This is a root cancellable
-                // Parameter cancellable_start_time_nano is useful only if this cancellable is a root cancellable
-                // TODO: Add a warning if this is not a root cancellable
-                Long startTimeNano = (Long) request.getParams().get("cancellable_start_time_nano");
-                rootCancellableToCancellableGroup.get(cancellable.getID()).setStartTimeNano(startTimeNano);
-            }
+            Long startTimeNano = (Long) request.getParams().get("cancellable_start_time_nano");
+            cancellable.setStartTimeNano(startTimeNano);
         }
 
         @SuppressWarnings("unchecked")

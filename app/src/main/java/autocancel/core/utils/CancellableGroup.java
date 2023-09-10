@@ -31,10 +31,6 @@ public class CancellableGroup {
 
     private Boolean exited;
 
-    private Long startTime;
-
-    private Long startTimeNano;
-
     public CancellableGroup(Cancellable root) {
         root.setLevel(0);
         this.root = root;
@@ -50,10 +46,6 @@ public class CancellableGroup {
         this.isCancellable = null;
 
         this.exited = false;
-
-        this.startTime = 0L;
-
-        this.startTimeNano = 0L;
     }
 
     public void exit() {
@@ -83,13 +75,7 @@ public class CancellableGroup {
 
     public Double getResourceSlowdown(ResourceName resourceName) {
         Double slowdown = 0.0;
-        if (!this.isExit()) {
-            Map<String, Object> cancellableGroupLevelInfo = Map.of(
-                "start_time", this.startTime,
-                "start_time_nano", this.startTimeNano
-            );
-            slowdown = this.resourcePool.getSlowdown(resourceName, cancellableGroupLevelInfo);
-        }
+
         return slowdown;
     }
 
@@ -108,26 +94,6 @@ public class CancellableGroup {
 
     public void setIsCancellable(Boolean isCancellable) {
         this.isCancellable = isCancellable;
-    }
-
-    public Long getStartTime() {
-        assert this.startTime != 0L;
-        return this.startTime;
-    }
-
-    public void setStartTime(Long startTime) {
-        assert this.startTime == 0L : "Start time has been set, don't set twice";
-        this.startTime = startTime;
-    }
-
-    public Long getStartTimeNano() {
-        assert this.startTimeNano != 0L;
-        return this.startTimeNano;
-    }
-
-    public void setStartTimeNano(Long startTimeNano) {
-        assert this.startTimeNano == 0L : "Start time nano has been set, don't set twice";
-        this.startTimeNano = startTimeNano;
     }
 
     public void putCancellable(Cancellable cancellable) {
