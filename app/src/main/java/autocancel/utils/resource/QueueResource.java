@@ -23,9 +23,12 @@ public class QueueResource extends Resource {
     }
 
     @Override
-    public Double getSlowdown() {
+    public Double getSlowdown(Map<String, Object> slowdownInfo) {
         Double slowdown = 0.0;
-        slowdown = Double.valueOf(this.totalWaitTime) / (System.nanoTime() - this.prevNanoTime);
+        Long startTime = (Long) slowdownInfo.get("start_time");
+        if (startTime != null) {
+            slowdown = Double.valueOf(this.totalWaitTime) / (System.nanoTime() - startTime);
+        }
 
         return slowdown;
     }

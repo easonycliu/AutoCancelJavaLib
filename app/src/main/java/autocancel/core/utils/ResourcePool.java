@@ -36,11 +36,11 @@ public class ResourcePool {
         return this.resources.containsKey(resourceName);
     }
 
-    public Double getSlowdown(ResourceName resourceName) {
+    public Double getSlowdown(ResourceName resourceName, Map<String, Object> cancellableGroupLevelInfo) {
         Double slowDown = 0.0;
         if (!this.global) {
             if (this.resources.containsKey(resourceName)) {
-                slowDown = this.resources.get(resourceName).getSlowdown();
+                slowDown = this.resources.get(resourceName).getSlowdown(cancellableGroupLevelInfo);
             } else {
                 Logger.systemWarn("Cannot find resource " + resourceName.toString());
             }

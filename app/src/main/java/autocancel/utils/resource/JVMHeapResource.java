@@ -3,6 +3,7 @@ package autocancel.utils.resource;
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.util.List;
+import java.util.Map;
 
 import autocancel.utils.logger.Logger;
 
@@ -28,7 +29,7 @@ public class JVMHeapResource extends MemoryResource {
     }
 
     @Override
-    public Double getSlowdown() {
+    public Double getSlowdown(Map<String, Object> slowdownInfo) {
         Logger.systemWarn("JVM heap resource can't calculate slowdown for a single cancellable group");
         return 0.0;
     }

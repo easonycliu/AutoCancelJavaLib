@@ -34,10 +34,11 @@ public class CPUResource extends Resource {
     }
 
     @Override
-    public Double getSlowdown() {
+    public Double getSlowdown(Map<String, Object> slowdownInfo) {
         Double slowdown = 0.0;
-        if (this.totalSystemTime != 0L) {
-            slowdown = 1.0 - Double.valueOf(this.usedSystemTime) / this.totalSystemTime;
+        Long startTime = (Long) slowdownInfo.get("start_time");
+        if (startTime != null) {
+            slowdown = 1.0 - Double.valueOf(this.usedSystemTime) / (System.nanoTime() - startTime);
         }
         return slowdown;
     }

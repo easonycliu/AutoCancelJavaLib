@@ -22,7 +22,7 @@ public abstract class Resource {
         this.resourceName = resourceName;
     }
 
-    public abstract Double getSlowdown();
+    public abstract Double getSlowdown(Map<String, Object> cancellableGroupLevelInfo);
 
     public abstract Double getResourceUsage();
 
