@@ -37,14 +37,23 @@ public class AutoCancelInfoCenter {
     }
 
     public Double getResourceContentionLevel(ResourceName resourceName) {
-        return this.systemResourcePool.getContentionLevel(resourceName);
+        Long cancellableGroupNumber = 0L;
+        Double averageSlowdown = 0.0;
+        for (CancellableGroup cancellableGroup : this.rootCancellableToCancellableGroup.values()) {
+            if (!cancellableGroup.isExit()) {
+                Double cancellableGroupSlowdown = cancellableGroup.getResourceSlowdown(resourceName);
+                averageSlowdown = (averageSlowdown * cancellableGroupNumber + cancellableGroupSlowdown) / (cancellableGroupNumber + 1);
+                cancellableGroupNumber += 1;
+            }
+        }
+        return averageSlowdown;
     }
 
     public Map<ResourceName, Double> getContentionLevel() {
         Set<ResourceName> resourceNames = this.systemResourcePool.getResourceNames();
         Map<ResourceName, Double> resourceContentionLevel = new HashMap<ResourceName, Double>();
         for (ResourceName resourceName : resourceNames) {
-            resourceContentionLevel.put(resourceName, this.systemResourcePool.getContentionLevel(resourceName));
+            resourceContentionLevel.put(resourceName, this.getResourceContentionLevel(resourceName));
         }
         return resourceContentionLevel;
     }
