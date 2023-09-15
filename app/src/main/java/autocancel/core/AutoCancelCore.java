@@ -200,8 +200,6 @@ public class AutoCancelCore {
     }
 
     protected void exitCancellable(Cancellable cancellable) {
-        this.cancellables.remove(cancellable.getID());
-
         if (cancellable.isRoot()) {
             // TODO: Problematic point: nullptr
             // CancellableGroup cancellableGroup =
