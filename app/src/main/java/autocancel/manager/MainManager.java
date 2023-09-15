@@ -72,7 +72,7 @@ public class MainManager {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(60000);
+                    Thread.sleep((Long) Settings.getSetting("skip_first_milli"));
                 }
                 catch (InterruptedException e) {
                     System.out.println(e.toString());
