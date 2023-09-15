@@ -42,7 +42,7 @@ public class BasePolicy extends Policy {
             if (currentTimeMilli - this.continuousAbnormalTimeMilli > BasePolicy.MAX_CONTINUOUS_ABNORMAL_MILLI) {
                 need = true;
                 this.started = false;
-                this.continuousAbnormalTimeMilli = 0L;
+                this.continuousAbnormalTimeMilli = currentTimeMilli;
             }
         }
         

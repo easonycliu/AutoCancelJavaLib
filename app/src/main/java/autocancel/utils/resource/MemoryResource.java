@@ -2,6 +2,7 @@ package autocancel.utils.resource;
 
 import java.util.Map;
 
+import autocancel.utils.Settings;
 import autocancel.utils.logger.Logger;
 
 public abstract class MemoryResource extends Resource {
@@ -41,7 +42,7 @@ public abstract class MemoryResource extends Resource {
                     this.totalMemory = (Long) entry.getValue();
                     break;
                 case "using_memory":
-                    this.usingMemory += (Long) entry.getValue();
+                    this.usingMemory = (long) Math.ceil((Double) Settings.getSetting("resource_usage_decay") * this.usingMemory) + (Long) entry.getValue();
                     break;
                 case "reuse_memory":
                     // TODO: Find a method to get reused memory

@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.HashSet;
 
 import autocancel.utils.logger.Logger;
+import autocancel.utils.Settings;
 import autocancel.utils.id.ID;
 
 public class CPUResource extends Resource {
@@ -84,7 +85,7 @@ public class CPUResource extends Resource {
                 case "cpu_time_system":
                     break;
                 case "cpu_time_thread":
-                    this.usedSystemTime += (Long) entry.getValue();
+                    this.usedSystemTime = (long) Math.ceil((Double) Settings.getSetting("resource_usage_decay") * this.usedSystemTime) + (Long) entry.getValue();
                     break;
                 case "thread_id":
                     if (!this.existedThreadID.contains((ID) entry.getValue())) {
