@@ -71,6 +71,13 @@ public class MainManager {
         this.autoCancelCoreThread = new Thread() {
             @Override
             public void run() {
+                try {
+                    Thread.sleep(60000);
+                }
+                catch (InterruptedException e) {
+                    System.out.println(e.toString());
+                }
+                AutoCancel.doStart();
                 try (AffinityLock lock = AffinityLock.acquireLock(Runtime.getRuntime().availableProcessors() - 1)) {
                     AutoCancelCore autoCancelCore = AutoCancelCoreHolder.getAutoCancelCore();
                     autoCancelCore.initialize(MainManager.this);
