@@ -121,14 +121,9 @@ public class Resource {
         
         for (Object monitorLock : monitorLocks) {
             Boolean monitorTarget = true;
-            String targetName = "";
+            String targetName = "Lock";
             for (Map.Entry<?, ?> entries : ((Map<?, ?>) monitorLock).entrySet()) {
-                if (targetName == "") {
-                    targetName += (String) entries.getValue();
-                }
-                else {
-                    targetName += "-" + (String) entries.getValue();
-                }
+                targetName += "-" + (String) entries.getValue();
 
                 if (Resource.lockInfoParser.containsKey((String) entries.getKey())) {
                     if (!Resource.lockInfoParser.get((String) entries.getKey()).apply((String) entries.getValue(), stackTraceElement)) {
