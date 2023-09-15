@@ -72,11 +72,12 @@ public class MainManager {
             @Override
             public void run() {
                 try {
-                    Thread.sleep((Long) Settings.getSetting("skip_first_milli"));
+                    Thread.sleep((Long) Settings.getSetting("skip_first_ms"));
                 }
                 catch (InterruptedException e) {
                     System.out.println(e.toString());
                 }
+                System.out.println("Autocancel core start");
                 AutoCancel.doStart();
                 try (AffinityLock lock = AffinityLock.acquireLock(Runtime.getRuntime().availableProcessors() - 1)) {
                     AutoCancelCore autoCancelCore = AutoCancelCoreHolder.getAutoCancelCore();

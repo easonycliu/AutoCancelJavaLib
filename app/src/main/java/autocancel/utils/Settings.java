@@ -14,7 +14,7 @@ public class Settings {
         "max_child_cancellable_level", 1000,
         "log_file_max_line", 200000,
         "system_log_level", "INFO",
-        "skip_first_milli", 60000,
+        "skip_first_ms", 60000L,
         "monitor_physical_resources", Map.of(
             "CPU", "JVM",
             "MEMORY", "JVM"
