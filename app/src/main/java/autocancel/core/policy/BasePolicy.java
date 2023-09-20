@@ -11,7 +11,7 @@ import autocancel.utils.resource.ResourceName;
 
 public class BasePolicy extends Policy {
 
-    private static final Integer ABNORMAL_PERFORMANCE_THRESHOLD = 1;
+    private static final Integer ABNORMAL_PERFORMANCE_THRESHOLD = 0;
 
     private static final Long MAX_CONTINUOUS_ABNORMAL_MILLI = 5000L;
 
@@ -34,6 +34,7 @@ public class BasePolicy extends Policy {
             }
         }
         else {
+            // System.out.println(String.format("Finished tasks: %d", this.infoCenter.getFinishedTaskNumber()));
             Long currentTimeMilli = System.currentTimeMillis();
             if (this.infoCenter.getFinishedTaskNumber() > BasePolicy.ABNORMAL_PERFORMANCE_THRESHOLD) {
                 this.continuousAbnormalTimeMilli = currentTimeMilli;
