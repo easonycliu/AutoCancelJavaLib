@@ -42,16 +42,16 @@ public class IDManager {
     }
 
     public CancellableID getCancellableIDOfJavaThreadID(JavaThreadID jid) {
-        CancellableID cancellableID = this.javaThreadIDToCancellableID.remove(jid);
+        CancellableID cancellableID = this.javaThreadIDToCancellableID.getOrDefault(jid, new CancellableID());
         
-        return cancellableID == null? new CancellableID() : cancellableID;
+        return cancellableID;
     }
 
     public void setCancellableIDAndJavaThreadID(CancellableID cid, JavaThreadID jid) {
-        this.doSetCancellableIDAndJavaThreadID(cid, jid);
+        this.javaThreadIDToCancellableID.put(jid, cid);
     }
 
-    private void doSetCancellableIDAndJavaThreadID(CancellableID cid, JavaThreadID jid) {
-        this.javaThreadIDToCancellableID.put(jid, cid);
+    public CancellableID removeJavaThreadID(JavaThreadID jid) {
+        return this.javaThreadIDToCancellableID.remove(jid);
     }
 }
