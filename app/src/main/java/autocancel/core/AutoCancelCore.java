@@ -312,7 +312,14 @@ public class AutoCancelCore {
                 // Itself is a root cancellable
                 rootID = request.getCancellableID();
             } else {
-                rootID = cancellables.get(parentID).getRootID();
+                Cancellable parentCancellable = cancellables.get(parentID);
+                if (parentCancellable == null) {
+                    System.out.println(String.format("Failed to find parenct , pretending to be cancellable itself", parentID.toString()));
+                    rootID = request.getCancellableID();
+                }
+                else {
+                    rootID = cancellables.get(parentID).getRootID();
+                }
             }
             return rootID;
         }

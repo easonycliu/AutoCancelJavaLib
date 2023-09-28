@@ -34,7 +34,7 @@ public class TaskTracker {
 
         this.mainManager.createCancellableIDOnCurrentJavaThreadID(
             wrappedTask.getTaskID(),
-            true, 
+            isCancellable, 
             task.toString(), 
             wrappedTask.getAction(), 
             parentCancellableID, 
