@@ -15,6 +15,8 @@ import autocancel.utils.id.ID;
 
 public class CPUResource extends Resource {
 
+    private Long totalSystemTime;
+
     private Long usedSystemTime;
 
     private Long usedSystemTimeDecay;
@@ -29,6 +31,7 @@ public class CPUResource extends Resource {
 
     public CPUResource() {
         super(ResourceType.CPU, ResourceName.CPU);
+        this.totalSystemTime = 0L;
         this.usedSystemTime = 0L;
         this.usedSystemTimeDecay = 0L;
         this.cpuUsageThreads = new ArrayList<Double>();
@@ -39,6 +42,7 @@ public class CPUResource extends Resource {
 
     public CPUResource(ResourceName resourceName) {
         super(ResourceType.CPU, resourceName);
+        this.totalSystemTime = 0L;
         this.usedSystemTime = 0L;
         this.usedSystemTimeDecay = 0L;
         this.cpuUsageThreads = new ArrayList<Double>();
@@ -52,7 +56,7 @@ public class CPUResource extends Resource {
         Double slowdown = 0.0;
         Long startTimeNano = (Long) slowdownInfo.get("start_time_nano");
         if (startTimeNano != null && this.existedThreadID.size() > 0) {
-            slowdown = 1.0 - Double.valueOf(this.usedSystemTime + (this.getTotalGCTime() - this.startGCTime) * 1000000 * this.existedThreadID.size()) / ((System.nanoTime() - startTimeNano) * this.existedThreadID.size());
+            slowdown = 1.0 - Double.valueOf(this.usedSystemTime + (this.getTotalGCTime() - this.startGCTime) * 1000000 * this.existedThreadID.size()) / this.totalSystemTime;
         }
         return slowdown;
     }
@@ -87,6 +91,7 @@ public class CPUResource extends Resource {
         for (Map.Entry<String, Object> entry : resourceUpdateInfo.entrySet()) {
             switch (entry.getKey()) {
                 case "cpu_time_system":
+                    this.totalSystemTime += (Long) entry.getValue();
                     break;
                 case "cpu_time_thread":
                     this.usedSystemTimeDecay = (long) Math.ceil((Double) Settings.getSetting("resource_usage_decay") * this.usedSystemTimeDecay) + (Long) entry.getValue();

@@ -15,7 +15,7 @@ public class Settings {
         "log_file_max_line", 200000,
         "system_log_level", "INFO",
         "skip_first_ms", 60000L,
-        "resource_usage_decay", 0.9,
+        "resource_usage_decay", 0.8,
         "monitor_physical_resources", Map.of(
             "CPU", "JVM",
             "MEMORY", "JVM"

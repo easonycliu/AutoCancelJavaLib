@@ -90,6 +90,7 @@ public class CancellableGroup {
             );
             slowdown = this.resourcePool.getSlowdown(resourceName, cancellableGroupLevelInfo);
         }
+        System.out.println(String.format("%s has slowdown %f on resource %s", this.root.toString(), slowdown, resourceName));
         return slowdown;
     }
 
