@@ -89,6 +89,10 @@ public class TaskWrapper {
             assert false : "Illegal task name format " + this.task.toString();
         }
 
+        if (this.taskID.equals(this.parentID)) {
+            this.parentID = new CancellableID();
+        }
+
     }
 
     public CancellableID getParentTaskID() {

@@ -1,21 +1,9 @@
 package autocancel.app.elasticsearch;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.apache.commons.collections4.BidiMap;
-import org.apache.commons.collections4.bidimap.TreeBidiMap;
-import org.apache.commons.collections4.bidimap.DualHashBidiMap;
-
 import autocancel.manager.MainManager;
-import autocancel.utils.ReleasableLock;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.logger.Logger;
 
@@ -44,16 +32,14 @@ public class TaskTracker {
 
         CancellableID parentCancellableID = wrappedTask.getParentTaskID();
 
-        if (parentCancellableID != null) {
-            CancellableID cid = this.mainManager.createCancellableIDOnCurrentJavaThreadID(true, 
+        CancellableID cid = this.mainManager.createCancellableIDOnCurrentJavaThreadID(true, 
             task.toString(), 
             wrappedTask.getAction(), 
             parentCancellableID, 
             wrappedTask.getStartTimeNano(),
             wrappedTask.getStartTime());
 
-            Logger.systemTrace("Created " + task.toString());
-        }
+        Logger.systemTrace("Created " + task.toString());
     }
 
     public void onTaskExit(Object task) throws AssertionError {

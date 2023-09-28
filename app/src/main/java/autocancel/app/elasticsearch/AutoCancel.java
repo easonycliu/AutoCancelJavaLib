@@ -34,7 +34,7 @@ public class AutoCancel {
 
     public static void start(BiConsumer<Long, String> canceller) {
         AutoCancel.mainManager.start(null);
-        AutoCancel.controller = new Control(AutoCancel.mainManager, cid -> AutoCancel.taskTracker.getTaskIDFromCancellableID(cid), canceller);
+        AutoCancel.controller = new Control(AutoCancel.mainManager, canceller);
     }
 
     public static void doStart() {

@@ -10,20 +10,16 @@ public class Control {
 
     private final MainManager mainManager;
 
-    private final Function<CancellableID, TaskWrapper.TaskID> taskIDGetter;
-
     private final BiConsumer<Long, String> canceller;
 
-    public Control(MainManager mainManager, Function<CancellableID, TaskWrapper.TaskID> taskIDGetter, BiConsumer<Long, String> canceller) {
+    public Control(MainManager mainManager, BiConsumer<Long, String> canceller) {
         this.mainManager = mainManager;
-        this.taskIDGetter = taskIDGetter;
         this.canceller = canceller;
     }
 
     public void cancel(CancellableID cid) {
-        TaskWrapper.TaskID taskID = this.taskIDGetter.apply(cid);
-        if (taskID != null) {
-            this.canceller.accept(taskID.unwrap(), "Auto Cancel Library");
+        if (cid.isValid()) {
+            this.canceller.accept(cid.toLong(), "Auto Cancel Library");
         }
     }
 }

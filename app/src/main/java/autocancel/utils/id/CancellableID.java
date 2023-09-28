@@ -39,4 +39,8 @@ public class CancellableID implements ID {
     public Boolean isValid() {
         return this.id != INVALID_ID;
     }
+
+    public Long toLong() {
+        return this.id;
+    }
 }
