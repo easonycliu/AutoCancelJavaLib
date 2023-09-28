@@ -14,6 +14,8 @@ import java.util.List;
 
 public class Resource {
 
+    private final static String NULL = "";
+
     private final MainManager mainManager;
 
     private ConcurrentMap<String, String> monitoredLock;
@@ -55,13 +57,14 @@ public class Resource {
     }
 
     public Long startResourceEvent(String name, String event) {
-        // System.out.println("Start " + event + " for resource " + name);
+        System.out.println(String.format("Thread %s start %s on resource %s", Thread.currentThread().getName(), event, name));
         return System.nanoTime();
     }
 
     public void endResourceEvent(String name, String event, Long timestamp) {
         // System.out.println("End " + event + " for resource " + name);
         Long duration = System.nanoTime() - timestamp;
+        System.out.println(String.format("Thread %s spend %d ns %s on resource %s", Thread.currentThread().getName(), duration, event, name));
         this.addResourceEventDuration(name, event, duration);
     }
 
@@ -75,21 +78,26 @@ public class Resource {
             // position sensitive! Do not use it in the plase other than ReleasableLock.acquire()
             // if want to track the lock waiting time of other types of locks, using startResourceWait(String name)
 
-            if (stackTraceElements.length >= 5) {
+            String targetName = Resource.NULL;
+            for (Integer i = 0; i < stackTraceElements.length; ++i) {
                 // System.out.println("Classname: " + stackTraceElements[4].getClassName() + 
                 // " Filename: " + stackTraceElements[4].getFileName() + 
                 // " Methodname: " + stackTraceElements[4].getMethodName() +
                 // " Linenumber: " + stackTraceElements[4].getLineNumber());
-                String targetName = this.isMonitorTarget(stackTraceElements[4]);
-                if (targetName != null) {
-                    // System.out.println("Find lock at " + stackTraceElements[4].toString());
+                targetName = this.isMonitorTarget(stackTraceElements[i]);
+                if (targetName != Resource.NULL) {
+                    System.out.println("Find lock at " + stackTraceElements[i].toString());
                     timestamp = this.startResourceEvent(targetName, "wait");
-                    this.monitoredLock.put(name, targetName);
+                    break;
                 }
             }
+            this.monitoredLock.put(name, targetName);
         }
         else {
-            timestamp = this.startResourceEvent(name, "wait");
+            String targetName = this.monitoredLock.get(name);
+            if (targetName != Resource.NULL) {
+                timestamp = this.startResourceEvent(targetName, "wait");
+            }
         }
 
         return timestamp;
@@ -99,7 +107,7 @@ public class Resource {
         Long nextTimestamp = -1L;
         if (timestamp > 0) {
             String targetName = this.monitoredLock.get(name);
-            if (targetName != null) {
+            if (targetName != null && targetName != Resource.NULL) {
                 this.endResourceEvent(targetName, "wait", timestamp);
                 nextTimestamp = this.startResourceEvent(targetName, "occupy");
             }
@@ -110,7 +118,7 @@ public class Resource {
     public void onLockRelease(String name, Long timestamp) {
         if (timestamp > 0) {
             String targetName = this.monitoredLock.get(name);
-            if (targetName != null) {
+            if (targetName != null && targetName != Resource.NULL) {
                 this.endResourceEvent(targetName, "occupy", timestamp);
             }
         }
@@ -143,6 +151,6 @@ public class Resource {
             }
         }
 
-        return null;
+        return Resource.NULL;
     }
 }

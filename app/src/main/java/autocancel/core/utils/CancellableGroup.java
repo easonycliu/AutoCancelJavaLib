@@ -82,7 +82,11 @@ public class CancellableGroup {
         if (!this.isExit()) {
             for (Cancellable cancellable : this.cancellables.values()) {
                 if (!cancellable.isExit()) {
-                    slowdown = ((slowdown * totalNoneExitCancellable) + cancellable.getResourceSlowdown(resourceName)) / (totalNoneExitCancellable + 1);
+                    Double cancellableSlowdown = cancellable.getResourceSlowdown(resourceName);
+                    if (cancellableSlowdown == 0.0) {
+                        continue;
+                    }
+                    slowdown = ((slowdown * totalNoneExitCancellable) + cancellableSlowdown) / (totalNoneExitCancellable + 1);
                     totalNoneExitCancellable += 1;
                 }
             }

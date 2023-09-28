@@ -145,6 +145,28 @@ public class AutoCancel {
         }
     }
 
+    public static Long startResourceOccupy(String name) {
+        Long timestamp = 0L;
+        if (AutoCancel.started) {
+            timestamp = AutoCancel.resourceTracker.startResourceEvent(name, "occupy");
+        }
+        else if (warnNotStarted) {
+            Logger.systemWarn("You should start lib AutoCancel first.");
+            AutoCancel.warnNotStarted = false;
+        }
+        return timestamp;
+    }
+
+    public static void endResourceOccupy(String name, Long timestamp) {
+        if (AutoCancel.started) {
+            AutoCancel.resourceTracker.endResourceEvent(name, "wait", timestamp);
+        }
+        else if (warnNotStarted) {
+            Logger.systemWarn("You should start lib AutoCancel first.");
+            AutoCancel.warnNotStarted = false;
+        }
+    }
+
     public static Long onLockWait(String name) {
         Long timestamp = -1L;
         if (AutoCancel.started) {

@@ -18,6 +18,8 @@ import java.util.regex.Pattern;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.util.regex.Matcher;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import autocancel.app.elasticsearch.AutoCancel;
 import autocancel.utils.Syscall;
@@ -101,15 +103,38 @@ public class App {
         AutoCancel.onTaskCreate(t1, false);
         AutoCancel.onTaskExit(t1);
         AutoCancel.onTaskFinishInThread();
+
+        Lock lock = new ReentrantLock();
+        Thread thread2 = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    System.out.println("Aquiring lock 0");
+                    lock.lock();
+                    Thread.sleep(10000);
+                    System.out.println("Release 0");
+                    lock.unlock();
+                }
+                catch (Exception e) {
+
+                }
+            }
+        };
+        thread2.start();
+        AutoCancel.stop();
+        System.out.println("Finish 1");
+
+        System.out.println("Aquiring lock 1 at " + System.nanoTime());
+        lock.lock();
+        System.out.println("Release 1 at " + System.nanoTime());
+        lock.unlock();
+
         try {
-            Thread.sleep(10000);
+            thread2.join();
         }
         catch (Exception e) {
 
         }
-        AutoCancel.stop();
-        System.out.println("Finish 1");
-        
 
         ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
 

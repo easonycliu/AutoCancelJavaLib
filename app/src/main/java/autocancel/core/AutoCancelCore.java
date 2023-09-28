@@ -410,7 +410,7 @@ public class AutoCancelCore {
                 }
 
             } else {
-                System.out.println("Can't find cancellable for cid " + request.getCancellableID());
+                // System.out.println("Can't find cancellable for cid " + request.getCancellableID());
             }
         }
     }
