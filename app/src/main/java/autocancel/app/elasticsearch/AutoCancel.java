@@ -1,22 +1,12 @@
 package autocancel.app.elasticsearch;
 
 import autocancel.manager.MainManager;
-import autocancel.app.elasticsearch.TaskWrapper;
-import autocancel.utils.ReleasableLock;
 import autocancel.utils.id.CancellableID;
-import autocancel.utils.id.JavaThreadID;
 import autocancel.utils.logger.Logger;
 import autocancel.utils.resource.ResourceType;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.BiConsumer;
-import java.util.List;
-import java.lang.Thread;
 
 public class AutoCancel {
     

@@ -1,7 +1,5 @@
 package autocancel.utils.resource;
 
-import autocancel.utils.logger.Logger;
-
 import java.util.Map;
 
 public class EvictableMemoryResource extends MemoryResource {

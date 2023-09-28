@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 
-import autocancel.core.monitor.Monitor;
 import autocancel.core.utils.OperationMethod;
 import autocancel.core.utils.OperationRequest;
 import autocancel.manager.MainManager;

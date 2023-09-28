@@ -1,16 +1,11 @@
 package autocancel.infrastructure.jvm;
 
 import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryMXBean;
-import java.lang.management.RuntimeMXBean;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeSet;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 
-import autocancel.infrastructure.CPUTimeInfo;
 import autocancel.infrastructure.ResourceReader;
 import autocancel.utils.id.ID;
 import autocancel.utils.id.JavaThreadID;

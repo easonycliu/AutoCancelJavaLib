@@ -4,7 +4,6 @@ import autocancel.core.performance.Performance;
 import autocancel.core.utils.Cancellable;
 import autocancel.core.utils.CancellableGroup;
 import autocancel.core.utils.ResourcePool;
-import autocancel.core.utils.ResourceUsage;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.resource.ResourceName;
 

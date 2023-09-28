@@ -4,7 +4,6 @@ import autocancel.manager.MainManager;
 import autocancel.utils.id.CancellableID;
 
 import java.util.function.BiConsumer;
-import java.util.function.Function;
 
 public class Control {
 

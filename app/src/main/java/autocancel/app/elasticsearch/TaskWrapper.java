@@ -2,9 +2,7 @@ package autocancel.app.elasticsearch;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.lang.Comparable;
 
-import autocancel.app.AppID;
 import autocancel.utils.id.CancellableID;
 
 public class TaskWrapper {

@@ -6,18 +6,11 @@
 
 package autocancel.manager;
 
-import autocancel.utils.ReleasableLock;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.id.JavaThreadID;
-import autocancel.utils.id.IDInfo;
-import autocancel.utils.logger.Logger;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentHashMap;
 

@@ -1,16 +1,12 @@
 package autocancel.app.elasticsearch;
 
 import autocancel.manager.MainManager;
-import autocancel.utils.Settings;
-import autocancel.utils.logger.Logger;
 import autocancel.utils.resource.ResourceType;
 
 import java.util.Map;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.BiFunction;
-import java.util.List;
 
 public class Resource {
 

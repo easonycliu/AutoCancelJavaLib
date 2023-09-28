@@ -5,8 +5,6 @@ import java.lang.management.ManagementFactory;
 import java.util.List;
 import java.util.Map;
 
-import autocancel.utils.logger.Logger;
-
 public class JVMHeapResource extends MemoryResource {
 
     private List<GarbageCollectorMXBean> gcMXBeans;

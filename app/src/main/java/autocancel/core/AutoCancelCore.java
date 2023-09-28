@@ -3,9 +3,6 @@ package autocancel.core;
 import autocancel.manager.MainManager;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.logger.Logger;
-import autocancel.utils.resource.CPUResource;
-import autocancel.utils.resource.MemoryResource;
-import autocancel.utils.resource.QueueResource;
 import autocancel.utils.resource.Resource;
 import autocancel.utils.resource.ResourceName;
 import autocancel.utils.resource.ResourceType;
@@ -13,22 +10,17 @@ import autocancel.core.monitor.MainMonitor;
 import autocancel.core.performance.Performance;
 import autocancel.core.utils.OperationRequest;
 import autocancel.core.utils.ResourcePool;
-import autocancel.core.utils.ResourceUsage;
 import autocancel.core.utils.Cancellable;
 import autocancel.core.utils.CancellableGroup;
-import autocancel.core.utils.OperationMethod;
 import autocancel.utils.Settings;
 
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.lang.Thread;
 import java.util.List;
 import java.util.Set;
-import java.util.HashSet;
 
 public class AutoCancelCore {
 

@@ -1,11 +1,7 @@
 package autocancel.core.utils;
 
-import autocancel.app.elasticsearch.AutoCancel;
-import autocancel.core.utils.Cancellable;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.logger.Logger;
-import autocancel.utils.resource.CPUResource;
-import autocancel.utils.resource.MemoryResource;
 import autocancel.utils.resource.Resource;
 import autocancel.utils.resource.ResourceName;
 import autocancel.utils.resource.ResourceType;
@@ -15,7 +11,6 @@ import java.util.Map;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
-import java.util.List;
 
 public class CancellableGroup {
 

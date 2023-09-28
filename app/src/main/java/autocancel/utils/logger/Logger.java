@@ -1,7 +1,6 @@
 package autocancel.utils.logger;
 
 import java.io.Closeable;
-import java.io.File;
 import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;

@@ -1,12 +1,6 @@
 package autocancel.core.utils;
 
-import autocancel.core.utils.ResourceUsage;
 import autocancel.utils.id.CancellableID;
-import autocancel.utils.resource.ResourceName;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 /*
  * root cancellable: id = id, parentID = -1, rootID = id

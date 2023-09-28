@@ -1,6 +1,5 @@
 package autocancel.app.elasticsearch;
 
-import autocancel.app.elasticsearch.AutoCancel;
 import autocancel.utils.Syscall;
 
 import java.util.concurrent.BlockingQueue;

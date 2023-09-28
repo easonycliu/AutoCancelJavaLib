@@ -1,10 +1,8 @@
 package autocancel.core.policy;
 
-import java.util.Comparator;
 import java.util.Map;
 
 import autocancel.utils.Policy;
-import autocancel.utils.Settings;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.logger.Logger;
 import autocancel.utils.resource.ResourceName;
