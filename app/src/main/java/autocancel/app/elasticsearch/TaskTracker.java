@@ -72,20 +72,8 @@ public class TaskTracker {
                         // It IS root task
                         parentCancellableID = new CancellableID();
                     }
-                    if (wrappedTask.getTaskID().compareTo(wrappedTask.getParentTaskID()) < 0) {
-                        // parent task id is bigger than task id
-                        // which means currently parent task hasn't been created yet
-                        if (this.danglingTaskBuffer.containsKey(wrappedTask.getParentTaskID())) {
-                            this.danglingTaskBuffer.get(wrappedTask.getParentTaskID()).add(task);
-                        }
-                        else {
-                            this.danglingTaskBuffer.put(wrappedTask.getParentTaskID(), new ArrayList<>(Arrays.asList(task)));
-                        }
-                        // leave parentCancellableID to null so it will skip the next step
-                        // once its parentCancellableID has been registered, it will be created
-                    }
                     else {
-                        // assert false : "Can't find parent task of " + task.toString();
+                        Logger.systemWarn(String.format("Can't find parent task of %s, discard it"));
                     }
                 }
             }
@@ -109,30 +97,7 @@ public class TaskTracker {
             }
 
             Logger.systemTrace("Created " + task.toString());
-
-            // handling dangling child cancellables
-            if (!parentCancellableID.isValid()) {
-                List<Object> danglingTasks = null;
-                try (ReleasableLock ignore = this.writeLock.acquire()) {
-                    danglingTasks = this.danglingTaskBuffer.get(wrappedTask.getTaskID());
-                    if (danglingTasks != null) {
-                        this.danglingTaskBuffer.remove(wrappedTask.getTaskID());
-                    }
-                }
-                if (danglingTasks != null) {
-                    for (Object danglingTask : danglingTasks) {
-                        // All children's isCancellable is the same as their parent's
-                        AutoCancel.onTaskCreate(danglingTask, isCancellable);
-                    }
-                }
-            }
         }
-        else {
-            // Some task will exit before its child task create
-            // TODO: Find a method to handle it
-            System.out.println(String.format("Parent cancellable id not found: Time: %d, %s, Parent %s", System.currentTimeMillis(), wrappedTask.getTaskID().toString(), wrappedTask.getParentTaskID().toString()));
-        }
-
     }
 
     public void onTaskExit(Object task) throws AssertionError {

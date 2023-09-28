@@ -35,7 +35,7 @@ public class Logger implements Closeable {
         this.writer = this.createFileWriter();
     }
 
-    public void log(String line) {
+    synchronized public void log(String line) {
         this.checkCurrentLine();
         if (this.writer != null) {
             if (!line.endsWith("\n")) {
