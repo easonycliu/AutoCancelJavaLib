@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.TreeBidiMap;
@@ -21,11 +23,9 @@ public class TaskTracker {
 
     private MainManager mainManager;
 
-    private Map<CancellableID, List<Runnable>> cancellableIDToAsyncRunnables;
+    private ConcurrentMap<Runnable, CancellableID> queueCancellable;
 
     private BidiMap<CancellableID, TaskWrapper.TaskID> cancellableIDTaskIDBiMap;
-
-    private Map<TaskWrapper.TaskID, List<Object>> danglingTaskBuffer;
     
     private ReadWriteLock autoCancelReadWriteLock;
 
@@ -38,11 +38,9 @@ public class TaskTracker {
     public TaskTracker(MainManager mainManager) {
         this.mainManager = mainManager;
 
-        this.cancellableIDToAsyncRunnables = new HashMap<CancellableID, List<Runnable>>();
+        this.queueCancellable = new ConcurrentHashMap<Runnable, CancellableID>();
 
         this.cancellableIDTaskIDBiMap = new DualHashBidiMap<CancellableID, TaskWrapper.TaskID>();
-
-        this.danglingTaskBuffer = new HashMap<TaskWrapper.TaskID, List<Object>>();
 
         this.autoCancelReadWriteLock = new ReentrantReadWriteLock();
 
@@ -127,13 +125,12 @@ public class TaskTracker {
 
     public void onTaskFinishInThread() throws AssertionError {
         CancellableID cid = this.mainManager.getCancellableIDOnCurrentJavaThreadID();
-        if (!cid.isValid()) {
-            // task has exited
-            // TODO: maybe there is a better way to identify the status
-            return;
+        if (cid.isValid()) {
+            this.mainManager.unregisterCancellableIDOnCurrentJavaThreadID();
         }
-
-        this.mainManager.unregisterCancellableIDOnCurrentJavaThreadID();
+        else {
+            Logger.systemWarn("Should have a cancellable running on a thread but not found");
+        }
     }
 
     public void onTaskQueueInThread(Runnable runnable) throws AssertionError {
@@ -141,46 +138,25 @@ public class TaskTracker {
 
         CancellableID cid = this.mainManager.getCancellableIDOnCurrentJavaThreadID();
 
-        // assert cid.isValid() : "Task must be running before queuing into threadpool.";
-        if (!cid.isValid()) {
-            // task has not been created yet
-            // TODO: maybe there is a better way to identify the status
-            return;
+        if (cid.isValid()) {
+            assert this.queueCancellable.put(runnable, cid) == null : "Duplicated runnable from threadpool";
         }
-
-        try (ReleasableLock ignored = this.writeLock.acquire()) {
-            if (this.cancellableIDToAsyncRunnables.containsKey(cid)) {
-                this.cancellableIDToAsyncRunnables.get(cid).add(runnable);
-            }
-            else {
-                this.cancellableIDToAsyncRunnables.put(cid, new ArrayList<Runnable>(Arrays.asList(runnable)));
-            }
+        else {
+            Logger.systemTrace("Cannot found corresponding cancellable from current thread");
         }
-
     }
 
     public void onTaskStartInThread(Runnable runnable) throws AssertionError {
         assert runnable != null : "Runable cannot be a null pointer.";
 
-        CancellableID cid = null;
+        CancellableID cid = this.queueCancellable.remove(runnable);
 
-        try (ReleasableLock ignored = this.readLock.acquire()) {
-            for (Map.Entry<CancellableID, List<Runnable>> entry : this.cancellableIDToAsyncRunnables.entrySet()) {
-                if (entry.getValue().contains(runnable)) {
-                    cid = entry.getKey();
-                    break;
-                }
-            }
+        if (cid != null) {
+            this.mainManager.registerCancellableIDOnCurrentJavaThreadID(cid);
         }
-
-        // assert cid != null : "Cannot start a runnable out of excute entry.";
-        if (cid == null) {
-            // task has not been created yet
-            // TODO: maybe there is a better way to identify the status
-            return;
+        else {
+            Logger.systemTrace("Cannot found corresponding cancellable from runnable");
         }
-
-        this.mainManager.registerCancellableIDOnCurrentJavaThreadID(cid);
     }
 
     public TaskWrapper.TaskID getTaskIDFromCancellableID(CancellableID cid) {
@@ -188,7 +164,6 @@ public class TaskTracker {
     }
 
     private void removeCancellableIDFromMaps(CancellableID cid) {
-        this.cancellableIDToAsyncRunnables.remove(cid);
         this.cancellableIDTaskIDBiMap.remove(cid);
     }
 }
