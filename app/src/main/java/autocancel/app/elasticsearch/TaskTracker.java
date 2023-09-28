@@ -32,12 +32,15 @@ public class TaskTracker {
 
         CancellableID parentCancellableID = wrappedTask.getParentTaskID();
 
-        CancellableID cid = this.mainManager.createCancellableIDOnCurrentJavaThreadID(true, 
+        this.mainManager.createCancellableIDOnCurrentJavaThreadID(
+            wrappedTask.getTaskID(),
+            true, 
             task.toString(), 
             wrappedTask.getAction(), 
             parentCancellableID, 
             wrappedTask.getStartTimeNano(),
-            wrappedTask.getStartTime());
+            wrappedTask.getStartTime()
+        );
 
         Logger.systemTrace("Created " + task.toString());
     }

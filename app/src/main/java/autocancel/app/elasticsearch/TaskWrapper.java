@@ -100,6 +100,7 @@ public class TaskWrapper {
     }
 
     public CancellableID getTaskID() {
+        assert this.taskID.isValid() : "Task id should never be invalid";
         return this.taskID;
     }
 
