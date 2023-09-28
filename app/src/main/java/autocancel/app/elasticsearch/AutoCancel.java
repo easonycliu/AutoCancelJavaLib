@@ -167,40 +167,6 @@ public class AutoCancel {
         }
     }
 
-    public static Long onLockWait(String name) {
-        Long timestamp = -1L;
-        if (AutoCancel.started) {
-            timestamp = AutoCancel.resourceTracker.onLockWait(name);
-        }
-        else if (warnNotStarted) {
-            Logger.systemWarn("You should start lib AutoCancel first.");
-            AutoCancel.warnNotStarted = false;
-        }
-        return timestamp;
-    }
-
-    public static Long onLockGet(String name, Long timestamp) {
-        Long nextTimestamp = -1L;
-        if (AutoCancel.started) {
-            nextTimestamp = AutoCancel.resourceTracker.onLockGet(name, timestamp);
-        }
-        else if (warnNotStarted) {
-            Logger.systemWarn("You should start lib AutoCancel first.");
-            AutoCancel.warnNotStarted = false;
-        }
-        return nextTimestamp;
-    }
-
-    public static void onLockRelease(String name, Long timestamp) {
-        if (AutoCancel.started) {
-            AutoCancel.resourceTracker.onLockRelease(name, timestamp);
-        }
-        else if (warnNotStarted) {
-            Logger.systemWarn("You should start lib AutoCancel first.");
-            AutoCancel.warnNotStarted = false;
-        }
-    }
-
     public static void cancel(CancellableID cid) {
         if (AutoCancel.started) {
             AutoCancel.controller.cancel(cid);
@@ -210,5 +176,4 @@ public class AutoCancel {
             AutoCancel.warnNotStarted = false;
         }
     }
-
 }
