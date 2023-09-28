@@ -25,14 +25,4 @@ public class Log {
     public void stop() {
         this.logger.close();
     }
-
-    public void logCancellableJavaThreadIDInfo(CancellableID cid, Object task) {
-        List<IDInfo<JavaThreadID>> javaThreadIDInfos = this.mainManager.getAllJavaThreadIDInfoOfCancellableID(cid);
-
-        this.logger.log(String.format("========== Cancellable %s %s ==========", cid.toString(), task.toString()));
-        for (IDInfo<JavaThreadID> javaThreadIDInfo : javaThreadIDInfos) {
-            this.logger.log(javaThreadIDInfo.toString());
-        }
-    }
-
 }

@@ -115,8 +115,6 @@ public class TaskTracker {
             }
 
             this.mainManager.destoryCancellableIDOnCurrentJavaThreadID(cid);
-
-            this.log.logCancellableJavaThreadIDInfo(cid, task);
         }
         else {
             Logger.systemWarn("Cannot find " + task.toString() + " , check whether it has exited before.");
