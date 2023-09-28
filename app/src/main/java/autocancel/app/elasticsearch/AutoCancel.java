@@ -159,7 +159,7 @@ public class AutoCancel {
 
     public static void endResourceOccupy(String name, Long timestamp) {
         if (AutoCancel.started) {
-            AutoCancel.resourceTracker.endResourceEvent(name, "wait", timestamp);
+            AutoCancel.resourceTracker.endResourceEvent(name, "occupy", timestamp);
         }
         else if (warnNotStarted) {
             Logger.systemWarn("You should start lib AutoCancel first.");
