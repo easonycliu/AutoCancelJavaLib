@@ -3,10 +3,8 @@ package autocancel.infrastructure.linux;
 import autocancel.infrastructure.ResourceReader;
 import autocancel.utils.id.ID;
 import autocancel.utils.logger.Logger;
-import autocancel.utils.resource.ResourceName;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.Map;
