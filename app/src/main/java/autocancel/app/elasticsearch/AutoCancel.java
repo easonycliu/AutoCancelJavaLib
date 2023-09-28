@@ -24,7 +24,7 @@ public class AutoCancel {
 
     public static void start(BiConsumer<Long, String> canceller) {
         AutoCancel.mainManager.start(null);
-        AutoCancel.controller = new Control(AutoCancel.mainManager, canceller);
+        AutoCancel.controller = new Control(canceller);
     }
 
     public static void doStart() {
