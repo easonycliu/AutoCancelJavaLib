@@ -71,7 +71,7 @@ public class ResourcePool {
             if (logger != null) {
                 logger.log(entries.getValue().toString());
             }
-            entries.getValue().reset();
+            entries.getValue().refresh();
         }
     }
 

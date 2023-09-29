@@ -21,6 +21,9 @@ public class QueueResource extends Resource {
     public QueueResource(ResourceName resourceName) {
         super(ResourceType.QUEUE, resourceName);
         this.totalEventTime = new HashMap<QueueEvent, Long>();
+        // Initiate them to zero to avoid negative value when start and end in a same refresh interval
+        this.currentSystemTime = 0L;
+        this.prevSystemTime = 0L;
         this.queueEventDataPoints = new HashMap<QueueEvent, Queue<Long>>();
         for (QueueEvent event : QueueEvent.values()) {
             this.queueEventDataPoints.put(event, new ArrayDeque<Long>());
@@ -33,7 +36,8 @@ public class QueueResource extends Resource {
         Long startTime = (Long) slowdownInfo.get("start_time_nano");
         Long currentTime = System.nanoTime();
         if (startTime != null) {
-            slowdown = Double.valueOf(this.totalEventTime.getOrDefault(QueueEvent.QUEUE, 0L)) / (currentTime - startTime);
+            slowdown = Double.valueOf(this.totalEventTime.getOrDefault(QueueEvent.QUEUE, 0L)) / 
+            ((currentTime - startTime) * this.queueEventDataPoints.size());
         }
 
         return slowdown;
@@ -45,8 +49,9 @@ public class QueueResource extends Resource {
     }
 
     // Queue resource update info has keys:
-    // wait_time
-    // occupy_time
+    // cpu_time_system
+    // event
+    // start
     @Override
     public void setResourceUpdateInfo(Map<String, Object> resourceUpdateInfo) {
         Long cpuTimeSystem = (Long) resourceUpdateInfo.get("cpu_time_system");

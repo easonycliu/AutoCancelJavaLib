@@ -1,6 +1,7 @@
 package autocancel.app.elasticsearch;
 
 import autocancel.manager.MainManager;
+import autocancel.utils.id.JavaThreadID;
 import autocancel.utils.resource.QueueEvent;
 import autocancel.utils.resource.ResourceType;
 
@@ -26,7 +27,7 @@ public class Resource {
             Map.of(
                 "cpu_time_system", System.nanoTime(),
                 "cpu_time_thread", threadMXBean.getCurrentThreadCpuTime(),
-                "thread_id", Thread.currentThread().getId(),
+                "thread_id", new JavaThreadID(Thread.currentThread().getId()),
                 "start", true
             )
         );
@@ -39,7 +40,7 @@ public class Resource {
             Map.of(
                 "cpu_time_system", System.nanoTime(),
                 "cpu_time_thread", threadMXBean.getCurrentThreadCpuTime(),
-                "thread_id", Thread.currentThread().getId(),
+                "thread_id", new JavaThreadID(Thread.currentThread().getId()),
                 "start", false
             )
         );
