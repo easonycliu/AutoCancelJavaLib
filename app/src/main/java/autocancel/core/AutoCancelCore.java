@@ -230,6 +230,14 @@ public class AutoCancelCore {
         }
     }
 
+    private Map<String, Object> addCoreLeveUpdateInfo(Map<String, Object> resourceUpdateInfo, OperationRequest request) {
+        CancellableID cid = request.getCancellableID();
+        assert cid.isValid() : "Should use valid cid to update cancellable group";
+        Map<String, Object> updateInfo = new HashMap<>(resourceUpdateInfo);
+        updateInfo.putIfAbsent("cancellable_id", cid);
+        return updateInfo;
+    }
+
     private class RequestParser {
         ParamHandlers paramHandlers;
 
@@ -405,7 +413,10 @@ public class AutoCancelCore {
                 ResourceType resourceType = request.getResourceType();
                 ResourceName resourceName = request.getResourceName();
                 if (!resourceName.equals(ResourceName.NULL) && !resourceType.equals(ResourceType.NULL)) {
-                    Map<String, Object> resourceUpdateInfo = (Map<String, Object>) request.getParams().get("update_group_resource");
+                    Map<String, Object> resourceUpdateInfo = AutoCancelCore.this.addCoreLeveUpdateInfo(
+                        (Map<String, Object>) request.getParams().get("update_group_resource"),
+                        request
+                    );
                     try {
                         rootCancellableToCancellableGroup.get(cancellable.getRootID()).updateResource(resourceType, resourceName, resourceUpdateInfo);
                         if (!resourcePool.isResourceExist(request.getResourceName())) {
@@ -417,7 +428,6 @@ public class AutoCancelCore {
                         System.out.println("Cannot find cancellable group for " + cancellable.toString() + " at " + e.getStackTrace()[0]);
                     }
                 }
-
             } else {
                 // System.out.println("Can't find cancellable for cid " + request.getCancellableID());
             }

@@ -2,10 +2,13 @@ package autocancel.utils.resource;
 
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.ArrayDeque;
 import java.util.HashMap;
+import java.util.HashSet;
 
+import autocancel.utils.id.ID;
 import autocancel.utils.logger.Logger;
 
 public class QueueResource extends Resource {
@@ -16,9 +19,9 @@ public class QueueResource extends Resource {
 
     private Long prevSystemTime;
 
-    private Map<QueueEvent, Queue<Long>> queueEventDataPoints;
+    private Set<ID> cancellableIDSet;
 
-    private Long queueNumber;
+    private Map<QueueEvent, Queue<Long>> queueEventDataPoints;
 
     public QueueResource(ResourceName resourceName) {
         super(ResourceType.QUEUE, resourceName);
@@ -26,6 +29,7 @@ public class QueueResource extends Resource {
         // Initiate them to zero to avoid negative value when start and end in a same refresh interval
         this.currentSystemTime = 0L;
         this.prevSystemTime = 0L;
+        this.cancellableIDSet = new HashSet<ID>();
         this.queueEventDataPoints = new HashMap<QueueEvent, Queue<Long>>();
         for (QueueEvent event : QueueEvent.values()) {
             this.queueEventDataPoints.put(event, new ArrayDeque<Long>());
@@ -37,9 +41,9 @@ public class QueueResource extends Resource {
         Double slowdown = 0.0;
         Long startTime = (Long) slowdownInfo.get("start_time_nano");
         Long currentTime = System.nanoTime();
-        if (startTime != null && this.queueNumber > 0) {
+        if (startTime != null && this.cancellableIDSet.size() > 0) {
             slowdown = Double.valueOf(this.totalEventTime.getOrDefault(QueueEvent.QUEUE, 0L)) / 
-            ((currentTime - startTime) * this.queueNumber);
+            ((currentTime - startTime) * this.cancellableIDSet.size());
         }
 
         return slowdown;
@@ -59,13 +63,20 @@ public class QueueResource extends Resource {
         Long cpuTimeSystem = (Long) resourceUpdateInfo.get("cpu_time_system");
         QueueEvent event = (QueueEvent) resourceUpdateInfo.get("event");
         Boolean start = (Boolean) resourceUpdateInfo.get("start");
+        ID cid = (ID) resourceUpdateInfo.get("cancellable_id");
         
-        if (cpuTimeSystem != null &&
-        event != null &&
-        start != null) {
+        if (
+            cpuTimeSystem != null &&
+            event != null &&
+            start != null &&
+            cid != null
+        ) {
             this.queueEventDataPoints.computeIfPresent(event, (dataPointKey, dataPointValue) -> {
                 if (start) {
                     dataPointValue.add(cpuTimeSystem);
+                    if (event.equals(QueueEvent.QUEUE)) {
+                        this.cancellableIDSet.add(cid);
+                    }
                 }
                 else {
                     Long startTime = dataPointValue.poll();
@@ -99,7 +110,6 @@ public class QueueResource extends Resource {
     public void refresh() {
         this.prevSystemTime = this.currentSystemTime;
         this.currentSystemTime = System.nanoTime();
-        this.queueNumber = (long) this.queueEventDataPoints.get(QueueEvent.QUEUE).size();
         for (Map.Entry<QueueEvent, Queue<Long>> entry : this.queueEventDataPoints.entrySet()) {
             AtomicLong eventTime = new AtomicLong(this.totalEventTime.getOrDefault(entry.getKey(), 0L));
             entry.getValue().forEach((startTime) -> {

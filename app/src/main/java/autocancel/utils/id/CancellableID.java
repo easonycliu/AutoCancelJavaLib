@@ -22,7 +22,6 @@ public class CancellableID implements ID {
 
     @Override
     public boolean equals(Object o) {
-        // TODO: Class should be the same
         if (o instanceof CancellableID cid) {
             return this.toLong().equals(cid.toLong());
         }

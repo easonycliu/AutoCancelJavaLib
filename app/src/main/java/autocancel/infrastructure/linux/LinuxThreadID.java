@@ -1,5 +1,6 @@
 package autocancel.infrastructure.linux;
 
+import autocancel.utils.id.CancellableID;
 import autocancel.utils.id.ID;
 
 class LinuxThreadID implements ID {
@@ -24,8 +25,10 @@ class LinuxThreadID implements ID {
 
     @Override
     public boolean equals(Object o) {
-        // TODO: Class should be the same
-        return this.id == ((LinuxThreadID) o).id;
+        if (o instanceof LinuxThreadID nid) {
+            return this.toLong().equals(nid.toLong());
+        }
+        return false;
     }
 
     @Override
