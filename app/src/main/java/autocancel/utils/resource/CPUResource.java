@@ -3,10 +3,11 @@ package autocancel.utils.resource;
 import java.util.Map;
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
-import java.util.HashSet;
+import java.util.concurrent.atomic.AtomicLong;
 
 import autocancel.utils.logger.Logger;
 import autocancel.utils.Settings;
@@ -22,11 +23,17 @@ public class CPUResource extends Resource {
 
     private List<Double> cpuUsageThreads;
 
-    private Set<ID> existedThreadID;
-
     private List<GarbageCollectorMXBean> gcMXBeans;
 
     private Long startGCTime;
+
+    private Map<ID, CPUDataPoint> cpuDataPoints;
+
+    private Long currentSystemTime;
+
+    private Long prevSystemTime;
+
+    private ThreadMXBean threadMXBean;
 
     public CPUResource() {
         super(ResourceType.CPU, ResourceName.CPU);
@@ -34,9 +41,12 @@ public class CPUResource extends Resource {
         this.usedSystemTime = 0L;
         this.usedSystemTimeDecay = 0L;
         this.cpuUsageThreads = new ArrayList<Double>();
-        this.existedThreadID = new HashSet<ID>();
         this.gcMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
         this.startGCTime = this.getTotalGCTime();
+        this.cpuDataPoints = new HashMap<ID, CPUDataPoint>();
+        this.currentSystemTime = 0L;
+        this.prevSystemTime = 0L;
+        this.threadMXBean = ManagementFactory.getThreadMXBean();
     }
 
     public CPUResource(ResourceName resourceName) {
@@ -45,17 +55,20 @@ public class CPUResource extends Resource {
         this.usedSystemTime = 0L;
         this.usedSystemTimeDecay = 0L;
         this.cpuUsageThreads = new ArrayList<Double>();
-        this.existedThreadID = new HashSet<ID>();
         this.gcMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
         this.startGCTime = this.getTotalGCTime();
+        this.cpuDataPoints = new HashMap<ID, CPUDataPoint>();
+        this.currentSystemTime = 0L;
+        this.prevSystemTime = 0L;
+        this.threadMXBean = ManagementFactory.getThreadMXBean();
     }
 
     @Override
     public Double getSlowdown(Map<String, Object> slowdownInfo) {
         Double slowdown = 0.0;
-        if (this.existedThreadID.size() > 0) {
+        if (this.cpuDataPoints.size() > 0) {
             slowdown = 1.0 - 
-            Double.valueOf(this.usedSystemTime + (this.getTotalGCTime() - this.startGCTime) * 1000000 * this.existedThreadID.size()) / 
+            Double.valueOf(this.usedSystemTime + (this.getTotalGCTime() - this.startGCTime) * 1000000 * this.cpuDataPoints.size()) / 
             this.totalSystemTime;
         }
         return slowdown;
@@ -88,41 +101,70 @@ public class CPUResource extends Resource {
     // cpu_usage_thread
     @Override
     public void setResourceUpdateInfo(Map<String, Object> resourceUpdateInfo) {
-        for (Map.Entry<String, Object> entry : resourceUpdateInfo.entrySet()) {
-            switch (entry.getKey()) {
-                case "cpu_time_system":
-                    this.totalSystemTime += (Long) entry.getValue();
-                    break;
-                case "cpu_time_thread":
-                    this.usedSystemTimeDecay = (long) Math.ceil((Double) Settings.getSetting("resource_usage_decay") * this.usedSystemTimeDecay) + (Long) entry.getValue();
-                    this.usedSystemTime += (Long) entry.getValue();
-                    break;
-                case "thread_id":
-                    if (!this.existedThreadID.contains((ID) entry.getValue())) {
-                        this.existedThreadID.add((ID) entry.getValue());
-                    }
-                    break;
-                case "start":
-                    break;
-                case "cpu_usage_thread":
-                    this.cpuUsageThreads.add((Double) entry.getValue());
-                    break;
-                default:
-                    Logger.systemWarn("Invalid info name " + entry.getKey() + " in resource type " + this.resourceType
-                            + " ,name " + this.resourceName);
-                    break;
+        Long cpuTimeSystem = (Long) resourceUpdateInfo.get("cpu_time_system");
+        Long cpuTimeThread = (Long) resourceUpdateInfo.get("cpu_time_thread");
+        ID threadID = (ID) resourceUpdateInfo.get("thread_id");
+        Boolean start = (Boolean) resourceUpdateInfo.get("start");
+        Double cpuUsageThread = (Double) resourceUpdateInfo.get("cpu_usage_thread");
+
+        if (cpuUsageThread != null) {
+            this.cpuUsageThreads.add(cpuUsageThread);
+        }
+
+        if (
+            cpuTimeSystem != null &&
+            cpuTimeThread != null &&
+            threadID != null &&
+            start != null
+        ) {
+            if (start) {
+                if (this.cpuDataPoints.put(threadID, new CPUDataPoint(cpuTimeSystem, cpuTimeThread, threadID)) != null) {
+                    Logger.systemWarn("Different runnables on the same thread simutanously");
+                }
             }
+            else {
+                CPUDataPoint cpuDataPoint = this.cpuDataPoints.remove(threadID);
+                if (cpuDataPoint != null) {
+                    Long startTimeSystem = cpuDataPoint.getCPUTimeSystem();
+                    Long startTimeThread = cpuDataPoint.getCPUTimeThread();
+                    this.totalSystemTime += cpuTimeSystem - startTimeSystem;
+                    this.usedSystemTime += cpuTimeThread - startTimeThread;
+                }
+                else {
+                    Logger.systemWarn(String.format("Unmatched start - end events in cpu resource"));
+                }
+            }
+        }
+        else {
+            Logger.systemWarn(String.format("Is null for cpu_time_system: %b, cpu_time_thread: %b, thread_id: %b, start: %b", 
+                cpuTimeSystem == null, 
+                cpuTimeThread == null, 
+                threadID == null,
+                start == null));
         }
     }
 
     @Override
     public void reset() {
-        this.cpuUsageThreads.clear();
+        
     }
 
     @Override 
     public void refresh() {
-
+        this.cpuUsageThreads.clear();
+        this.prevSystemTime = this.currentSystemTime;
+        this.currentSystemTime = System.nanoTime();
+        AtomicLong totalSystemTimeAtomic = new AtomicLong(this.totalSystemTime);
+        AtomicLong usedSystemTimeAtomic = new AtomicLong(this.usedSystemTime);
+        this.cpuDataPoints.forEach((key, value) -> {
+            totalSystemTimeAtomic.addAndGet(this.currentSystemTime - Math.max(this.prevSystemTime, value.getCPUTimeSystem()));
+            usedSystemTimeAtomic.addAndGet(value.refresh(threadMXBean));
+        });
+        Long usedSystemTimeTmp = usedSystemTimeAtomic.get();
+        this.usedSystemTimeDecay =  (long) ((Double) Settings.getSetting("resource_usage_decay") * this.usedSystemTimeDecay + 
+        (usedSystemTimeTmp - this.usedSystemTime));
+        this.totalSystemTime = totalSystemTimeAtomic.get();
+        this.usedSystemTime = usedSystemTimeTmp;
     }
 
     @Override
@@ -142,5 +184,45 @@ public class CPUResource extends Resource {
             totalGCTime += gcMXBean.getCollectionTime();
         }
         return totalGCTime;
+    }
+
+    class CPUDataPoint {
+
+        private final Long cpuTimeSystem;
+
+        private final Long cpuTimeThread;
+
+        private final ID threadID;
+
+        private Long currentTimeThread;
+
+        private Long prevTimeThread;
+
+        public CPUDataPoint(Long cpuTimeSystem, Long cpuTimeThread, ID threadID) {
+            this.cpuTimeSystem = cpuTimeSystem;
+            this.cpuTimeThread = cpuTimeThread;
+            this.threadID = threadID;
+            this.currentTimeThread = 0L;
+            this.prevTimeThread = 0L;
+        }
+
+        public Long getCPUTimeSystem() {
+            return this.cpuTimeSystem;
+        }
+
+        public Long getCPUTimeThread() {
+            return this.cpuTimeThread;
+        }
+
+        public Long refresh(ThreadMXBean threadMXBean) {
+            long threadCPUTime = threadMXBean.getThreadCpuTime(this.threadID.toLong());
+            Long addValue = 0L;
+            if (threadCPUTime > 0) {
+                this.prevTimeThread = this.currentTimeThread;
+                this.currentTimeThread = threadCPUTime;
+                addValue = this.currentTimeThread - Math.max(this.prevTimeThread, this.cpuTimeThread);
+            }
+            return addValue;
+        }
     }
 }

@@ -41,4 +41,8 @@ class LinuxThreadID implements ID {
     public Long unwrap() {
         return this.id;
     }
+
+    public Long toLong() {
+        return this.id;
+    }
 }

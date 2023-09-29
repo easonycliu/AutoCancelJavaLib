@@ -18,6 +18,8 @@ public class QueueResource extends Resource {
 
     private Map<QueueEvent, Queue<Long>> queueEventDataPoints;
 
+    private Long queueNumber;
+
     public QueueResource(ResourceName resourceName) {
         super(ResourceType.QUEUE, resourceName);
         this.totalEventTime = new HashMap<QueueEvent, Long>();
@@ -35,9 +37,9 @@ public class QueueResource extends Resource {
         Double slowdown = 0.0;
         Long startTime = (Long) slowdownInfo.get("start_time_nano");
         Long currentTime = System.nanoTime();
-        if (startTime != null) {
+        if (startTime != null && this.queueNumber > 0) {
             slowdown = Double.valueOf(this.totalEventTime.getOrDefault(QueueEvent.QUEUE, 0L)) / 
-            ((currentTime - startTime) * this.queueEventDataPoints.size());
+            ((currentTime - startTime) * this.queueNumber);
         }
 
         return slowdown;
@@ -97,6 +99,7 @@ public class QueueResource extends Resource {
     public void refresh() {
         this.prevSystemTime = this.currentSystemTime;
         this.currentSystemTime = System.nanoTime();
+        this.queueNumber = (long) this.queueEventDataPoints.get(QueueEvent.QUEUE).size();
         for (Map.Entry<QueueEvent, Queue<Long>> entry : this.queueEventDataPoints.entrySet()) {
             AtomicLong eventTime = new AtomicLong(this.totalEventTime.getOrDefault(entry.getKey(), 0L));
             entry.getValue().forEach((startTime) -> {
