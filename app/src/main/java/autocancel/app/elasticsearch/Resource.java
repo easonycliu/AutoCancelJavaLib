@@ -1,44 +1,83 @@
 package autocancel.app.elasticsearch;
 
 import autocancel.manager.MainManager;
+import autocancel.utils.resource.QueueEvent;
 import autocancel.utils.resource.ResourceType;
 
+import java.lang.management.ThreadMXBean;
+import java.lang.management.ManagementFactory;
 import java.util.Map;
 
 public class Resource {
 
     private final MainManager mainManager;
 
+    private final ThreadMXBean threadMXBean;
+
     public Resource(MainManager mainManager) {
         this.mainManager = mainManager;
+        this.threadMXBean = ManagementFactory.getThreadMXBean();
+    }
+
+    public void startCPUUsing(String name) {
+        this.mainManager.updateCancellableGroup(
+            ResourceType.CPU, 
+            name, 
+            Map.of(
+                "cpu_time_system", System.nanoTime(),
+                "cpu_time_thread", threadMXBean.getCurrentThreadCpuTime(),
+                "thread_id", Thread.currentThread().getId(),
+                "start", true
+            )
+        );
+    }
+
+    public void endCPUUsing(String name) {
+        this.mainManager.updateCancellableGroup(
+            ResourceType.CPU, 
+            name, 
+            Map.of(
+                "cpu_time_system", System.nanoTime(),
+                "cpu_time_thread", threadMXBean.getCurrentThreadCpuTime(),
+                "thread_id", Thread.currentThread().getId(),
+                "start", false
+            )
+        );
     }
     
-    public void addResourceUsage(ResourceType type, String name, Map<String, Object> resourceUpdateInfo) {
-        this.mainManager.updateCancellableGroup(type, name, resourceUpdateInfo);
+    public void addMemoryUsage(String name, Long totalMemory, Long usingMemory, Long reuseMemory) {
+        this.mainManager.updateCancellableGroup(
+            ResourceType.MEMORY, 
+            name, 
+            Map.of(
+                "total_memory", totalMemory,
+                "using_memory", usingMemory,
+                "reuse_memory", reuseMemory
+            )
+        );
     }
 
-    private void addResourceEventDuration(String name, String event, Long value) {
-        switch (event) {
-            case "wait": 
-                this.mainManager.updateCancellableGroup(ResourceType.QUEUE, name, Map.of("wait_time", value));
-                break;
-            case "occupy":
-                this.mainManager.updateCancellableGroup(ResourceType.QUEUE, name, Map.of("occupy_time", value));
-                break;
-            default:
-                break;
-        }
+    public void startQueueEvent(String name, QueueEvent event) {
+        this.mainManager.updateCancellableGroup(
+            ResourceType.QUEUE, 
+            name, 
+            Map.of(
+                "cpu_time_system", System.nanoTime(),
+                "event", event,
+                "start", true
+            )
+        );
     }
 
-    public Long startResourceEvent(String name, String event) {
-        System.out.println(String.format("Thread %s start %s on resource %s", Thread.currentThread().getName(), event, name));
-        return System.nanoTime();
-    }
-
-    public void endResourceEvent(String name, String event, Long timestamp) {
-        // System.out.println("End " + event + " for resource " + name);
-        Long duration = System.nanoTime() - timestamp;
-        System.out.println(String.format("Thread %s spend %d ns %s on resource %s", Thread.currentThread().getName(), duration, event, name));
-        this.addResourceEventDuration(name, event, duration);
+    public void endQueueEvent(String name, QueueEvent event) {
+        this.mainManager.updateCancellableGroup(
+            ResourceType.QUEUE, 
+            name, 
+            Map.of(
+                "cpu_time_system", System.nanoTime(),
+                "event", event,
+                "start", false
+            )
+        );
     }
 }

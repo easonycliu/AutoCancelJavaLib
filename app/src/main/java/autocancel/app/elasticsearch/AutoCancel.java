@@ -3,6 +3,7 @@ package autocancel.app.elasticsearch;
 import autocancel.manager.MainManager;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.logger.Logger;
+import autocancel.utils.resource.QueueEvent;
 import autocancel.utils.resource.ResourceType;
 
 import java.util.Map;
@@ -87,9 +88,9 @@ public class AutoCancel {
         }
     }
 
-    public static void addMemoryResourceUsage(String name, Long usingMemory, Long totalMemory) {
+    public static void startCPUUsing(String name) {
         if (AutoCancel.started) {
-            AutoCancel.resourceTracker.addResourceUsage(ResourceType.MEMORY, name, Map.of("using_memory", usingMemory, "total_memory", totalMemory));
+            AutoCancel.resourceTracker.startCPUUsing(name);
         }
         else if (warnNotStarted) {
             Logger.systemWarn("You should start lib AutoCancel first.");
@@ -97,15 +98,9 @@ public class AutoCancel {
         }
     }
 
-    public static void addCPUResourceUsage(String name, Long cpuTimeSystem, Long cpuTimeThread) {
+    public static void endCPUUsing(String name) {
         if (AutoCancel.started) {
-            Double threadCPUUsage = 0.0;
-            if (cpuTimeSystem != 0L) {
-                threadCPUUsage = Double.valueOf(cpuTimeThread) / cpuTimeSystem;
-            }
-            AutoCancel.resourceTracker.addResourceUsage(ResourceType.CPU, name, Map.of("cpu_time_system", cpuTimeSystem, 
-            "cpu_time_thread", cpuTimeThread,
-            "cpu_usage_thread", threadCPUUsage));
+            AutoCancel.resourceTracker.endCPUUsing(name);
         }
         else if (warnNotStarted) {
             Logger.systemWarn("You should start lib AutoCancel first.");
@@ -113,21 +108,9 @@ public class AutoCancel {
         }
     }
 
-    public static Long startResourceWait(String name) {
-        Long timestamp = 0L;
+    public static void addMemoryUsage(String name, Long usingMemory, Long totalMemory, Long reuseMemory) {
         if (AutoCancel.started) {
-            timestamp = AutoCancel.resourceTracker.startResourceEvent(name, "wait");
-        }
-        else if (warnNotStarted) {
-            Logger.systemWarn("You should start lib AutoCancel first.");
-            AutoCancel.warnNotStarted = false;
-        }
-        return timestamp;
-    }
-
-    public static void endResourceWait(String name, Long timestamp) {
-        if (AutoCancel.started) {
-            AutoCancel.resourceTracker.endResourceEvent(name, "wait", timestamp);
+            AutoCancel.resourceTracker.addMemoryUsage(name, totalMemory, usingMemory, reuseMemory);
         }
         else if (warnNotStarted) {
             Logger.systemWarn("You should start lib AutoCancel first.");
@@ -135,21 +118,39 @@ public class AutoCancel {
         }
     }
 
-    public static Long startResourceOccupy(String name) {
-        Long timestamp = 0L;
+    public static void startQueueWait(String name) {
         if (AutoCancel.started) {
-            timestamp = AutoCancel.resourceTracker.startResourceEvent(name, "occupy");
+            AutoCancel.resourceTracker.startQueueEvent(name, QueueEvent.QUEUE);
         }
         else if (warnNotStarted) {
             Logger.systemWarn("You should start lib AutoCancel first.");
             AutoCancel.warnNotStarted = false;
         }
-        return timestamp;
     }
 
-    public static void endResourceOccupy(String name, Long timestamp) {
+    public static void endQueueWait(String name) {
         if (AutoCancel.started) {
-            AutoCancel.resourceTracker.endResourceEvent(name, "occupy", timestamp);
+            AutoCancel.resourceTracker.endQueueEvent(name, QueueEvent.QUEUE);
+        }
+        else if (warnNotStarted) {
+            Logger.systemWarn("You should start lib AutoCancel first.");
+            AutoCancel.warnNotStarted = false;
+        }
+    }
+
+    public static void startQueueOccupy(String name) {
+        if (AutoCancel.started) {
+            AutoCancel.resourceTracker.startQueueEvent(name, QueueEvent.OCCUPY);
+        }
+        else if (warnNotStarted) {
+            Logger.systemWarn("You should start lib AutoCancel first.");
+            AutoCancel.warnNotStarted = false;
+        }
+    }
+
+    public static void endQueueOccupy(String name) {
+        if (AutoCancel.started) {
+            AutoCancel.resourceTracker.endQueueEvent(name, QueueEvent.OCCUPY);
         }
         else if (warnNotStarted) {
             Logger.systemWarn("You should start lib AutoCancel first.");

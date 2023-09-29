@@ -14,6 +14,7 @@ public abstract class Resource {
 
     protected final ResourceName resourceName;
 
+    // TODO: REMOVE
     protected static final List<String> acceptedInfoKeywords = Arrays.asList(
             "wait_time", "occupy_time");
 

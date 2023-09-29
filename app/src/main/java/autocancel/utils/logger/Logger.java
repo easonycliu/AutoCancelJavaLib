@@ -42,12 +42,15 @@ public class Logger implements Closeable {
             }
 
             try {
-                this.writer.write(line);
+                this.writer.append(line);
                 this.currentLine += 1;
             }
             catch (Exception e) {
-
+                System.out.print(String.format("Error occored in %s logger: %s", this.fileBaseName, e.toString()));
             }
+        }
+        else {
+            System.out.print(String.format("Write is null"));
         }
     }
 
