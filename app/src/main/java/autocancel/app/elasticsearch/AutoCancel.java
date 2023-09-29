@@ -4,9 +4,7 @@ import autocancel.manager.MainManager;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.logger.Logger;
 import autocancel.utils.resource.QueueEvent;
-import autocancel.utils.resource.ResourceType;
 
-import java.util.Map;
 import java.util.function.BiConsumer;
 
 public class AutoCancel {

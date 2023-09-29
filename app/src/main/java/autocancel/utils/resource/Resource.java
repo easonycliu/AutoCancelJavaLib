@@ -68,5 +68,7 @@ public abstract class Resource {
 
     public abstract void reset();
 
+    public abstract void refresh();
+
     public abstract String toString();
 }

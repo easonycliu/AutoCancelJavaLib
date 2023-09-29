@@ -117,6 +117,11 @@ public class CPUResource extends Resource {
         this.cpuUsageThreads.clear();
     }
 
+    @Override 
+    public void refresh() {
+
+    }
+
     @Override
     public String toString() {
         return String.format("Resource Type: %s, name: %s, used system time: %d, used system time decay: %d",
