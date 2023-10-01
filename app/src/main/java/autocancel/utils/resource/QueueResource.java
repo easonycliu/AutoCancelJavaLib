@@ -42,6 +42,9 @@ public class QueueResource extends Resource {
         Long startTime = (Long) slowdownInfo.get("start_time_nano");
         Long currentTime = System.nanoTime();
         if (startTime != null && this.cancellableIDSet.size() > 0) {
+            if (currentTime < startTime) {
+                System.out.println(String.format("Find abnormal value, current time %d, start time %d", currentTime, startTime));
+            }
             slowdown = Double.valueOf(this.totalEventTime.getOrDefault(QueueEvent.QUEUE, 0L)) / 
             ((currentTime - startTime) * this.cancellableIDSet.size());
         }
@@ -82,7 +85,11 @@ public class QueueResource extends Resource {
                     Long startTime = dataPointValue.poll();
                     if (startTime != null) {
                         this.totalEventTime.computeIfPresent(event, (timeKey, timeValue) -> {
-                            timeValue += cpuTimeSystem - Math.max(startTime, this.currentSystemTime);
+                            Long addValue = cpuTimeSystem - Math.max(startTime, this.currentSystemTime);
+                            if (addValue < 0) {
+                                System.out.println(String.format("Find abnormal add value %d in setResourceUpdateInfo", addValue));
+                            }
+                            timeValue += addValue;
                             return timeValue;
                         });
                     }
@@ -113,7 +120,11 @@ public class QueueResource extends Resource {
         for (Map.Entry<QueueEvent, Queue<Long>> entry : this.queueEventDataPoints.entrySet()) {
             AtomicLong eventTime = new AtomicLong(this.totalEventTime.getOrDefault(entry.getKey(), 0L));
             entry.getValue().forEach((startTime) -> {
-                eventTime.addAndGet(this.currentSystemTime - Math.max(this.prevSystemTime, startTime));
+                Long addValue = this.currentSystemTime - Math.max(this.prevSystemTime, startTime);
+                if (addValue < 0) {
+                    System.out.println(String.format("Find abnormal add value %d in setResourceUpdateInfo", addValue));
+                }
+                eventTime.addAndGet(addValue);
             });
             this.totalEventTime.put(entry.getKey(), eventTime.get());
         }

@@ -5,6 +5,7 @@ import autocancel.utils.id.CancellableID;
 import autocancel.utils.logger.Logger;
 import autocancel.utils.resource.QueueEvent;
 
+import java.lang.instrument.Instrumentation;
 import java.util.function.BiConsumer;
 
 public class AutoCancel {
@@ -106,9 +107,9 @@ public class AutoCancel {
         }
     }
 
-    public static void addMemoryUsage(String name, Long usingMemory, Long totalMemory, Long reuseMemory) {
+    public static void addMemoryUsage(String name, Long evictTime, Long usingMemory, Long totalMemory, Long reuseMemory) {
         if (AutoCancel.started) {
-            AutoCancel.resourceTracker.addMemoryUsage(name, totalMemory, usingMemory, reuseMemory);
+            AutoCancel.resourceTracker.addMemoryUsage(name, evictTime, totalMemory, usingMemory, reuseMemory);
         }
         else if (warnNotStarted) {
             Logger.systemWarn("You should start lib AutoCancel first.");

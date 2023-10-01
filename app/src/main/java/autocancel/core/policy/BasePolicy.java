@@ -1,5 +1,7 @@
 package autocancel.core.policy;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 
 import autocancel.utils.Policy;
@@ -9,16 +11,23 @@ import autocancel.utils.resource.ResourceName;
 
 public class BasePolicy extends Policy {
 
-    private static final Integer ABNORMAL_PERFORMANCE_THRESHOLD = 0;
+    private static final Double ABNORMAL_PERFORMANCE_THRESHOLD = 1.5;
 
     private static final Long MAX_CONTINUOUS_ABNORMAL_MILLI = 5000L;
 
-    private Boolean started = false;
+    private static final Integer AVERAGE_FILTER_SIZE = 5;
 
-    private Long continuousAbnormalTimeMilli = 0L;
+    private AverageFilter averageFilter;
+
+    private Boolean started;
+
+    private Long continuousAbnormalTimeMilli;
     
     public BasePolicy() {
         super();
+        this.averageFilter = new AverageFilter(AVERAGE_FILTER_SIZE);
+        this.started = false;
+        this.continuousAbnormalTimeMilli = 0L;
     }
 
     @Override
@@ -32,9 +41,10 @@ public class BasePolicy extends Policy {
             }
         }
         else {
-            // System.out.println(String.format("Finished tasks: %d", this.infoCenter.getFinishedTaskNumber()));
+            Double filteredFinishedTaskNumber = this.averageFilter.putAndGet(this.infoCenter.getFinishedTaskNumber());
+            // System.out.println(String.format("Finished tasks: %f", filteredFinishedTaskNumber));
             Long currentTimeMilli = System.currentTimeMillis();
-            if (this.infoCenter.getFinishedTaskNumber() > BasePolicy.ABNORMAL_PERFORMANCE_THRESHOLD) {
+            if (filteredFinishedTaskNumber > BasePolicy.ABNORMAL_PERFORMANCE_THRESHOLD) {
                 this.continuousAbnormalTimeMilli = currentTimeMilli;
             }
 
@@ -89,5 +99,27 @@ public class BasePolicy extends Policy {
         }
 
         return target;
+    }
+
+    class AverageFilter {
+
+        private final int size;
+
+        private long[] buffer;
+
+        private int currentIndex;
+
+        public AverageFilter(int size) {
+            this.size = size;
+            this.buffer = new long[this.size];
+            Arrays.fill(buffer, 0);
+            this.currentIndex = 0;
+        }
+
+        public <T> Double putAndGet(long input) {
+            this.buffer[currentIndex] = input;
+            currentIndex = (currentIndex + 1) % this.size;
+            return Arrays.stream(this.buffer).average().getAsDouble();
+        }
     }
 }
