@@ -5,7 +5,6 @@ import autocancel.utils.id.CancellableID;
 import autocancel.utils.logger.Logger;
 import autocancel.utils.resource.QueueEvent;
 
-import java.lang.instrument.Instrumentation;
 import java.util.function.BiConsumer;
 
 public class AutoCancel {

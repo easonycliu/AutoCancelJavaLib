@@ -1,7 +1,6 @@
 package autocancel.core.policy;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Map;
 
 import autocancel.utils.Policy;
@@ -11,7 +10,7 @@ import autocancel.utils.resource.ResourceName;
 
 public class BasePolicy extends Policy {
 
-    private static final Double ABNORMAL_PERFORMANCE_THRESHOLD = 1.5;
+    private static final Double ABNORMAL_PERFORMANCE_THRESHOLD = 0.6;
 
     private static final Long MAX_CONTINUOUS_ABNORMAL_MILLI = 5000L;
 
@@ -42,7 +41,7 @@ public class BasePolicy extends Policy {
         }
         else {
             Double filteredFinishedTaskNumber = this.averageFilter.putAndGet(this.infoCenter.getFinishedTaskNumber());
-            // System.out.println(String.format("Finished tasks: %f", filteredFinishedTaskNumber));
+            System.out.println(String.format("Finished tasks: %f", filteredFinishedTaskNumber));
             Long currentTimeMilli = System.currentTimeMillis();
             if (filteredFinishedTaskNumber > BasePolicy.ABNORMAL_PERFORMANCE_THRESHOLD) {
                 this.continuousAbnormalTimeMilli = currentTimeMilli;

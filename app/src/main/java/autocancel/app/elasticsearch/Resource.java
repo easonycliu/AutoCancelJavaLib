@@ -53,7 +53,8 @@ public class Resource {
             Map.of(
                 "total_memory", totalMemory,
                 "using_memory", usingMemory,
-                "reuse_memory", reuseMemory
+                "reuse_memory", reuseMemory,
+                "evict_time", evictTime
             )
         );
     }
