@@ -20,7 +20,7 @@ public class BasePolicy extends Policy {
 
     private static final Long ONE_CYCLE_MILLI = 1000L;
 
-    private static final Long MAX_CONTINUOUS_ABNORMAL_CYCLE = 5L;
+    private static final Long MAX_CONTINUOUS_ABNORMAL_CYCLE = 10L;
 
     private static final Long PAST_PERFORMANCE_REF_MILLI = 20000L;
 
