@@ -48,5 +48,4 @@ public class EvictableMemoryResource extends MemoryResource {
             super.setResourceUpdateInfo(resourceUpdateInfo);
         }
     }
-
 }
