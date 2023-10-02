@@ -10,7 +10,7 @@ import autocancel.utils.resource.ResourceName;
 
 public class BasePolicy extends Policy {
 
-    private static final Double ABNORMAL_PERFORMANCE_THRESHOLD = 0.6;
+    private static final Double ABNORMAL_PERFORMANCE_THRESHOLD = 80.0;
 
     private static final Long MAX_CONTINUOUS_ABNORMAL_MILLI = 5000L;
 

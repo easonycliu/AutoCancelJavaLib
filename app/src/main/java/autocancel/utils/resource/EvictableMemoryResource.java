@@ -1,5 +1,6 @@
 package autocancel.utils.resource;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,10 +15,14 @@ public class EvictableMemoryResource extends MemoryResource {
 
     public EvictableMemoryResource() {
         super();
+        this.totalEvictTime = 0L;
+        this.cancellableIDSet = new HashSet<ID>();
     }
 
     public EvictableMemoryResource(ResourceName name) {
         super(name);
+        this.totalEvictTime = 0L;
+        this.cancellableIDSet = new HashSet<ID>();
     }
 
     @Override
@@ -25,7 +30,7 @@ public class EvictableMemoryResource extends MemoryResource {
         Double slowdown = 0.0;
         Long startTimeNano = (Long) slowdownInfo.get("start_time_nano");
         if (startTimeNano != null) {
-            slowdown = Double.valueOf(this.totalEvictTime / ((System.nanoTime() - startTimeNano) * this.cancellableIDSet.size()));
+            slowdown = Double.valueOf(this.totalEvictTime) / ((System.nanoTime() - startTimeNano) * this.cancellableIDSet.size());
         }
         return slowdown;
     }
