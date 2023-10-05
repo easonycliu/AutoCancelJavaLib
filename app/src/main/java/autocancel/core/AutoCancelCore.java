@@ -3,6 +3,7 @@ package autocancel.core;
 import autocancel.manager.MainManager;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.logger.Logger;
+import autocancel.utils.resource.JVMHeapResource;
 import autocancel.utils.resource.Resource;
 import autocancel.utils.resource.ResourceName;
 import autocancel.utils.resource.ResourceType;
@@ -106,9 +107,11 @@ public class AutoCancelCore {
     public void startOneLoop() {
         if (this.isInitialized()) {
 
-            this.refreshCancellableGroups();
+            Map<String, Object> refreshInfo = this.addCoreLevelRefreshInfo();
 
-            this.resourcePool.refreshResources(this.logger);
+            this.refreshCancellableGroups(refreshInfo);
+
+            this.resourcePool.refreshResources(refreshInfo, this.logger);
 
             this.logger.log(this.performanceMetrix.toString());
 
@@ -157,7 +160,7 @@ public class AutoCancelCore {
         }
     }
 
-    private void refreshCancellableGroups() {
+    private void refreshCancellableGroups(Map<String, Object> refreshInfo) {
         List<CancellableGroup> toBeRemovedCancellableGroups = new ArrayList<CancellableGroup>();
         for (Map.Entry<CancellableID, CancellableGroup> entry : this.rootCancellableToCancellableGroup.entrySet()) {
 
@@ -166,7 +169,7 @@ public class AutoCancelCore {
                 continue;
             }
 
-            entry.getValue().refreshResourcePool();
+            entry.getValue().refreshResourcePool(refreshInfo);
         }
 
         for (CancellableGroup cancellableGroup : toBeRemovedCancellableGroups) {
@@ -238,6 +241,10 @@ public class AutoCancelCore {
         Map<String, Object> updateInfo = new HashMap<>(resourceUpdateInfo);
         updateInfo.putIfAbsent("cancellable_id", cid);
         return updateInfo;
+    }
+
+    private Map<String, Object> addCoreLevelRefreshInfo() {
+        return Map.of("current_gc_time", JVMHeapResource.getTotalGCTime());
     }
 
     private class RequestParser {

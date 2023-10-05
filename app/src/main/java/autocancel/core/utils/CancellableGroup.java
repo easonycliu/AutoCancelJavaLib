@@ -76,9 +76,9 @@ public class CancellableGroup {
         return this.resourcePool.getResourceNames();
     }
 
-    public void refreshResourcePool() {
+    public void refreshResourcePool(Map<String, Object> resourceRefreshInfo) {
         CancellableGroup.logger.log("Root " + this.root.toString() + " used resource:");
-        this.resourcePool.refreshResources(CancellableGroup.logger);
+        this.resourcePool.refreshResources(resourceRefreshInfo, CancellableGroup.logger);
     }
 
     public void updateResource(ResourceType resourceType, ResourceName resourceName,

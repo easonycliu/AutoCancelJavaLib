@@ -7,14 +7,16 @@ import java.util.Map;
 
 public class JVMHeapResource extends MemoryResource {
 
-    private List<GarbageCollectorMXBean> gcMXBeans;
+    private static List<GarbageCollectorMXBean> gcMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
 
     private Long startGCTime;
+
+    private Long currentGCTime;
     
     public JVMHeapResource() {
         super();
-        this.gcMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
-        this.startGCTime = this.getTotalGCTime();
+        this.startGCTime = JVMHeapResource.getTotalGCTime();
+        this.currentGCTime = this.startGCTime;
     }
 
     @Override
@@ -22,17 +24,22 @@ public class JVMHeapResource extends MemoryResource {
         Double slowdown = 0.0;
         Long startTime = (Long) slowdownInfo.get("start_time");
         if (startTime != null) {
-            slowdown = Double.valueOf(this.getTotalGCTime() - this.startGCTime) / (System.currentTimeMillis() - startTime);
+            slowdown = Double.valueOf(this.currentGCTime - this.startGCTime) / (System.currentTimeMillis() - startTime);
         }
         return slowdown;
     }
 
-    private Long getTotalGCTime() {
+    public static Long getTotalGCTime() {
         Long totalGCTime = 0L;
-        for (GarbageCollectorMXBean gcMXBean : this.gcMXBeans) {
+        for (GarbageCollectorMXBean gcMXBean : JVMHeapResource.gcMXBeans) {
             totalGCTime += gcMXBean.getCollectionTime();
         }
         return totalGCTime;
+    }
+
+    @Override
+    public void refresh(Map<String, Object> refreshInfo) {
+        this.currentGCTime = (Long) refreshInfo.getOrDefault("current_gc_time", 0L);
     }
 
     @Override

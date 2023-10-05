@@ -1,7 +1,6 @@
 package autocancel.utils.resource;
 
 import java.util.Map;
-import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
@@ -23,8 +22,6 @@ public class CPUResource extends Resource {
 
     private List<Double> cpuUsageThreads;
 
-    private List<GarbageCollectorMXBean> gcMXBeans;
-
     private Long startGCTime;
 
     private Long currentGCTime;
@@ -39,8 +36,7 @@ public class CPUResource extends Resource {
         this.usedSystemTime = 0L;
         this.usedSystemTimeDecay = 0L;
         this.cpuUsageThreads = new ArrayList<Double>();
-        this.gcMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
-        this.startGCTime = this.getTotalGCTime();
+        this.startGCTime = JVMHeapResource.getTotalGCTime();
         this.currentGCTime = this.startGCTime;
         this.cpuDataPoints = new HashMap<ID, CPUDataPoint>();
         this.threadMXBean = ManagementFactory.getThreadMXBean();
@@ -52,8 +48,7 @@ public class CPUResource extends Resource {
         this.usedSystemTime = 0L;
         this.usedSystemTimeDecay = 0L;
         this.cpuUsageThreads = new ArrayList<Double>();
-        this.gcMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
-        this.startGCTime = this.getTotalGCTime();
+        this.startGCTime = JVMHeapResource.getTotalGCTime();
         this.currentGCTime = this.startGCTime;
         this.cpuDataPoints = new HashMap<ID, CPUDataPoint>();
         this.threadMXBean = ManagementFactory.getThreadMXBean();
@@ -150,7 +145,7 @@ public class CPUResource extends Resource {
     }
 
     @Override 
-    public void refresh() {
+    public void refresh(Map<String, Object> refreshInfo) {
         this.cpuUsageThreads.clear();
         Long currentSystemTime = System.nanoTime();
         AtomicLong totalSystemTimeAtomic = new AtomicLong(this.totalSystemTime);
@@ -164,8 +159,8 @@ public class CPUResource extends Resource {
         (usedSystemTimeTmp - this.usedSystemTime));
         this.totalSystemTime = totalSystemTimeAtomic.get();
         this.usedSystemTime = usedSystemTimeTmp;
-
-        this.currentGCTime = this.getTotalGCTime();
+        
+        this.currentGCTime = (Long) refreshInfo.getOrDefault("current_gc_time", 0L);
     }
 
     @Override
@@ -175,16 +170,6 @@ public class CPUResource extends Resource {
                 this.getResourceName().toString(),
                 this.usedSystemTime,
                 this.usedSystemTimeDecay);
-    }
-
-    // This is exactly the same method as JVMHeapResource
-    // TODO: Don't right the same code twice
-    private Long getTotalGCTime() {
-        Long totalGCTime = 0L;
-        for (GarbageCollectorMXBean gcMXBean : this.gcMXBeans) {
-            totalGCTime += gcMXBean.getCollectionTime();
-        }
-        return totalGCTime;
     }
 
     class CPUDataPoint {

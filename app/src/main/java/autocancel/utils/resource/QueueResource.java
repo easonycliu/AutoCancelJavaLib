@@ -105,7 +105,7 @@ public class QueueResource extends Resource {
     }
 
     @Override 
-    public void refresh() {
+    public void refresh(Map<String, Object> refreshInfo) {
         Long currentSystemTime = System.nanoTime();
         for (Map.Entry<QueueEvent, List<Long>> entry : this.queueEventDataPoints.entrySet()) {
             AtomicLong eventTime = new AtomicLong(this.totalEventTime.get(entry.getKey()));
