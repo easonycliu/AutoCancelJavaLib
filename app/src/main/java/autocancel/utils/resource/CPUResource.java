@@ -27,6 +27,8 @@ public class CPUResource extends Resource {
 
     private Long startGCTime;
 
+    private Long currentGCTime;
+
     private Map<ID, CPUDataPoint> cpuDataPoints;
 
     private ThreadMXBean threadMXBean;
@@ -39,6 +41,7 @@ public class CPUResource extends Resource {
         this.cpuUsageThreads = new ArrayList<Double>();
         this.gcMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
         this.startGCTime = this.getTotalGCTime();
+        this.currentGCTime = this.startGCTime;
         this.cpuDataPoints = new HashMap<ID, CPUDataPoint>();
         this.threadMXBean = ManagementFactory.getThreadMXBean();
     }
@@ -51,6 +54,7 @@ public class CPUResource extends Resource {
         this.cpuUsageThreads = new ArrayList<Double>();
         this.gcMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
         this.startGCTime = this.getTotalGCTime();
+        this.currentGCTime = this.startGCTime;
         this.cpuDataPoints = new HashMap<ID, CPUDataPoint>();
         this.threadMXBean = ManagementFactory.getThreadMXBean();
     }
@@ -58,10 +62,14 @@ public class CPUResource extends Resource {
     @Override
     public Double getSlowdown(Map<String, Object> slowdownInfo) {
         Double slowdown = 0.0;
-        if (this.totalSystemTime > 0 && this.cpuDataPoints.size() > 0) {
+        if (this.totalSystemTime > 0) {
             slowdown = 1.0 - 
-            Double.valueOf(this.usedSystemTime + (this.getTotalGCTime() - this.startGCTime) * 1000000 * this.cpuDataPoints.size()) / 
+            Double.valueOf(this.usedSystemTime + 
+            Math.max(this.currentGCTime - this.startGCTime, 0) * 1000000 * this.cpuDataPoints.size()) / 
             this.totalSystemTime;
+            if (this.usedSystemTime > this.totalSystemTime) {
+                System.out.println(String.format("Find abnormal slowdown in cpu, used system time: %d, total system time: %d", this.usedSystemTime, this.totalSystemTime));
+            }
         }
         return slowdown;
     }
@@ -156,6 +164,8 @@ public class CPUResource extends Resource {
         (usedSystemTimeTmp - this.usedSystemTime));
         this.totalSystemTime = totalSystemTimeAtomic.get();
         this.usedSystemTime = usedSystemTimeTmp;
+
+        this.currentGCTime = this.getTotalGCTime();
     }
 
     @Override

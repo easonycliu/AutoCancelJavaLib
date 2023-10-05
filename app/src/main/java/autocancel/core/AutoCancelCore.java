@@ -170,7 +170,9 @@ public class AutoCancelCore {
         }
 
         for (CancellableGroup cancellableGroup : toBeRemovedCancellableGroups) {
-            this.removeCancellableGroup(cancellableGroup);
+            if (cancellableGroup.isExpired()) {
+                this.removeCancellableGroup(cancellableGroup);
+            }
         }
     }
 
