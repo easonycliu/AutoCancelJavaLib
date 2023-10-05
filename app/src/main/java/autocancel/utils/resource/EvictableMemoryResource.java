@@ -13,16 +13,20 @@ public class EvictableMemoryResource extends MemoryResource {
 
     private Set<ID> cancellableIDSet;
 
+    private Long currentTimeNano;
+
     public EvictableMemoryResource() {
         super();
         this.totalEvictTime = 0L;
         this.cancellableIDSet = new HashSet<ID>();
+        this.currentTimeNano = System.nanoTime();
     }
 
     public EvictableMemoryResource(ResourceName name) {
         super(name);
         this.totalEvictTime = 0L;
         this.cancellableIDSet = new HashSet<ID>();
+        this.currentTimeNano = System.nanoTime();
     }
 
     @Override
@@ -30,7 +34,7 @@ public class EvictableMemoryResource extends MemoryResource {
         Double slowdown = 0.0;
         Long startTimeNano = (Long) slowdownInfo.get("start_time_nano");
         if (startTimeNano != null) {
-            slowdown = Double.valueOf(this.totalEvictTime) / ((System.nanoTime() - startTimeNano) * this.cancellableIDSet.size());
+            slowdown = Double.valueOf(this.totalEvictTime) / ((this.currentTimeNano - startTimeNano) * this.cancellableIDSet.size());
         }
         return slowdown;
     }
@@ -47,5 +51,11 @@ public class EvictableMemoryResource extends MemoryResource {
                 + this.totalEvictTime;
             super.setResourceUpdateInfo(resourceUpdateInfo);
         }
+    }
+
+    @Override
+    public void refresh(Map<String, Object> refreshInfo) {
+        super.refresh(refreshInfo);
+        this.currentTimeNano = System.nanoTime();
     }
 }

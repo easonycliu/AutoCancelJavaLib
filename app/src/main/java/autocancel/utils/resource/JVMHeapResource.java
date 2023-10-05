@@ -12,11 +12,14 @@ public class JVMHeapResource extends MemoryResource {
     private Long startGCTime;
 
     private Long currentGCTime;
+
+    private Long currentTime;
     
     public JVMHeapResource() {
         super();
         this.startGCTime = JVMHeapResource.getTotalGCTime();
         this.currentGCTime = this.startGCTime;
+        this.currentTime = System.currentTimeMillis();
     }
 
     @Override
@@ -24,7 +27,7 @@ public class JVMHeapResource extends MemoryResource {
         Double slowdown = 0.0;
         Long startTime = (Long) slowdownInfo.get("start_time");
         if (startTime != null) {
-            slowdown = Double.valueOf(this.currentGCTime - this.startGCTime) / (System.currentTimeMillis() - startTime);
+            slowdown = Double.valueOf(this.currentGCTime - this.startGCTime) / (this.currentTime - startTime);
         }
         return slowdown;
     }
@@ -39,7 +42,9 @@ public class JVMHeapResource extends MemoryResource {
 
     @Override
     public void refresh(Map<String, Object> refreshInfo) {
-        this.currentGCTime = (Long) refreshInfo.getOrDefault("current_gc_time", 0L);
+        super.refresh(refreshInfo);
+        this.currentGCTime = (Long) refreshInfo.getOrDefault("current_gc_time", this.currentGCTime);
+        this.currentTime = System.currentTimeMillis();
     }
 
     @Override
