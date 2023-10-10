@@ -34,7 +34,7 @@ public class EvictableMemoryResource extends MemoryResource {
         Double slowdown = 0.0;
         Long startTimeNano = (Long) slowdownInfo.get("start_time_nano");
         if (startTimeNano != null) {
-            slowdown = Double.valueOf(this.totalEvictTime) / ((this.currentTimeNano - startTimeNano) * this.cancellableIDSet.size());
+            slowdown = Double.valueOf(this.totalEvictTime) / (this.currentTimeNano - startTimeNano);
         }
         return slowdown;
     }
@@ -46,9 +46,7 @@ public class EvictableMemoryResource extends MemoryResource {
         ID cid = (ID) resourceUpdateInfo.get("cancellable_id");
         if (cid != null) {
             this.cancellableIDSet.add(cid);
-            this.totalEvictTime = (long) ((double) Settings.getSetting("resource_usage_decay") * 
-            (Long) resourceUpdateInfo.getOrDefault("evict_time", 0L))
-                + this.totalEvictTime;
+            this.totalEvictTime += (Long) resourceUpdateInfo.getOrDefault("evict_time", 0L);
             super.setResourceUpdateInfo(resourceUpdateInfo);
         }
     }

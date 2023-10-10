@@ -65,6 +65,9 @@ public class CPUResource extends Resource {
             if (this.usedSystemTime > this.totalSystemTime) {
                 System.out.println(String.format("Find abnormal slowdown in cpu, used system time: %d, total system time: %d", this.usedSystemTime, this.totalSystemTime));
             }
+            // GC Time + used system time may larger than total system time
+            // TODO: Find a better way to handle GC time
+            slowdown = Math.max(slowdown, 0.0);
         }
         return slowdown;
     }
