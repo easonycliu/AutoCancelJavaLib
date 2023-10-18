@@ -1,12 +1,6 @@
 package autocancel.core.policy;
 
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.function.Predicate;
-import java.util.function.Function;
 
 import autocancel.utils.Policy;
 import autocancel.utils.id.CancellableID;
@@ -14,7 +8,7 @@ import autocancel.utils.resource.ResourceName;
 
 public class BasePolicy extends Policy {
 
-    CancelTrigger trigger;
+    private CancelTrigger trigger;
     
     public BasePolicy() {
         super();
