@@ -101,6 +101,9 @@ public class CancellableGroup {
     public void updateWork(Map<String, Object> workUpdateInfo) {
         if (!this.isExit()) {
             this.progressTracker.setWorkUpdateInfo(workUpdateInfo);
+            if (this.root.getAction().equals("indices:data/read/msearch")) {
+                System.out.println(String.format("Predict %s exit time %s", this.root.getID().toString(), System.currentTimeMillis() + this.predictRemainTime()));
+            }
         }
     }
 
@@ -160,6 +163,9 @@ public class CancellableGroup {
     public void setExitTime(Long exitTime) {
         assert this.exitTime == 0L : "Exit time has been set, don't set twice";
         this.exitTime = exitTime;
+        if (this.root.getAction().equals("indices:data/read/msearch")) {
+            System.out.println(String.format("Real %s exit time %s", this.root.getID().toString(), this.exitTime));
+        }
     }
 
     public Long getExitTimeNano() {
@@ -204,7 +210,9 @@ public class CancellableGroup {
         if (!this.isExit()) {
             // Which means the cancellable group has not exited yet
             // Or the remain time is natually 0
-            remainTime = Double.valueOf(progressTracker.getProgress() * (System.currentTimeMillis() - this.startTime)).longValue();
+            Double progress = progressTracker.getProgress();
+            Double remainWork = 1.0 - progress;
+            remainTime = Double.valueOf((remainWork / progress) * (System.currentTimeMillis() - this.startTime)).longValue();
         }
         return remainTime;
     }
