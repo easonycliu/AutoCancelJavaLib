@@ -106,7 +106,7 @@ public class AutoCancel {
         }
     }
 
-    public static void addMemoryUsage(String name, Long evictTime, Long usingMemory, Long totalMemory, Long reuseMemory) {
+    public static void addMemoryUsage(String name, Long evictTime, Long totalMemory, Long usingMemory, Long reuseMemory) {
         if (AutoCancel.started) {
             AutoCancel.resourceTracker.addMemoryUsage(name, evictTime, totalMemory, usingMemory, reuseMemory);
         }

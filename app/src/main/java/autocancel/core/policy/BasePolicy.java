@@ -16,13 +16,13 @@ public class BasePolicy extends Policy {
 
     private static final Double ABNORMAL_PERFORMANCE_DROP_PROTION = 0.4;
 
-    private static final Double ABNORMAL_PERFORMANCE_DROP_ABSOLUTE = 200.0;
+    private static final Double ABNORMAL_PERFORMANCE_DROP_ABSOLUTE = 300.0;
 
     private static final Long ONE_CYCLE_MILLI = 1000L;
 
-    private static final Long MAX_CONTINUOUS_ABNORMAL_CYCLE = 10L;
+    private static final Long MAX_CONTINUOUS_ABNORMAL_CYCLE = 5L;
 
-    private static final Long PAST_PERFORMANCE_REF_MILLI = 20000L;
+    private static final Long PAST_PERFORMANCE_REF_CYCLE = 30L;
 
     private static final Integer MAX_PAST_PERFORMANCE_REF_NUM = 3;
 
@@ -72,7 +72,7 @@ public class BasePolicy extends Policy {
                 this.averageFilter.clear();
                 this.performanceBuffer.clear();
                 this.continuousAbnormalCycles = 0L;
-                this.maxThroughputQueue.clear();
+                // this.maxThroughputQueue.clear();
 
                 this.performanceBuffer.lastCyclePerformance(System.currentTimeMillis(), finishedTaskNumber);
             }
@@ -84,8 +84,9 @@ public class BasePolicy extends Policy {
                 this.maxThroughputQueue.removeIf((element) -> element.isExpired());
                 this.maxThroughputQueue.enQueue(new ThroughputDataPoint(lastCyclePerformance, currentTimeMilli));
                 Double filteredFinishedTaskNumber = this.averageFilter.putAndGet(lastCyclePerformance);
-                System.out.println(String.format("Finished tasks: %f", filteredFinishedTaskNumber));
-                if (this.isAbnormal(filteredFinishedTaskNumber)) {
+                Boolean abnormal = this.isAbnormal(filteredFinishedTaskNumber);
+                System.out.println(String.format("Finished tasks: %f, Abnormal: %b", filteredFinishedTaskNumber, abnormal));
+                if (abnormal) {
                     this.continuousAbnormalCycles += 1;
                     if (this.continuousAbnormalCycles > BasePolicy.MAX_CONTINUOUS_ABNORMAL_CYCLE) {
                         need = true;
@@ -194,7 +195,7 @@ public class BasePolicy extends Policy {
         }
 
         public Boolean isExpired() {
-            return BasePolicy.PAST_PERFORMANCE_REF_MILLI.compareTo(System.currentTimeMillis() - this.timestamp) < 0;
+            return BasePolicy.PAST_PERFORMANCE_REF_CYCLE.compareTo((System.currentTimeMillis() - this.timestamp) / BasePolicy.ONE_CYCLE_MILLI) < 0;
         }
     }
 

@@ -30,7 +30,9 @@ public class CancellableGroup {
 
     private Long startTimeNano;
 
-    private Long endTimeNano;
+    private Long exitTime;
+
+    private Long exitTimeNano;
 
     public CancellableGroup(Cancellable root) {
         root.setLevel(0);
@@ -52,12 +54,13 @@ public class CancellableGroup {
 
         this.startTimeNano = 0L;
 
-        this.endTimeNano = 0L;
+        this.exitTime = 0L;
+
+        this.exitTimeNano = 0L;
     }
 
     public void exit() {
         this.exited = true;
-        this.endTimeNano = System.nanoTime();
     }
 
     public Boolean isExit() {
@@ -66,7 +69,7 @@ public class CancellableGroup {
 
     public Boolean isExpired() {
         Boolean expired = false;
-        if (!this.endTimeNano.equals(0L) && System.nanoTime() - this.endTimeNano > ((Long) Settings.getSetting("save_history_ms") * 1000000)) {
+        if (!this.exitTimeNano.equals(0L) && System.nanoTime() - this.exitTimeNano > ((Long) Settings.getSetting("save_history_ms") * 1000000)) {
             expired = true;
         }
         return expired;
@@ -95,7 +98,9 @@ public class CancellableGroup {
         Double slowdown = 0.0;
         Map<String, Object> cancellableGroupLevelInfo = Map.of(
             "start_time", this.startTime,
-            "start_time_nano", this.startTimeNano
+            "start_time_nano", this.startTimeNano,
+            "exit_time", this.exitTime,
+            "exit_time_nano", this.exitTimeNano
         );
         slowdown = this.resourcePool.getSlowdown(resourceName, cancellableGroupLevelInfo);
         // System.out.println(String.format("%s has slowdown %f on resource %s", this.root.toString(), slowdown, resourceName));
@@ -135,6 +140,26 @@ public class CancellableGroup {
     public void setStartTimeNano(Long startTimeNano) {
         assert this.startTimeNano == 0L : "Start time nano has been set, don't set twice";
         this.startTimeNano = startTimeNano;
+    }
+
+    public Long getExitTime() {
+        assert this.exitTime != 0L;
+        return this.exitTime;
+    }
+
+    public void setExitTime(Long exitTime) {
+        assert this.exitTime == 0L : "Exit time has been set, don't set twice";
+        this.exitTime = exitTime;
+    }
+
+    public Long getExitTimeNano() {
+        assert this.exitTimeNano != 0L;
+        return this.exitTimeNano;
+    }
+
+    public void setExitTimeNano(Long exitTimeNano) {
+        assert this.exitTimeNano == 0L : "Exit time nano has been set, don't set twice";
+        this.exitTimeNano = exitTimeNano;
     }
 
     public void putCancellable(Cancellable cancellable) {

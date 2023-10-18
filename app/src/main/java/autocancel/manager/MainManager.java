@@ -175,6 +175,8 @@ public class MainManager {
         // unregisterCancellableIDOnCurrentJavaThreadID() should handle it
 
         OperationRequest request = new OperationRequest(OperationMethod.DELETE, Map.of("cancellable_id", cid));
+        request.addRequestParam("cancellable_exit_time", System.currentTimeMillis());
+        request.addRequestParam("cancellable_exit_time_nano", System.nanoTime());
         this.putManagerRequestToCore(request);
     }
 

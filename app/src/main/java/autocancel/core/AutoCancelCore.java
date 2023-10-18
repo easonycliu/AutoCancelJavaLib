@@ -353,6 +353,8 @@ public class AutoCancelCore {
                 "cancellable_action", request -> this.cancellableAction(request),
                 "cancellable_start_time_nano", request -> this.cancellableStartTimeNano(request),
                 "cancellable_start_time", request -> this.cancellableStartTime(request),
+                "cancellable_exit_time_nano", request -> this.cancellableExitTimeNano(request),
+                "cancellable_exit_time", request -> this.cancellableExitTime(request),
                 "update_group_resource", request -> this.updateGroupResource(request));
 
         public ParamHandlers() {
@@ -412,6 +414,28 @@ public class AutoCancelCore {
                 // TODO: Add a warning if this is not a root cancellable
                 Long startTimeNano = (Long) request.getParams().get("cancellable_start_time_nano");
                 rootCancellableToCancellableGroup.get(cancellable.getID()).setStartTimeNano(startTimeNano);
+            }
+        }
+
+        private void cancellableExitTime(OperationRequest request) {
+            Cancellable cancellable = cancellables.get(request.getCancellableID());
+            if (cancellable.isRoot()) {
+                // This is a root cancellable
+                // Parameter cancellable_start_time is useful only if this cancellable is a root cancellable
+                // TODO: Add a warning if this is not a root cancellable
+                Long exitTime = (Long) request.getParams().get("cancellable_exit_time");
+                rootCancellableToCancellableGroup.get(cancellable.getID()).setExitTime(exitTime);
+            }
+        }
+
+        private void cancellableExitTimeNano(OperationRequest request) {
+            Cancellable cancellable = cancellables.get(request.getCancellableID());
+            if (cancellable.isRoot()) {
+                // This is a root cancellable
+                // Parameter cancellable_start_time_nano is useful only if this cancellable is a root cancellable
+                // TODO: Add a warning if this is not a root cancellable
+                Long exitTimeNano = (Long) request.getParams().get("cancellable_exit_time_nano");
+                rootCancellableToCancellableGroup.get(cancellable.getID()).setExitTimeNano(exitTimeNano);
             }
         }
 
