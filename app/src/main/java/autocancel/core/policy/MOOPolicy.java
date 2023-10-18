@@ -18,13 +18,13 @@ public class MOOPolicy extends Policy {
 
     @Override
     public Boolean needCancellation() {
-        return this.trigger.triggered(this.infoCenter.getFinishedTaskNumber());
+        return this.trigger.triggered(Policy.infoCenter.getFinishedTaskNumber());
     }
 
     @Override
     public CancellableID getCancelTarget() {
-        Map<CancellableID, Map<ResourceName, Long>> cancellableGroupUsage = this.infoCenter.getCancellableGroupUsage();
-        Map<ResourceName, Double> weight = this.infoCenter.getContentionLevel();
+        Map<CancellableID, Map<ResourceName, Long>> cancellableGroupUsage = Policy.infoCenter.getCancellableGroupUsage();
+        Map<ResourceName, Double> weight = Policy.infoCenter.getContentionLevel();
         Map<CancellableID, Double> weightedSum = new HashMap<CancellableID, Double>();
         for (Map.Entry<CancellableID, Map<ResourceName, Long>> cancellableGroupUsageEntry : cancellableGroupUsage.entrySet()) {
             weightedSum.put(cancellableGroupUsageEntry.getKey(), MOOPolicy.calculateWeightedSum(weight, cancellableGroupUsageEntry.getValue()));
@@ -43,7 +43,7 @@ public class MOOPolicy extends Policy {
             System.out.println("Failed to find a target to cancel for unknown reason");
             target = new CancellableID();
         }
-        else if (!this.infoCenter.isCancellable(target)) {
+        else if (!Policy.infoCenter.isCancellable(target)) {
             System.out.println(target.toString() + " is not cancellable");
             target = new CancellableID();
         }

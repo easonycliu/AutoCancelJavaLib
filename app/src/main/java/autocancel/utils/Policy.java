@@ -9,10 +9,10 @@ import autocancel.utils.logger.Logger;
 
 public abstract class Policy {
     
-    protected final AutoCancelInfoCenter infoCenter;
+    protected static final AutoCancelInfoCenter infoCenter = AutoCancelCoreHolder.getInfoCenter();
 
     public Policy() {
-        this.infoCenter = AutoCancelCoreHolder.getInfoCenter();
+        
     }
 
     public abstract Boolean needCancellation();

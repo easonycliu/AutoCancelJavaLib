@@ -13,7 +13,7 @@ public class PredictPolicy extends Policy {
 
     @Override
     public Boolean needCancellation() {
-        return this.trigger.triggered(this.infoCenter.getFinishedTaskNumber());
+        return this.trigger.triggered(Policy.infoCenter.getFinishedTaskNumber());
     }
 
     @Override

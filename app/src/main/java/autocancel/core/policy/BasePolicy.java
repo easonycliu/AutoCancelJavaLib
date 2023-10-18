@@ -17,12 +17,12 @@ public class BasePolicy extends Policy {
 
     @Override
     public Boolean needCancellation() {
-        return this.trigger.triggered(this.infoCenter.getFinishedTaskNumber());
+        return this.trigger.triggered(Policy.infoCenter.getFinishedTaskNumber());
     }
 
     @Override
     public CancellableID getCancelTarget() {
-        Map<ResourceName, Double> resourceContentionLevel = this.infoCenter.getContentionLevel();
+        Map<ResourceName, Double> resourceContentionLevel = Policy.infoCenter.getContentionLevel();
         Map.Entry<ResourceName, Double> maxContentionLevel = resourceContentionLevel
                                                                 .entrySet()
                                                                 .stream()
@@ -39,7 +39,7 @@ public class BasePolicy extends Policy {
             for (Map.Entry<ResourceName, Double> entry : resourceContentionLevel.entrySet()) {
                 System.out.println(entry.getKey() + "'s contention level is " + entry.getValue());
             }
-            Map<CancellableID, Long> cancellableGroupResourceResourceUsage = this.infoCenter.getCancellableGroupResourceUsage(resourceName);
+            Map<CancellableID, Long> cancellableGroupResourceResourceUsage = Policy.infoCenter.getCancellableGroupResourceUsage(resourceName);
             Map.Entry<CancellableID, Long> maxResourceUsage = cancellableGroupResourceResourceUsage
                                                                     .entrySet()
                                                                     .stream()
@@ -55,7 +55,7 @@ public class BasePolicy extends Policy {
             System.out.println("Failed to find a target to cancel for unknown reason");
             target = new CancellableID();
         }
-        else if (!this.infoCenter.isCancellable(target)) {
+        else if (!Policy.infoCenter.isCancellable(target)) {
             System.out.println(target.toString() + " is not cancellable");
             target = new CancellableID();
         }
