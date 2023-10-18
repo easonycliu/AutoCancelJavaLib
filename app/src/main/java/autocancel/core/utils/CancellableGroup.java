@@ -22,6 +22,8 @@ public class CancellableGroup {
 
     private ResourcePool resourcePool;
 
+    private Progress progressTracker;
+
     private Boolean isCancellable;
 
     private Boolean exited;
@@ -45,6 +47,8 @@ public class CancellableGroup {
         // These are "built-in" monitored resources
         this.resourcePool.addResource(Resource.createResource(ResourceType.CPU, ResourceName.CPU));
         this.resourcePool.addResource(Resource.createResource(ResourceType.MEMORY, ResourceName.MEMORY));
+
+        this.progressTracker = new Progress();
 
         this.isCancellable = null;
 
@@ -96,7 +100,7 @@ public class CancellableGroup {
 
     public void updateWork(Map<String, Object> workUpdateInfo) {
         if (!this.isExit()) {
-            
+            this.progressTracker.setWorkUpdateInfo(workUpdateInfo);
         }
     }
 
@@ -192,6 +196,30 @@ public class CancellableGroup {
 
     public CancellableID getRootID() {
         return this.root.getID();
+    }
+
+    public Long predictRemainTime() {
+        assert !this.startTime.equals(0L) : "A task has to be started to predict remain time";
+        Long remainTime = 0L;
+        if (!this.isExit()) {
+            // Which means the cancellable group has not exited yet
+            // Or the remain time is natually 0
+            remainTime = Double.valueOf(progressTracker.getProgress() * (System.currentTimeMillis() - this.startTime)).longValue();
+        }
+        return remainTime;
+    }
+
+    public Long predictRemainTimeNano() {
+        assert !this.startTimeNano.equals(0L) : "A task has to be started to predict remain time";
+        Long remainTimeNano = 0L;
+        if (!this.isExit()) {
+            // Which means the cancellable group has not exited yet
+            // Or the remain time is natually 0
+            Double progress = progressTracker.getProgress();
+            Double remainWork = 1.0 - progress;
+            remainTimeNano = Double.valueOf((remainWork / progress) * (System.nanoTime() - this.startTimeNano)).longValue();
+        }
+        return remainTimeNano;
     }
 
     private Integer getCancellableLevel(Cancellable cancellable) {
