@@ -83,7 +83,7 @@ public class MainManager {
                     try (AffinityLock lock = AffinityLock.acquireLock(Runtime.getRuntime().availableProcessors() - 1)) {
                         AutoCancelCore autoCancelCore = AutoCancelCoreHolder.getAutoCancelCore();
                         autoCancelCore.initialize(MainManager.this);
-                        Policy actualPolicy = ((policy != null) ? policy : new BasePolicy());
+                        Policy actualPolicy = ((policy != null) ? policy : Policy.getPolicyBySetting());
                         while (!Thread.interrupted()) {
                             try {
                                 autoCancelCore.startOneLoop();

@@ -51,7 +51,7 @@ public class MOOPolicy extends Policy {
         return target;
     }
 
-    static private Double calculateWeightedSum(Map<ResourceName, Double> weight, Map<ResourceName, Long> resourceUsages) {
+    private static Double calculateWeightedSum(Map<ResourceName, Double> weight, Map<ResourceName, Long> resourceUsages) {
         Double sum = 0.0;
         for (Map.Entry<ResourceName, Long> usageEntry : resourceUsages.entrySet()) {
             try {

@@ -15,6 +15,7 @@ public class Settings {
         "skip_first_ms", 60000L,
         "save_history_ms", 0L,
         "resource_usage_decay", 0.8,
+        "default_policy", "base_policy",
         "monitor_physical_resources", Map.of(
             "CPU", "JVM",
             "MEMORY", "JVM"
