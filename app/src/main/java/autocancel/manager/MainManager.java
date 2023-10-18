@@ -229,4 +229,18 @@ public class MainManager {
             // TODO: do something more
         }
     }
+
+    public void updateCancellableGroupWork(Map<String, Object> cancellableGroupWorkInfo) {
+        JavaThreadID jid = new JavaThreadID(Thread.currentThread().getId());
+        CancellableID cid = this.idManager.getCancellableIDOfJavaThreadID(jid);
+        if (cid.isValid()) {
+            OperationRequest request = new OperationRequest(OperationMethod.UPDATE,
+                    Map.of("cancellable_id", cid));
+            request.addRequestParam("update_group_work", cancellableGroupWorkInfo);
+            this.putManagerRequestToCore(request);
+        } else {
+            System.out.println("Cannot find cancellable id from current " + jid.toString());
+            // TODO: do something more
+        }
+    }
 }
