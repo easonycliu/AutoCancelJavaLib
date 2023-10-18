@@ -76,6 +76,22 @@ public class AutoCancelInfoCenter {
         return cancellableGroupUsage;
     }
 
+    public Map<CancellableID, Long> getCancellableGroupRemainTime() {
+        Map<CancellableID, Long> cancellableGroupRemainTime = new HashMap<CancellableID, Long>();
+        for (Map.Entry<CancellableID, CancellableGroup> entry : this.rootCancellableToCancellableGroup.entrySet()) {
+            cancellableGroupRemainTime.put(entry.getKey(), entry.getValue().predictRemainTime());
+        }
+        return cancellableGroupRemainTime;
+    }
+
+    public Map<CancellableID, Long> getCancellableGroupRemainTimeNano() {
+        Map<CancellableID, Long> cancellableGroupRemainTimeNano = new HashMap<CancellableID, Long>();
+        for (Map.Entry<CancellableID, CancellableGroup> entry : this.rootCancellableToCancellableGroup.entrySet()) {
+            cancellableGroupRemainTimeNano.put(entry.getKey(), entry.getValue().predictRemainTimeNano());
+        }
+        return cancellableGroupRemainTimeNano;
+    }
+
     public Boolean isCancellable(CancellableID cid) {
         Boolean isCancellable = false;
         if (cid != null) {
