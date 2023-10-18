@@ -94,4 +94,12 @@ public class TaskTracker {
             Logger.systemTrace("Cannot found corresponding cancellable from runnable");
         }
     }
+
+    public void addTaskWork(Long work) {
+
+    }
+
+    public void finishTaskWork(Long work) {
+        
+    }
 }

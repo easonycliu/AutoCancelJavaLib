@@ -216,7 +216,7 @@ public class MainManager {
         return resourceUpdateInfos;
     }
 
-    public void updateCancellableGroup(ResourceType type, String name, Map<String, Object> cancellableGroupUpdateInfo) {
+    public void updateCancellableGroupResource(ResourceType type, String name, Map<String, Object> cancellableGroupUpdateInfo) {
         JavaThreadID jid = new JavaThreadID(Thread.currentThread().getId());
         CancellableID cid = this.idManager.getCancellableIDOfJavaThreadID(jid);
         if (cid.isValid()) {
