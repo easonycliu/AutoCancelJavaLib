@@ -63,6 +63,19 @@ public class AutoCancelInfoCenter {
         return cancellableGroupResourceUsage;
     }
 
+    public Map<CancellableID, Map<ResourceName, Long>> getCancellableGroupUsage() {
+        Map<CancellableID, Map<ResourceName, Long>> cancellableGroupUsage = new HashMap<CancellableID, Map<ResourceName, Long>>();
+        for (Map.Entry<CancellableID, CancellableGroup> entry : this.rootCancellableToCancellableGroup.entrySet()) {
+            Set<ResourceName> resourceNames = entry.getValue().getResourceNames();
+            Map<ResourceName, Long> resourceUsage = new HashMap<ResourceName, Long>();
+            for (ResourceName resourceName : resourceNames) {
+                resourceUsage.put(resourceName, entry.getValue().getResourceUsage(resourceName));
+            }
+            cancellableGroupUsage.put(entry.getKey(), resourceUsage);
+        }
+        return cancellableGroupUsage;
+    }
+
     public Boolean isCancellable(CancellableID cid) {
         Boolean isCancellable = false;
         if (cid != null) {
