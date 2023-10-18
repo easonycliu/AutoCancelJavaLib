@@ -94,6 +94,12 @@ public class CancellableGroup {
         }
     }
 
+    public void updateWork(Map<String, Object> workUpdateInfo) {
+        if (!this.isExit()) {
+            
+        }
+    }
+
     public Double getResourceSlowdown(ResourceName resourceName) {
         Double slowdown = 0.0;
         Map<String, Object> cancellableGroupLevelInfo = Map.of(
