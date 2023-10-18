@@ -1,6 +1,5 @@
 package autocancel.core.utils;
 
-import autocancel.core.utils.OperationMethod;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.resource.ResourceName;
 import autocancel.utils.resource.ResourceType;

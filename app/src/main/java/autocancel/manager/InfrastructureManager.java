@@ -9,10 +9,8 @@ import autocancel.infrastructure.AbstractInfrastructure;
 import autocancel.infrastructure.jvm.JavaThreadStatusReader;
 import autocancel.infrastructure.linux.LinuxThreadStatusReader;
 import autocancel.utils.Settings;
-import autocancel.utils.id.CancellableID;
 import autocancel.utils.id.JavaThreadID;
 import autocancel.utils.resource.ResourceName;
-import autocancel.utils.resource.ResourceType;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;

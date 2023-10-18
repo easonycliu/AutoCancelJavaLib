@@ -2,14 +2,12 @@ package autocancel.infrastructure.jvm;
 
 import autocancel.infrastructure.AbstractInfrastructure;
 import autocancel.utils.Settings;
-import autocancel.utils.id.JavaThreadID;
 import autocancel.utils.resource.ResourceName;
 import autocancel.infrastructure.ResourceBatch;
 import autocancel.infrastructure.ResourceReader;
 import autocancel.utils.id.ID;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

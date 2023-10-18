@@ -1,12 +1,8 @@
 package autocancel.core.utils;
 
 import autocancel.utils.logger.Logger;
-import autocancel.utils.resource.CPUResource;
-import autocancel.utils.resource.MemoryResource;
-import autocancel.utils.resource.QueueResource;
 import autocancel.utils.resource.Resource;
 import autocancel.utils.resource.ResourceName;
-import autocancel.utils.resource.ResourceType;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -70,12 +66,12 @@ public class ResourcePool {
         }
     }
 
-    public void refreshResources(Logger logger) {
+    public void refreshResources(Map<String, Object> resourceRefreshInfo, Logger logger) {
         for (Map.Entry<ResourceName, Resource> entries : this.resources.entrySet()) {
             if (logger != null) {
                 logger.log(entries.getValue().toString());
             }
-            entries.getValue().reset();
+            entries.getValue().refresh(resourceRefreshInfo);
         }
     }
 

@@ -1,9 +1,7 @@
 package autocancel.utils;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.HashSet;
 import java.util.Set;
 
 public class Settings {
@@ -13,21 +11,18 @@ public class Settings {
         "core_update_cycle_ms", 100L,
         "max_child_cancellable_level", 1000,
         "log_file_max_line", 200000,
-        "system_log_level", "INFO",
+        "system_log_level", "WARN",
         "skip_first_ms", 60000L,
+        "save_history_ms", 0L,
         "resource_usage_decay", 0.8,
         "monitor_physical_resources", Map.of(
             "CPU", "JVM",
             "MEMORY", "JVM"
         ),
-        "monitor_locks", Arrays.asList(
-            // Map.of("class_name", "Cache..."), // use ... to include all classes inside specified class
-            // Map.of("class_name", "InternalEngine...")
-            // Map.of("file_name", "InternalEngine.java", "line_number", "1072")
-        ),
         "monitor_actions", Set.of(
             "indices:data/read/search",
-            "indices:data/write/bulk"
+            "indices:data/write/bulk",
+            "indices:data/write/index"
         )
     );
 

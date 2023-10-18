@@ -3,12 +3,10 @@ package autocancel.infrastructure.linux;
 import autocancel.infrastructure.AbstractInfrastructure;
 import autocancel.infrastructure.ResourceBatch;
 import autocancel.infrastructure.ResourceReader;
-import autocancel.utils.id.CancellableID;
 import autocancel.utils.id.ID;
 import autocancel.utils.id.JavaThreadID;
 import autocancel.utils.logger.Logger;
 import autocancel.utils.resource.ResourceName;
-import autocancel.infrastructure.linux.LinuxThreadID;
 import autocancel.utils.Settings;
 
 import java.util.Map;
@@ -18,7 +16,6 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 

@@ -4,10 +4,8 @@ import autocancel.infrastructure.ResourceReader;
 import autocancel.infrastructure.CPUTimeInfo;
 import autocancel.utils.id.ID;
 import autocancel.utils.id.JavaThreadID;
-import autocancel.utils.resource.ResourceName;
 
 import java.lang.management.ManagementFactory;
-import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 import java.util.HashMap;
 import java.util.Map;

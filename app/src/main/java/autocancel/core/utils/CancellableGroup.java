@@ -1,11 +1,7 @@
 package autocancel.core.utils;
 
-import autocancel.app.elasticsearch.AutoCancel;
-import autocancel.core.utils.Cancellable;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.logger.Logger;
-import autocancel.utils.resource.CPUResource;
-import autocancel.utils.resource.MemoryResource;
 import autocancel.utils.resource.Resource;
 import autocancel.utils.resource.ResourceName;
 import autocancel.utils.resource.ResourceType;
@@ -15,7 +11,6 @@ import java.util.Map;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
-import java.util.List;
 
 public class CancellableGroup {
 
@@ -34,6 +29,10 @@ public class CancellableGroup {
     private Long startTime;
 
     private Long startTimeNano;
+
+    private Long exitTime;
+
+    private Long exitTimeNano;
 
     public CancellableGroup(Cancellable root) {
         root.setLevel(0);
@@ -54,6 +53,10 @@ public class CancellableGroup {
         this.startTime = 0L;
 
         this.startTimeNano = 0L;
+
+        this.exitTime = 0L;
+
+        this.exitTimeNano = 0L;
     }
 
     public void exit() {
@@ -64,41 +67,49 @@ public class CancellableGroup {
         return this.exited;
     }
 
+    public Boolean isExpired() {
+        Boolean expired = false;
+        if (!this.exitTimeNano.equals(0L) && System.nanoTime() - this.exitTimeNano > ((Long) Settings.getSetting("save_history_ms") * 1000000)) {
+            expired = true;
+        }
+        return expired;
+    }
+
     public Set<ResourceName> getResourceNames() {
         return this.resourcePool.getResourceNames();
     }
 
-    public void refreshResourcePool() {
+    public void refreshResourcePool(Map<String, Object> resourceRefreshInfo) {
         CancellableGroup.logger.log("Root " + this.root.toString() + " used resource:");
-        this.resourcePool.refreshResources(CancellableGroup.logger);
+        this.resourcePool.refreshResources(resourceRefreshInfo, CancellableGroup.logger);
     }
 
     public void updateResource(ResourceType resourceType, ResourceName resourceName,
             Map<String, Object> resourceUpdateInfo) {
-        if (!this.resourcePool.isResourceExist(resourceName)) {
-            this.resourcePool.addResource(Resource.createResource(resourceType, resourceName));
+        if (!this.isExit()) {
+            if (!this.resourcePool.isResourceExist(resourceName)) {
+                this.resourcePool.addResource(Resource.createResource(resourceType, resourceName));
+            }
+            this.resourcePool.setResourceUpdateInfo(resourceName, resourceUpdateInfo);
         }
-        this.resourcePool.setResourceUpdateInfo(resourceName, resourceUpdateInfo);
     }
 
     public Double getResourceSlowdown(ResourceName resourceName) {
         Double slowdown = 0.0;
-        if (!this.isExit()) {
-            Map<String, Object> cancellableGroupLevelInfo = Map.of(
-                "start_time", this.startTime,
-                "start_time_nano", this.startTimeNano
-            );
-            slowdown = this.resourcePool.getSlowdown(resourceName, cancellableGroupLevelInfo);
-        }
-        System.out.println(String.format("%s has slowdown %f on resource %s", this.root.toString(), slowdown, resourceName));
+        Map<String, Object> cancellableGroupLevelInfo = Map.of(
+            "start_time", this.startTime,
+            "start_time_nano", this.startTimeNano,
+            "exit_time", this.exitTime,
+            "exit_time_nano", this.exitTimeNano
+        );
+        slowdown = this.resourcePool.getSlowdown(resourceName, cancellableGroupLevelInfo);
+        // System.out.println(String.format("%s has slowdown %f on resource %s", this.root.toString(), slowdown, resourceName));
         return slowdown;
     }
 
     public Long getResourceUsage(ResourceName resourceName) {
         Long resourceUsage = 0L;
-        if (!this.isExit()) {
-            resourceUsage = this.resourcePool.getResourceUsage(resourceName);
-        }
+        resourceUsage = this.resourcePool.getResourceUsage(resourceName);
         return resourceUsage;
     }
 
@@ -129,6 +140,26 @@ public class CancellableGroup {
     public void setStartTimeNano(Long startTimeNano) {
         assert this.startTimeNano == 0L : "Start time nano has been set, don't set twice";
         this.startTimeNano = startTimeNano;
+    }
+
+    public Long getExitTime() {
+        assert this.exitTime != 0L;
+        return this.exitTime;
+    }
+
+    public void setExitTime(Long exitTime) {
+        assert this.exitTime == 0L : "Exit time has been set, don't set twice";
+        this.exitTime = exitTime;
+    }
+
+    public Long getExitTimeNano() {
+        assert this.exitTimeNano != 0L;
+        return this.exitTimeNano;
+    }
+
+    public void setExitTimeNano(Long exitTimeNano) {
+        assert this.exitTimeNano == 0L : "Exit time nano has been set, don't set twice";
+        this.exitTimeNano = exitTimeNano;
     }
 
     public void putCancellable(Cancellable cancellable) {

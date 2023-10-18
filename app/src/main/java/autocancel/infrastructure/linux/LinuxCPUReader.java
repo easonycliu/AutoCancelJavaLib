@@ -2,8 +2,6 @@ package autocancel.infrastructure.linux;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.lang.management.ThreadMXBean;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -15,7 +13,6 @@ import autocancel.infrastructure.CPUTimeInfo;
 import autocancel.infrastructure.ResourceReader;
 import autocancel.utils.id.ID;
 import autocancel.utils.logger.Logger;
-import autocancel.infrastructure.linux.LinuxThreadID;
 
 public class LinuxCPUReader extends ResourceReader {
     

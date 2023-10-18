@@ -1,11 +1,8 @@
 package autocancel.core.monitor;
 
-import autocancel.core.monitor.Monitor;
 import autocancel.core.utils.Cancellable;
 import autocancel.core.utils.CancellableGroup;
 import autocancel.core.utils.OperationRequest;
-import autocancel.core.monitor.CPUMonitor;
-import autocancel.core.monitor.MemoryMonitor;
 import autocancel.manager.MainManager;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.resource.ResourceName;
@@ -14,7 +11,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Set;
 
 public class MainMonitor {
 
@@ -45,7 +41,7 @@ public class MainMonitor {
         this.mainManager.startNewVersion();
         for (Cancellable cancellable : this.cancellables.values()) {
             assert this.rootCancellableToCancellableGroup.containsKey(cancellable.getRootID())
-                    : String.format("Ungrouped cancellable %d", cancellable.getID());
+                    : String.format("Ungrouped cancellable %s", cancellable.getID().toString());
             // TODO: Problematic point: nullptr
             for (ResourceName resourceName : this.rootCancellableToCancellableGroup.get(cancellable.getRootID())
                     .getResourceNames()) {
