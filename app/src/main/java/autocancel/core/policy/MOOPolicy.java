@@ -27,9 +27,14 @@ public class MOOPolicy extends Policy {
         Map<CancellableID, Map<ResourceName, Long>> cancellableGroupUsage = Policy.infoCenter.getCancellableGroupUsage();
         Map<CancellableID, Map<ResourceName, Double>> unifiedCancellableGroupUsage = MOOPolicy.calculateUnifiedCancellableGroupUsage(cancellableGroupUsage);
         Map<ResourceName, Double> weight = Policy.infoCenter.getContentionLevel();
+        for (Map.Entry<ResourceName, Double> entry : weight.entrySet()) {
+            System.out.println(entry.getKey() + "'s contention level is " + entry.getValue());
+        }
         Map<CancellableID, Double> weightedSum = new HashMap<CancellableID, Double>();
         for (Map.Entry<CancellableID, Map<ResourceName, Double>> cancellableGroupUsageEntry : unifiedCancellableGroupUsage.entrySet()) {
-            weightedSum.put(cancellableGroupUsageEntry.getKey(), MOOPolicy.calculateWeightedSum(weight, cancellableGroupUsageEntry.getValue()));
+            Double sum = MOOPolicy.calculateWeightedSum(weight, cancellableGroupUsageEntry.getValue());
+            // System.out.println(String.format("%s has sum: %f", cancellableGroupUsageEntry.getKey().toString(), sum));
+            weightedSum.put(cancellableGroupUsageEntry.getKey(), sum);
         }
         Map.Entry<CancellableID, Double> maxWeightedSum = weightedSum
                                                             .entrySet()
@@ -49,6 +54,22 @@ public class MOOPolicy extends Policy {
             System.out.println(target.toString() + " is not cancellable");
             target = new CancellableID();
         }
+        else {
+            for (Map.Entry<ResourceName, Double> entry : unifiedCancellableGroupUsage.get(target).entrySet()) {
+                System.out.println(entry.getKey() + "'s unified usage is " + entry.getValue());
+            }
+            weightedSum.remove(target);
+            Map.Entry<CancellableID, Double> secondWeightedSum = weightedSum
+                                                            .entrySet()
+                                                            .stream()
+                                                            .max(Map.Entry.comparingByValue())
+                                                            .orElse(null);
+            if (secondWeightedSum != null) {
+                for (Map.Entry<ResourceName, Double> entry : unifiedCancellableGroupUsage.get(secondWeightedSum.getKey()).entrySet()) {
+                    System.out.println("Second weighted cancellable's " + entry.getKey() + "'s unified usage is " + entry.getValue());
+                }
+            }
+        }
 
         return target;
     }
@@ -60,11 +81,21 @@ public class MOOPolicy extends Policy {
             });
             return result;
         });
+        cancellableGroupUsageSum.forEach((key, value) -> {
+            System.out.println(String.format("%s's sum is %d", key, value));
+        });
         Map<CancellableID, Map<ResourceName, Double>> unifiedCancellableGroupUsage = new HashMap<CancellableID, Map<ResourceName, Double>>();
         for (Map.Entry<CancellableID, Map<ResourceName, Long>> cancellableGroupUsageEntry : cancellableGroupUsage.entrySet()) {
             unifiedCancellableGroupUsage.put(cancellableGroupUsageEntry.getKey(), cancellableGroupUsageEntry.getValue().entrySet().stream().collect(Collectors.toMap(
                 element -> element.getKey(),
-                element -> Double.valueOf(element.getValue()) / cancellableGroupUsageSum.get(element.getKey())
+                element -> {
+                    Long sum = cancellableGroupUsageSum.get(element.getKey());
+                    Double unifiedResourceUsage = 0.0;
+                    if (!sum.equals(0L)) {
+                        unifiedResourceUsage = Double.valueOf(element.getValue()) / sum;
+                    }
+                    return unifiedResourceUsage;
+                }
             )));
         }
         return unifiedCancellableGroupUsage;
