@@ -10,6 +10,7 @@ import autocancel.utils.resource.ResourceName;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class AutoCancelInfoCenter {
     
@@ -74,6 +75,58 @@ public class AutoCancelInfoCenter {
             cancellableGroupUsage.put(entry.getKey(), resourceUsage);
         }
         return cancellableGroupUsage;
+    }
+
+    public Map<CancellableID, Double> getUnifiedCancellableGroupResourceUsage(ResourceName resourceName) {
+        Map<CancellableID, Long> cancellableGroupResourceUsage = new HashMap<CancellableID, Long>();
+        Long cancellableGroupResourceUsageSum = 0L;
+        for (Map.Entry<CancellableID, CancellableGroup> entry : this.rootCancellableToCancellableGroup.entrySet()) {
+            Long usage = entry.getValue().getResourceUsage(resourceName);
+            cancellableGroupResourceUsage.put(entry.getKey(), usage);
+            cancellableGroupResourceUsageSum += usage;
+        }
+        final Long finalCancellableGroupResourceUsageSum = cancellableGroupResourceUsageSum;
+        return cancellableGroupResourceUsage.entrySet().stream().collect(Collectors.toMap(
+            e -> e.getKey(), 
+            e -> {
+                if (finalCancellableGroupResourceUsageSum.equals(0L)) {
+                    return 0.0;
+                }
+                else {
+                    return Double.valueOf(e.getValue()) / finalCancellableGroupResourceUsageSum;
+                }
+            }
+        ));
+    }
+
+    public Map<CancellableID, Map<ResourceName, Double>> getUnifiedCancellableGroupUsage() {
+        Map<CancellableID, Map<ResourceName, Long>> cancellableGroupUsage = new HashMap<CancellableID, Map<ResourceName, Long>>();
+        Map<ResourceName, Long> cancellableGroupUsageSum = new HashMap<ResourceName, Long>();
+        for (Map.Entry<CancellableID, CancellableGroup> entry : this.rootCancellableToCancellableGroup.entrySet()) {
+            Set<ResourceName> resourceNames = entry.getValue().getResourceNames();
+            Map<ResourceName, Long> resourceUsage = new HashMap<ResourceName, Long>();
+            for (ResourceName resourceName : resourceNames) {
+                Long usage = entry.getValue().getResourceUsage(resourceName);
+                resourceUsage.put(resourceName, usage);
+                cancellableGroupUsageSum.merge(resourceName, usage, Long::sum);
+            }
+            cancellableGroupUsage.put(entry.getKey(), resourceUsage);
+        }
+        return cancellableGroupUsage.entrySet().stream().collect(Collectors.toMap(
+            cancellableGroupUsageElement -> cancellableGroupUsageElement.getKey(), 
+            cancellableGroupUsageElement -> cancellableGroupUsageElement.getValue().entrySet().stream().collect(Collectors.toMap(
+                resourceUsageElement -> resourceUsageElement.getKey(), 
+                resourceUsageElement -> {
+                    Long sum = cancellableGroupUsageSum.get(resourceUsageElement.getKey());
+                    if (sum.equals(0L)) {
+                        return 0.0;
+                    }
+                    else {
+                        return Double.valueOf(resourceUsageElement.getValue()) / sum;
+                    }
+                }
+            ))
+        ));
     }
 
     public Map<CancellableID, Long> getCancellableGroupRemainTime() {
