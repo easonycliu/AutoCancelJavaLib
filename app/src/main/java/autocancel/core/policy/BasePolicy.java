@@ -39,8 +39,8 @@ public class BasePolicy extends Policy {
             for (Map.Entry<ResourceName, Double> entry : resourceContentionLevel.entrySet()) {
                 System.out.println(entry.getKey() + "'s contention level is " + entry.getValue());
             }
-            Map<CancellableID, Long> cancellableGroupResourceResourceUsage = Policy.infoCenter.getCancellableGroupResourceUsage(resourceName);
-            Map.Entry<CancellableID, Long> maxResourceUsage = cancellableGroupResourceResourceUsage
+            Map<CancellableID, Double> unifiedCancellableGroupResourceResourceUsage = Policy.infoCenter.getUnifiedCancellableGroupResourceUsage(resourceName);
+            Map.Entry<CancellableID, Double> maxResourceUsage = unifiedCancellableGroupResourceResourceUsage
                                                                     .entrySet()
                                                                     .stream()
                                                                     .max(Map.Entry.comparingByValue()).orElse(null);
