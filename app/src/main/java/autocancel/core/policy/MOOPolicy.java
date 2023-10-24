@@ -2,7 +2,6 @@ package autocancel.core.policy;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import autocancel.utils.Policy;
 import autocancel.utils.id.CancellableID;
@@ -24,8 +23,7 @@ public class MOOPolicy extends Policy {
 
     @Override
     public CancellableID getCancelTarget() {
-        Map<CancellableID, Map<ResourceName, Long>> cancellableGroupUsage = Policy.infoCenter.getCancellableGroupUsage();
-        Map<CancellableID, Map<ResourceName, Double>> unifiedCancellableGroupUsage = MOOPolicy.calculateUnifiedCancellableGroupUsage(cancellableGroupUsage);
+        Map<CancellableID, Map<ResourceName, Double>> unifiedCancellableGroupUsage = Policy.infoCenter.getUnifiedCancellableGroupUsage();
         Map<ResourceName, Double> weight = Policy.infoCenter.getContentionLevel();
         for (Map.Entry<ResourceName, Double> entry : weight.entrySet()) {
             System.out.println(entry.getKey() + "'s contention level is " + entry.getValue());
@@ -72,33 +70,6 @@ public class MOOPolicy extends Policy {
         }
 
         return target;
-    }
-
-    private static Map<CancellableID, Map<ResourceName, Double>> calculateUnifiedCancellableGroupUsage(Map<CancellableID, Map<ResourceName, Long>> cancellableGroupUsage) {
-        Map<ResourceName, Long> cancellableGroupUsageSum = cancellableGroupUsage.values().stream().reduce(new HashMap<ResourceName, Long>(), (result, element) -> {
-            element.forEach((key, value) -> {
-                result.merge(key, value, Long::sum);
-            });
-            return result;
-        });
-        cancellableGroupUsageSum.forEach((key, value) -> {
-            System.out.println(String.format("%s's sum is %d", key, value));
-        });
-        Map<CancellableID, Map<ResourceName, Double>> unifiedCancellableGroupUsage = new HashMap<CancellableID, Map<ResourceName, Double>>();
-        for (Map.Entry<CancellableID, Map<ResourceName, Long>> cancellableGroupUsageEntry : cancellableGroupUsage.entrySet()) {
-            unifiedCancellableGroupUsage.put(cancellableGroupUsageEntry.getKey(), cancellableGroupUsageEntry.getValue().entrySet().stream().collect(Collectors.toMap(
-                element -> element.getKey(),
-                element -> {
-                    Long sum = cancellableGroupUsageSum.get(element.getKey());
-                    Double unifiedResourceUsage = 0.0;
-                    if (!sum.equals(0L)) {
-                        unifiedResourceUsage = Double.valueOf(element.getValue()) / sum;
-                    }
-                    return unifiedResourceUsage;
-                }
-            )));
-        }
-        return unifiedCancellableGroupUsage;
     }
 
     private static Double calculateWeightedSum(Map<ResourceName, Double> weight, Map<ResourceName, Double> resourceUsages) {
