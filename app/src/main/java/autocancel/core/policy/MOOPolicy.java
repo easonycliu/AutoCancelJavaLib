@@ -23,13 +23,13 @@ public class MOOPolicy extends Policy {
 
     @Override
     public CancellableID getCancelTarget() {
-        Map<CancellableID, Map<ResourceName, Double>> unifiedCancellableGroupUsage = Policy.infoCenter.getUnifiedCancellableGroupUsage();
+        Map<CancellableID, Map<ResourceName, Double>> cancellableGroupMeasure = BasePolicy.getCancellableGroupMeasure();
         Map<ResourceName, Double> weight = Policy.infoCenter.getContentionLevel();
         for (Map.Entry<ResourceName, Double> entry : weight.entrySet()) {
             System.out.println(entry.getKey() + "'s contention level is " + entry.getValue());
         }
         Map<CancellableID, Double> weightedSum = new HashMap<CancellableID, Double>();
-        for (Map.Entry<CancellableID, Map<ResourceName, Double>> cancellableGroupUsageEntry : unifiedCancellableGroupUsage.entrySet()) {
+        for (Map.Entry<CancellableID, Map<ResourceName, Double>> cancellableGroupUsageEntry : cancellableGroupMeasure.entrySet()) {
             Double sum = MOOPolicy.calculateWeightedSum(weight, cancellableGroupUsageEntry.getValue());
             // System.out.println(String.format("%s has sum: %f", cancellableGroupUsageEntry.getKey().toString(), sum));
             weightedSum.put(cancellableGroupUsageEntry.getKey(), sum);
@@ -53,7 +53,7 @@ public class MOOPolicy extends Policy {
             target = new CancellableID();
         }
         else {
-            for (Map.Entry<ResourceName, Double> entry : unifiedCancellableGroupUsage.get(target).entrySet()) {
+            for (Map.Entry<ResourceName, Double> entry : cancellableGroupMeasure.get(target).entrySet()) {
                 System.out.println(entry.getKey() + "'s unified usage is " + entry.getValue());
             }
             weightedSum.remove(target);
@@ -63,7 +63,7 @@ public class MOOPolicy extends Policy {
                                                             .max(Map.Entry.comparingByValue())
                                                             .orElse(null);
             if (secondWeightedSum != null) {
-                for (Map.Entry<ResourceName, Double> entry : unifiedCancellableGroupUsage.get(secondWeightedSum.getKey()).entrySet()) {
+                for (Map.Entry<ResourceName, Double> entry : cancellableGroupMeasure.get(secondWeightedSum.getKey()).entrySet()) {
                     System.out.println("Second weighted cancellable's " + entry.getKey() + "'s unified usage is " + entry.getValue());
                 }
             }
