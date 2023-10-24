@@ -3,6 +3,7 @@ package autocancel.core.policy;
 import java.util.Map;
 
 import autocancel.utils.Policy;
+import autocancel.utils.Settings;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.resource.ResourceName;
 
@@ -61,5 +62,23 @@ public class BasePolicy extends Policy {
         }
 
         return target;
+    }
+
+    public static Map<CancellableID, Double> getCancellableGroupResourceMeasure(ResourceName resourceName) {
+        if ((Boolean) Settings.getSetting("predict_progress")) {
+            return Policy.infoCenter.getCancellableGroupResourceBenefit(resourceName);
+        }
+        else {
+            return Policy.infoCenter.getUnifiedCancellableGroupResourceUsage(resourceName);
+        }
+    }
+
+    public static Map<CancellableID, Map<ResourceName, Double>> getCancellableGroupMeasure() {
+        if ((Boolean) Settings.getSetting("predict_progress")) {
+            return Policy.infoCenter.getCancellableGroupBenefit();
+        }
+        else {
+            return Policy.infoCenter.getUnifiedCancellableGroupUsage();
+        }
     }
 }
