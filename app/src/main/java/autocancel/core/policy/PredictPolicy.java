@@ -29,34 +29,26 @@ public class PredictPolicy extends Policy {
 
     public static Map<CancellableID, Double> getCancellableGroupResourceBenefit(ResourceName resourceName) {
         Map<CancellableID, Double> cancellableGroupResourceBenefit = new HashMap<CancellableID, Double>();
-        Map<CancellableID, Long> cancellableGroupResourceUsage = Policy.infoCenter.getCancellableGroupResourceUsage(resourceName);
+        Map<CancellableID, Double> unifiedCancellableGroupResourceUsage = Policy.infoCenter.getUnifiedCancellableGroupResourceUsage(resourceName);
         Map<CancellableID, Long> cancellableGroupRemainTime = Policy.infoCenter.getCancellableGroupRemainTime();
-        Long cancellableGroupResourceUsageSum = cancellableGroupResourceUsage.values().stream().reduce(0L, Long::sum);
-        Set<CancellableID> availableCancellableGroup = new HashSet<CancellableID>(cancellableGroupResourceUsage.keySet());
+        Set<CancellableID> availableCancellableGroup = new HashSet<CancellableID>(unifiedCancellableGroupResourceUsage.keySet());
         availableCancellableGroup.retainAll(cancellableGroupRemainTime.keySet());
         for (CancellableID cid : availableCancellableGroup) {
-            cancellableGroupResourceBenefit.put(cid, Double.valueOf(cancellableGroupResourceUsage.get(cid) * cancellableGroupRemainTime.get(cid)) / cancellableGroupResourceUsageSum);
+            cancellableGroupResourceBenefit.put(cid, unifiedCancellableGroupResourceUsage.get(cid) * cancellableGroupRemainTime.get(cid));
         }
         return cancellableGroupResourceBenefit;
     }
 
     public static Map<CancellableID, Map<ResourceName, Double>> getCancellableGroupBenefit() {
         Map<CancellableID, Map<ResourceName, Double>> cancellableGroupBenefit = new HashMap<CancellableID, Map<ResourceName, Double>>();
-        Map<CancellableID, Map<ResourceName, Long>> cancellableGroupUsage = Policy.infoCenter.getCancellableGroupUsage();
+        Map<CancellableID, Map<ResourceName, Double>> unifiedCancellableGroupUsage = Policy.infoCenter.getUnifiedCancellableGroupUsage();
         Map<CancellableID, Long> cancellableGroupRemainTime = Policy.infoCenter.getCancellableGroupRemainTime();
-        Map<ResourceName, Long> cancellableGroupUsageSum = cancellableGroupUsage.values().stream().reduce(new HashMap<ResourceName, Long>(), (result, element) -> {
-            element.forEach((key, value) -> {
-                result.merge(key, value, Long::sum);
-            });
-            return result;
-        });
-        Set<CancellableID> availableCancellableGroup = new HashSet<CancellableID>(cancellableGroupUsage.keySet());
+        Set<CancellableID> availableCancellableGroup = new HashSet<CancellableID>(unifiedCancellableGroupUsage.keySet());
         availableCancellableGroup.retainAll(cancellableGroupRemainTime.keySet());
         for (CancellableID cid : availableCancellableGroup) {
             Map<ResourceName, Double> benefit = new HashMap<ResourceName, Double>();
-            Long remainTime = cancellableGroupRemainTime.get(cid);
-            for (Map.Entry<ResourceName, Long> usageEntry : cancellableGroupUsage.get(cid).entrySet()) {
-                benefit.put(usageEntry.getKey(), Double.valueOf(usageEntry.getValue() * remainTime) / cancellableGroupUsageSum.get(usageEntry.getKey()));
+            for (Map.Entry<ResourceName, Double> usageEntry : unifiedCancellableGroupUsage.get(cid).entrySet()) {
+                benefit.put(usageEntry.getKey(), usageEntry.getValue() * cancellableGroupRemainTime.get(cid));
             }
             cancellableGroupBenefit.put(cid, benefit);
         }
