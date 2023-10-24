@@ -355,7 +355,8 @@ public class AutoCancelCore {
                 "cancellable_start_time", request -> this.cancellableStartTime(request),
                 "cancellable_exit_time_nano", request -> this.cancellableExitTimeNano(request),
                 "cancellable_exit_time", request -> this.cancellableExitTime(request),
-                "update_group_resource", request -> this.updateGroupResource(request));
+                "update_group_resource", request -> this.updateGroupResource(request),
+                "update_group_work", request -> this.updateGroupWork(request));
 
         public ParamHandlers() {
 
@@ -463,6 +464,18 @@ public class AutoCancelCore {
                 }
             } else {
                 // System.out.println("Can't find cancellable for cid " + request.getCancellableID());
+            }
+        }
+
+        @SuppressWarnings("unchecked")
+        private void updateGroupWork(OperationRequest request) {
+            try {
+                Cancellable cancellable = cancellables.get(request.getCancellableID());
+                Map<String, Object> workUpdateInfo = (Map<String, Object>) request.getParams().get("update_group_work");
+                rootCancellableToCancellableGroup.get(cancellable.getRootID()).updateWork(workUpdateInfo);
+            }
+            catch (NullPointerException e) {
+                System.out.println(String.format("Dereference to null pointer at %s", e.getMessage()));
             }
         }
     }

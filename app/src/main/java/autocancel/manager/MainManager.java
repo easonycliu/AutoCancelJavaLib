@@ -83,7 +83,7 @@ public class MainManager {
                     try (AffinityLock lock = AffinityLock.acquireLock(Runtime.getRuntime().availableProcessors() - 1)) {
                         AutoCancelCore autoCancelCore = AutoCancelCoreHolder.getAutoCancelCore();
                         autoCancelCore.initialize(MainManager.this);
-                        Policy actualPolicy = ((policy != null) ? policy : new BasePolicy());
+                        Policy actualPolicy = ((policy != null) ? policy : Policy.getPolicyBySetting());
                         while (!Thread.interrupted()) {
                             try {
                                 autoCancelCore.startOneLoop();
@@ -216,13 +216,27 @@ public class MainManager {
         return resourceUpdateInfos;
     }
 
-    public void updateCancellableGroup(ResourceType type, String name, Map<String, Object> cancellableGroupUpdateInfo) {
+    public void updateCancellableGroupResource(ResourceType type, String name, Map<String, Object> cancellableGroupUpdateInfo) {
         JavaThreadID jid = new JavaThreadID(Thread.currentThread().getId());
         CancellableID cid = this.idManager.getCancellableIDOfJavaThreadID(jid);
         if (cid.isValid()) {
             OperationRequest request = new OperationRequest(OperationMethod.UPDATE,
                     Map.of("cancellable_id", cid, "resource_name", ResourceName.valueOf(name), "resource_type", type));
             request.addRequestParam("update_group_resource", cancellableGroupUpdateInfo);
+            this.putManagerRequestToCore(request);
+        } else {
+            System.out.println("Cannot find cancellable id from current " + jid.toString());
+            // TODO: do something more
+        }
+    }
+
+    public void updateCancellableGroupWork(Map<String, Object> cancellableGroupWorkInfo) {
+        JavaThreadID jid = new JavaThreadID(Thread.currentThread().getId());
+        CancellableID cid = this.idManager.getCancellableIDOfJavaThreadID(jid);
+        if (cid.isValid()) {
+            OperationRequest request = new OperationRequest(OperationMethod.UPDATE,
+                    Map.of("cancellable_id", cid));
+            request.addRequestParam("update_group_work", cancellableGroupWorkInfo);
             this.putManagerRequestToCore(request);
         } else {
             System.out.println("Cannot find cancellable id from current " + jid.toString());

@@ -22,6 +22,8 @@ public class CancellableGroup {
 
     private ResourcePool resourcePool;
 
+    private Progress progressTracker;
+
     private Boolean isCancellable;
 
     private Boolean exited;
@@ -45,6 +47,8 @@ public class CancellableGroup {
         // These are "built-in" monitored resources
         this.resourcePool.addResource(Resource.createResource(ResourceType.CPU, ResourceName.CPU));
         this.resourcePool.addResource(Resource.createResource(ResourceType.MEMORY, ResourceName.MEMORY));
+
+        this.progressTracker = new Progress();
 
         this.isCancellable = null;
 
@@ -91,6 +95,15 @@ public class CancellableGroup {
                 this.resourcePool.addResource(Resource.createResource(resourceType, resourceName));
             }
             this.resourcePool.setResourceUpdateInfo(resourceName, resourceUpdateInfo);
+        }
+    }
+
+    public void updateWork(Map<String, Object> workUpdateInfo) {
+        if (!this.isExit()) {
+            this.progressTracker.setWorkUpdateInfo(workUpdateInfo);
+            // if (this.root.getAction().equals("indices:data/read/msearch") || this.root.getAction().equals("indices:data/write/bulk") || this.root.getAction().equals("indices:data/read/search") || this.root.getAction().equals("indices:data/write/update/byquery")) {
+            //     System.out.println(String.format("Predict %s exit time %s", this.root.getID().toString(), System.currentTimeMillis() + this.predictRemainTime()));
+            // }
         }
     }
 
@@ -150,6 +163,9 @@ public class CancellableGroup {
     public void setExitTime(Long exitTime) {
         assert this.exitTime == 0L : "Exit time has been set, don't set twice";
         this.exitTime = exitTime;
+        // if (this.root.getAction().equals("indices:data/read/msearch") || this.root.getAction().equals("indices:data/write/bulk") || this.root.getAction().equals("indices:data/read/search") || this.root.getAction().equals("indices:data/write/update/byquery")) {
+        //     System.out.println(String.format("Real %s exit time %s", this.root.getID().toString(), this.exitTime));
+        // }
     }
 
     public Long getExitTimeNano() {
@@ -186,6 +202,32 @@ public class CancellableGroup {
 
     public CancellableID getRootID() {
         return this.root.getID();
+    }
+
+    public Long predictRemainTime() {
+        assert !this.startTime.equals(0L) : "A task has to be started to predict remain time";
+        Long remainTime = 0L;
+        if (!this.isExit()) {
+            // Which means the cancellable group has not exited yet
+            // Or the remain time is natually 0
+            Double progress = progressTracker.getProgress();
+            Double remainWork = 1.0 - progress;
+            remainTime = Double.valueOf((remainWork / progress) * (System.currentTimeMillis() - this.startTime)).longValue();
+        }
+        return remainTime;
+    }
+
+    public Long predictRemainTimeNano() {
+        assert !this.startTimeNano.equals(0L) : "A task has to be started to predict remain time";
+        Long remainTimeNano = 0L;
+        if (!this.isExit()) {
+            // Which means the cancellable group has not exited yet
+            // Or the remain time is natually 0
+            Double progress = progressTracker.getProgress();
+            Double remainWork = 1.0 - progress;
+            remainTimeNano = Double.valueOf((remainWork / progress) * (System.nanoTime() - this.startTimeNano)).longValue();
+        }
+        return remainTimeNano;
     }
 
     private Integer getCancellableLevel(Cancellable cancellable) {
