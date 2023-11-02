@@ -8,7 +8,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class CancelTrigger {
-    private static final Double ABNORMAL_PERFORMANCE_DROP_PROTION = 0.4;
+    private static final Double ABNORMAL_PERFORMANCE_DROP_PROTION = 0.5;
 
     private static final Double ABNORMAL_PERFORMANCE_DROP_ABSOLUTE = 300.0;
 

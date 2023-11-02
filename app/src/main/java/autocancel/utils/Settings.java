@@ -14,8 +14,8 @@ public class Settings {
         Map.entry("skip_first_ms", 60000L),
         Map.entry("save_history_ms", 0L),
         Map.entry("resource_usage_decay", 0.8),
-        Map.entry("default_policy", "multi_objective_policy"),
-        Map.entry("predict_progress", true),
+        Map.entry("default_policy", Settings.getFromJVMOrDefault("default.policy", "base_policy")),
+        Map.entry("predict_progress", Settings.getFromJVMOrDefault("predict.progress", "false")),
         Map.entry(
             "monitor_physical_resources", 
             Map.of(
@@ -36,5 +36,13 @@ public class Settings {
     public static Object getSetting(String name) {
         assert Settings.settings.containsKey(name) : "invalid setting name: " + name;
         return Settings.settings.get(name);
+    }
+
+    private static String getFromJVMOrDefault(String key, String defaultSetting) {
+        String setting = System.getProperty("default.policy");
+        if (setting == null) {
+            setting = defaultSetting;
+        }
+        return setting;
     }
 }
