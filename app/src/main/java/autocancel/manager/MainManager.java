@@ -42,8 +42,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.Map;
 
-import net.openhft.affinity.AffinityLock;
-
 public class MainManager {
 
     private ConcurrentLinkedQueue<OperationRequest> managerRequestToCoreBuffer;
@@ -79,29 +77,26 @@ public class MainManager {
                 if (!exitWhenSleep) {
                     System.out.println("Autocancel core start");
                     AutoCancel.doStart();
-                    try (AffinityLock lock = AffinityLock.acquireLock(Runtime.getRuntime().availableProcessors() - 1)) {
-                        System.out.println(String.format("Accquired lock %s", lock.toString()));
-                        AutoCancelCore autoCancelCore = AutoCancelCoreHolder.getAutoCancelCore();
-                        autoCancelCore.initialize(MainManager.this);
-                        Policy actualPolicy = ((policy != null) ? policy : Policy.getPolicyBySetting());
-                        while (!Thread.interrupted()) {
-                            try {
-                                autoCancelCore.startOneLoop();
+                    AutoCancelCore autoCancelCore = AutoCancelCoreHolder.getAutoCancelCore();
+                    autoCancelCore.initialize(MainManager.this);
+                    Policy actualPolicy = ((policy != null) ? policy : Policy.getPolicyBySetting());
+                    while (!Thread.interrupted()) {
+                        try {
+                            autoCancelCore.startOneLoop();
 
-                                if (actualPolicy.needCancellation()) {
-                                    CancellableID targetCID = actualPolicy.getCancelTarget();
-                                    if (targetCID.isValid()) {
-                                        AutoCancel.cancel(targetCID);
-                                    }
+                            if (actualPolicy.needCancellation()) {
+                                CancellableID targetCID = actualPolicy.getCancelTarget();
+                                if (targetCID.isValid()) {
+                                    AutoCancel.cancel(targetCID);
                                 }
-
-                                Thread.sleep((Long) Settings.getSetting("core_update_cycle_ms"));
-                            } catch (InterruptedException e) {
-                                break;
                             }
+
+                            Thread.sleep((Long) Settings.getSetting("core_update_cycle_ms"));
+                        } catch (InterruptedException e) {
+                            break;
                         }
-                        autoCancelCore.stop();
                     }
+                    autoCancelCore.stop();
                 }
             }
         };
