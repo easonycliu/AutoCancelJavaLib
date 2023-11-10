@@ -3,6 +3,7 @@ package autocancel.api;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.Function;
 
 import autocancel.manager.MainManager;
 import autocancel.utils.id.CancellableID;
@@ -11,6 +12,8 @@ import autocancel.utils.logger.Logger;
 public class TaskTracker {
 
     private MainManager mainManager;
+
+    private Function<Object, TaskInfo> taskInfoApplier;
 
     private ConcurrentMap<Runnable, CancellableID> queueCancellable;
 
@@ -24,26 +27,24 @@ public class TaskTracker {
     }
 
     public void onTaskCreate(Object task, Boolean isCancellable) throws AssertionError {        
-        TaskWrapper wrappedTask = new TaskWrapper(task);
-
-        CancellableID parentCancellableID = wrappedTask.getParentTaskID();
+        TaskInfo taskInfo = this.taskInfoApplier.apply(task);
 
         this.mainManager.createCancellableIDOnCurrentJavaThreadID(
-            wrappedTask.getTaskID(),
+            taskInfo.getTaskID(),
             isCancellable, 
             task.toString(), 
-            wrappedTask.getAction(), 
-            parentCancellableID, 
-            wrappedTask.getStartTimeNano(),
-            wrappedTask.getStartTime()
+            taskInfo.getAction(), 
+            taskInfo.getParentTaskID(), 
+            taskInfo.getStartTimeNano(),
+            taskInfo.getStartTime()
         );
 
         Logger.systemTrace("Created " + task.toString());
     }
 
     public void onTaskExit(Object task) throws AssertionError {
-        TaskWrapper wrappedTask = new TaskWrapper(task);
-        CancellableID cid = wrappedTask.getTaskID();
+        TaskInfo taskInfo = this.taskInfoApplier.apply(task);
+        CancellableID cid = taskInfo.getTaskID();
 
         Logger.systemTrace("Exit " + task.toString());
 
