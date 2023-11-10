@@ -14,18 +14,26 @@ public class TaskInfo {
 
     private Long startTime;
 
+    private Boolean isCancellable;
+
+    private String name;
+
     public TaskInfo(
         Long taskID,
         Long parentID,
         String action,
         Long startTimeNano,
-        Long startTime
+        Long startTime,
+        Boolean isCancellable,
+        String name
     ) {
         this.taskID = new CancellableID(taskID);
         this.parentID = new CancellableID(parentID);
         this.action = action;
         this.startTimeNano = startTimeNano;
         this.startTime = startTime;
+        this.isCancellable = isCancellable;
+        this.name = name;
     }
 
     public CancellableID getParentTaskID() {
@@ -47,5 +55,13 @@ public class TaskInfo {
 
     public Long getStartTime() {
         return this.startTime;
+    }
+
+    public Boolean getIsCancellable() {
+        return this.isCancellable;
+    }
+
+    public String getName() {
+        return this.name;
     }
 }

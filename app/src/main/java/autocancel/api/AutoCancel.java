@@ -6,6 +6,7 @@ import autocancel.utils.logger.Logger;
 import autocancel.utils.resource.QueueEvent;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class AutoCancel {
     
@@ -36,9 +37,9 @@ public class AutoCancel {
         AutoCancel.mainManager.stop();
     }
 
-    public static void onTaskCreate(Object task, Boolean isCancellable) {
+    public static void onTaskCreate(Object task, Function<Object, TaskInfo> taskInfoFunction) {
         if (AutoCancel.started) {
-            AutoCancel.taskTracker.onTaskCreate(task, isCancellable);
+            AutoCancel.taskTracker.onTaskCreate(task, taskInfoFunction);
         }
         else if (warnNotStarted) {
             Logger.systemWarn("You should start lib AutoCancel first.");
@@ -46,9 +47,9 @@ public class AutoCancel {
         }
     }
 
-    public static void onTaskExit(Object task) {
+    public static void onTaskExit(Object task, Function<Object, TaskInfo> taskInfoFunction) {
         if (AutoCancel.started) {
-            AutoCancel.taskTracker.onTaskExit(task);
+            AutoCancel.taskTracker.onTaskExit(task, taskInfoFunction);
         }
         else if (warnNotStarted) {
             Logger.systemWarn("You should start lib AutoCancel first.");

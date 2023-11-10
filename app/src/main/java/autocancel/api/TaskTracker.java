@@ -13,26 +13,23 @@ public class TaskTracker {
 
     private MainManager mainManager;
 
-    private Function<Object, TaskInfo> taskInfoApplier;
-
     private ConcurrentMap<Runnable, CancellableID> queueCancellable;
 
     public TaskTracker(MainManager mainManager) {
         this.mainManager = mainManager;
-
         this.queueCancellable = new ConcurrentHashMap<Runnable, CancellableID>();
     }
 
     public void stop() {
     }
 
-    public void onTaskCreate(Object task, Boolean isCancellable) throws AssertionError {        
-        TaskInfo taskInfo = this.taskInfoApplier.apply(task);
+    public void onTaskCreate(Object task, Function<Object, TaskInfo> taskInfoFunction) throws AssertionError {
+        TaskInfo taskInfo = taskInfoFunction.apply(task);
 
         this.mainManager.createCancellableIDOnCurrentJavaThreadID(
             taskInfo.getTaskID(),
-            isCancellable, 
-            task.toString(), 
+            taskInfo.getIsCancellable(), 
+            taskInfo.getName(), 
             taskInfo.getAction(), 
             taskInfo.getParentTaskID(), 
             taskInfo.getStartTimeNano(),
@@ -42,8 +39,8 @@ public class TaskTracker {
         Logger.systemTrace("Created " + task.toString());
     }
 
-    public void onTaskExit(Object task) throws AssertionError {
-        TaskInfo taskInfo = this.taskInfoApplier.apply(task);
+    public void onTaskExit(Object task, Function<Object, TaskInfo> taskInfoFunction) throws AssertionError {
+        TaskInfo taskInfo = taskInfoFunction.apply(task);
         CancellableID cid = taskInfo.getTaskID();
 
         Logger.systemTrace("Exit " + task.toString());
