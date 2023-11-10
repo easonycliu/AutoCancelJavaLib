@@ -6,12 +6,12 @@ import java.util.Set;
 public class Settings {
     
     private final static Map<String, Object> settings = Map.ofEntries(
-        Map.entry("path_to_logs", "/usr/share/elasticsearch/logs"),
+        Map.entry("path_to_logs", "/var/solr/logs"),
         Map.entry("core_update_cycle_ms", 100L),
         Map.entry("max_child_cancellable_level", 1000),
         Map.entry("log_file_max_line", 200000),
         Map.entry("system_log_level", "WARN"),
-        Map.entry("skip_first_ms", 60000L),
+        Map.entry("skip_first_ms", 10000L),
         Map.entry("save_history_ms", 0L),
         Map.entry("resource_usage_decay", 0.8),
         Map.entry("default_policy", Settings.getFromJVMOrDefault("default.policy", "base_policy")),

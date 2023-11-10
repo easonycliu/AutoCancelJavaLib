@@ -25,8 +25,8 @@ class LinuxThreadID implements ID {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof LinuxThreadID nid) {
-            return this.toLong().equals(nid.toLong());
+        if (o instanceof LinuxThreadID) {
+            return this.toLong().equals(((LinuxThreadID) o).toLong());
         }
         return false;
     }
