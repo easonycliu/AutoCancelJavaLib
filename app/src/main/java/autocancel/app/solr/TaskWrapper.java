@@ -125,6 +125,7 @@ public class TaskWrapper {
     }
 
     @Override
+    @SuppressWarnings("EqualsUsingHashCode")
     public boolean equals(Object o) {
         return this.hashCode() == o.hashCode();
     }

@@ -95,6 +95,7 @@ public class Logger implements Closeable {
         return dateFormat.format(date);
     }
 
+    @SuppressWarnings("DefaultCharset")
     private FileWriter createFileWriter() {
         FileWriter fileWriter;
         try {

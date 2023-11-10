@@ -1,11 +1,10 @@
-package autocancel.app.elasticsearch;
+package autocancel.api;
 
 import autocancel.manager.MainManager;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.logger.Logger;
 import autocancel.utils.resource.QueueEvent;
 
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class AutoCancel {

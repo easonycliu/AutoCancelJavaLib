@@ -22,7 +22,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import autocancel.app.elasticsearch.AutoCancel;
-import autocancel.utils.Syscall;
 
 public class App {
 

@@ -7,7 +7,6 @@ package autocancel.manager;
 
 import autocancel.infrastructure.AbstractInfrastructure;
 import autocancel.infrastructure.jvm.JavaThreadStatusReader;
-import autocancel.infrastructure.linux.LinuxThreadStatusReader;
 import autocancel.utils.Settings;
 import autocancel.utils.id.JavaThreadID;
 import autocancel.utils.resource.ResourceName;
@@ -24,8 +23,8 @@ public class InfrastructureManager {
     public InfrastructureManager() {
         this.version = new AtomicInteger();
         this.infrastructures = Map.of(
-                "JVM", new JavaThreadStatusReader(),
-                "Linux", new LinuxThreadStatusReader());
+                "JVM", new JavaThreadStatusReader()
+        );
     }
 
     public Map<String, Object> getSpecifiedResourceLatest(JavaThreadID jid, ResourceName resourceName) {

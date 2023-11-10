@@ -1,8 +1,7 @@
-package autocancel.app.elasticsearch;
+package autocancel.api;
 
 import autocancel.utils.id.CancellableID;
 
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class Control {
@@ -15,7 +14,7 @@ public class Control {
 
     public void cancel(CancellableID cid) {
         if (cid.isValid()) {
-            this.canceller.accept(cid.toLong(), "Auto Cancel Library");
+            this.canceller.accept(cid.toLong());
         }
     }
 }
