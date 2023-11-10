@@ -179,7 +179,7 @@ public class AutoCancel {
 
     public static void cancel(CancellableID cid) {
         if (AutoCancel.started) {
-            AutoCancel.controller.cancel(cid);
+            AutoCancel.controller.cancel(AutoCancel.taskTracker.getTaskInfo(cid));
         }
         else if (warnNotStarted) {
             Logger.systemWarn("You should start lib AutoCancel first.");

@@ -1,7 +1,5 @@
 package autocancel.api;
 
-import autocancel.utils.id.CancellableID;
-
 import java.util.function.Consumer;
 
 public class Control {
@@ -12,9 +10,9 @@ public class Control {
         this.canceller = canceller;
     }
 
-    public void cancel(CancellableID cid) {
-        if (cid.isValid()) {
-            this.canceller.accept(cid.toLong());
+    public void cancel(Object task) {
+        if (task != null) {
+            this.canceller.accept(task);
         }
     }
 }

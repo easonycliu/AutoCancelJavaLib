@@ -4,6 +4,8 @@ import autocancel.utils.id.CancellableID;
 
 public class TaskInfo {
 
+    private Object task;
+
     private CancellableID taskID;
 
     private CancellableID parentID;
@@ -19,6 +21,7 @@ public class TaskInfo {
     private String name;
 
     public TaskInfo(
+        Object task,
         Long taskID,
         Long parentID,
         String action,
@@ -27,6 +30,7 @@ public class TaskInfo {
         Boolean isCancellable,
         String name
     ) {
+        this.task = task;
         this.taskID = new CancellableID(taskID);
         this.parentID = new CancellableID(parentID);
         this.action = action;
@@ -34,6 +38,10 @@ public class TaskInfo {
         this.startTime = startTime;
         this.isCancellable = isCancellable;
         this.name = name;
+    }
+
+    public Object getTask() {
+        return this.task;
     }
 
     public CancellableID getParentTaskID() {

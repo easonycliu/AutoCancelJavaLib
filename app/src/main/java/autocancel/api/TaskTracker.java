@@ -15,9 +15,12 @@ public class TaskTracker {
 
     private ConcurrentMap<Runnable, CancellableID> queueCancellable;
 
+    private ConcurrentMap<CancellableID, TaskInfo> taskMap;
+
     public TaskTracker(MainManager mainManager) {
         this.mainManager = mainManager;
         this.queueCancellable = new ConcurrentHashMap<Runnable, CancellableID>();
+        this.taskMap = new ConcurrentHashMap<CancellableID, TaskInfo>();
     }
 
     public void stop() {
@@ -25,6 +28,7 @@ public class TaskTracker {
 
     public void onTaskCreate(Object task, Function<Object, TaskInfo> taskInfoFunction) throws AssertionError {
         TaskInfo taskInfo = taskInfoFunction.apply(task);
+        this.taskMap.put(taskInfo.getTaskID(), taskInfo);
 
         this.mainManager.createCancellableIDOnCurrentJavaThreadID(
             taskInfo.getTaskID(),
@@ -41,12 +45,12 @@ public class TaskTracker {
 
     public void onTaskExit(Object task, Function<Object, TaskInfo> taskInfoFunction) throws AssertionError {
         TaskInfo taskInfo = taskInfoFunction.apply(task);
-        CancellableID cid = taskInfo.getTaskID();
+        this.taskMap.remove(taskInfo.getTaskID(), taskInfo);
 
         Logger.systemTrace("Exit " + task.toString());
 
-        if (cid.isValid()) {
-            this.mainManager.destoryCancellableIDOnCurrentJavaThreadID(cid);
+        if (taskInfo.getTaskID().isValid()) {
+            this.mainManager.destoryCancellableIDOnCurrentJavaThreadID(taskInfo.getTaskID());
         }
         else {
             Logger.systemWarn(String.format("Error parsing %s", task.toString()));
@@ -99,5 +103,9 @@ public class TaskTracker {
         this.mainManager.updateCancellableGroupWork(Map.of(
             "finish_work", work
         ));
+    }
+
+    public TaskInfo getTaskInfo(CancellableID cid) {
+        return this.taskMap.get(cid);
     }
 }
