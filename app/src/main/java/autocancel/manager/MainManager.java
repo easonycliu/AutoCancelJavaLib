@@ -9,8 +9,7 @@
 
 package autocancel.manager;
 
-import autocancel.app.elasticsearch.AutoCancel;
-import autocancel.app.elasticsearch.Log;
+import autocancel.api.AutoCancel;
 import autocancel.core.AutoCancelCore;
 import autocancel.core.AutoCancelCoreHolder;
 import autocancel.core.AutoCancelInfoCenter;
@@ -81,6 +80,7 @@ public class MainManager {
                     System.out.println("Autocancel core start");
                     AutoCancel.doStart();
                     try (AffinityLock lock = AffinityLock.acquireLock(Runtime.getRuntime().availableProcessors() - 1)) {
+                        System.out.println(String.format("Accquired lock %s", lock.toString()));
                         AutoCancelCore autoCancelCore = AutoCancelCoreHolder.getAutoCancelCore();
                         autoCancelCore.initialize(MainManager.this);
                         Policy actualPolicy = ((policy != null) ? policy : Policy.getPolicyBySetting());

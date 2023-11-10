@@ -85,13 +85,13 @@ public class Logger implements Closeable {
 
     private String getCurrentTimeString() {
         Date date = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd-HH-mm-ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
         return dateFormat.format(date);
     }
 
     private String getCurrentDayString() {
         Date date = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         return dateFormat.format(date);
     }
 

@@ -21,7 +21,7 @@ import java.util.regex.Matcher;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import autocancel.app.elasticsearch.AutoCancel;
+import autocancel.api.AutoCancel;
 
 public class App {
 
@@ -30,7 +30,7 @@ public class App {
     }
 
     public static void main(String[] args) {
-        AutoCancel.start(null);
+        AutoCancel.start(() -> {}, () -> {});
 
         System.out.println("CPU core number: " + Runtime.getRuntime().availableProcessors());
 

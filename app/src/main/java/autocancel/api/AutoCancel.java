@@ -14,7 +14,7 @@ public class AutoCancel {
 
     private static MainManager mainManager = new MainManager();
 
-    private static TaskTracker taskTracker = new TaskTracker(AutoCancel.mainManager);
+    private static TaskTracker taskTracker = null;
 
     private static Resource resourceTracker = new Resource(AutoCancel.mainManager);
 
@@ -22,8 +22,9 @@ public class AutoCancel {
 
     private static Control controller = null;
 
-    public static void start(Consumer<Object> canceller) {
+    public static void start(Function<Object, TaskInfo> taskInfoFunction, Consumer<Object> canceller) {
         AutoCancel.mainManager.start(null);
+        AutoCancel.taskTracker = new TaskTracker(mainManager, taskInfoFunction);
         AutoCancel.controller = new Control(canceller);
     }
 
@@ -37,9 +38,9 @@ public class AutoCancel {
         AutoCancel.mainManager.stop();
     }
 
-    public static void onTaskCreate(Object task, Function<Object, TaskInfo> taskInfoFunction) {
+    public static void onTaskCreate(Object task) {
         if (AutoCancel.started) {
-            AutoCancel.taskTracker.onTaskCreate(task, taskInfoFunction);
+            AutoCancel.taskTracker.onTaskCreate(task);
         }
         else if (warnNotStarted) {
             Logger.systemWarn("You should start lib AutoCancel first.");
@@ -47,9 +48,9 @@ public class AutoCancel {
         }
     }
 
-    public static void onTaskExit(Object task, Function<Object, TaskInfo> taskInfoFunction) {
+    public static void onTaskExit(Object task) {
         if (AutoCancel.started) {
-            AutoCancel.taskTracker.onTaskExit(task, taskInfoFunction);
+            AutoCancel.taskTracker.onTaskExit(task);
         }
         else if (warnNotStarted) {
             Logger.systemWarn("You should start lib AutoCancel first.");
