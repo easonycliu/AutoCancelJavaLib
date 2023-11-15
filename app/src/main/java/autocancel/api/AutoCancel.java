@@ -180,7 +180,13 @@ public class AutoCancel {
 
     public static void cancel(CancellableID cid) {
         if (AutoCancel.started) {
-            AutoCancel.controller.cancel(AutoCancel.taskTracker.getTaskInfo(cid));
+            TaskInfo taskInfo = AutoCancel.taskTracker.getTaskInfo(cid);
+            if (taskInfo != null) {
+                AutoCancel.controller.cancel(taskInfo.getTask());
+            }
+            else {
+                System.out.println("Cannot get task info from task tackrer");
+            }
         }
         else if (warnNotStarted) {
             Logger.systemWarn("You should start lib AutoCancel first.");
