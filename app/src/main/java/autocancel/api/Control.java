@@ -15,4 +15,8 @@ public class Control {
             this.canceller.accept(task);
         }
     }
+
+    public void retry(Object task) {
+        if 
+    }
 }

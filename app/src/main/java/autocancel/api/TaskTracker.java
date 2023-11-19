@@ -48,6 +48,25 @@ public class TaskTracker {
         }
     }
 
+    public void onTaskCreate(Object task, Object request) throws AssertionError {
+        TaskInfo taskInfo = this.taskInfoFunction.apply(task);
+        if (taskInfo != null) {
+            this.taskMap.put(taskInfo.getTaskID(), taskInfo);
+
+            this.mainManager.createCancellableIDOnCurrentJavaThreadID(
+                taskInfo.getTaskID(),
+                taskInfo.getIsCancellable(), 
+                taskInfo.getName(), 
+                taskInfo.getAction(), 
+                taskInfo.getParentTaskID(), 
+                taskInfo.getStartTimeNano(),
+                taskInfo.getStartTime()
+            );
+
+            Logger.systemTrace("Created " + task.toString());
+        }
+    }
+
     public void onTaskExit(Object task) throws AssertionError {
         TaskInfo taskInfo = this.taskInfoFunction.apply(task);
         if (taskInfo != null) {
