@@ -11,7 +11,7 @@ public class Settings {
         Map.entry("max_child_cancellable_level", 1000),
         Map.entry("log_file_max_line", 200000),
         Map.entry("system_log_level", "WARN"),
-        Map.entry("skip_first_ms", 10000L),
+        Map.entry("skip_first_ms", 30000L),
         Map.entry("save_history_ms", 0L),
         Map.entry("resource_usage_decay", 0.8),
         Map.entry("default_policy", Settings.getFromJVMOrDefault("default.policy", "base_policy")),
@@ -26,7 +26,9 @@ public class Settings {
         Map.entry(
             "monitor_actions", 
             Set.of(
-                "/query"
+                "indices:data/read/search",
+                "indices:data/write/bulk",
+                "indices:data/write/index"
             )
         )
     );
