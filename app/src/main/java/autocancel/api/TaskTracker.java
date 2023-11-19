@@ -3,7 +3,7 @@ package autocancel.api;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 import autocancel.manager.MainManager;
 import autocancel.utils.id.CancellableID;
@@ -17,9 +17,9 @@ public class TaskTracker {
 
     private ConcurrentMap<CancellableID, TaskInfo> taskMap;
 
-    private Function<Object, TaskInfo> taskInfoFunction;
+    private BiFunction<Object, Object, TaskInfo> taskInfoFunction;
 
-    public TaskTracker(MainManager mainManager, Function<Object, TaskInfo> taskInfoFunction) {
+    public TaskTracker(MainManager mainManager, BiFunction<Object, Object, TaskInfo> taskInfoFunction) {
         this.mainManager = mainManager;
         this.queueCancellable = new ConcurrentHashMap<Runnable, CancellableID>();
         this.taskMap = new ConcurrentHashMap<CancellableID, TaskInfo>();
@@ -29,27 +29,8 @@ public class TaskTracker {
     public void stop() {
     }
 
-    public void onTaskCreate(Object task) throws AssertionError {
-        TaskInfo taskInfo = this.taskInfoFunction.apply(task);
-        if (taskInfo != null) {
-            this.taskMap.put(taskInfo.getTaskID(), taskInfo);
-
-            this.mainManager.createCancellableIDOnCurrentJavaThreadID(
-                taskInfo.getTaskID(),
-                taskInfo.getIsCancellable(), 
-                taskInfo.getName(), 
-                taskInfo.getAction(), 
-                taskInfo.getParentTaskID(), 
-                taskInfo.getStartTimeNano(),
-                taskInfo.getStartTime()
-            );
-
-            Logger.systemTrace("Created " + task.toString());
-        }
-    }
-
     public void onTaskCreate(Object task, Object request) throws AssertionError {
-        TaskInfo taskInfo = this.taskInfoFunction.apply(task);
+        TaskInfo taskInfo = this.taskInfoFunction.apply(task, request);
         if (taskInfo != null) {
             this.taskMap.put(taskInfo.getTaskID(), taskInfo);
 
@@ -68,7 +49,7 @@ public class TaskTracker {
     }
 
     public void onTaskExit(Object task) throws AssertionError {
-        TaskInfo taskInfo = this.taskInfoFunction.apply(task);
+        TaskInfo taskInfo = this.taskInfoFunction.apply(task, null);
         if (taskInfo != null) {
             this.taskMap.remove(taskInfo.getTaskID(), taskInfo);
 
