@@ -17,6 +17,7 @@ import autocancel.core.utils.OperationMethod;
 import autocancel.core.utils.OperationRequest;
 import autocancel.utils.Policy;
 import autocancel.core.policy.BasePolicy;
+import autocancel.core.policy.CancelLogger;
 import autocancel.utils.ReleasableLock;
 import autocancel.utils.Settings;
 import autocancel.utils.id.CancellableID;
@@ -77,6 +78,7 @@ public class MainManager {
                 if (!exitWhenSleep) {
                     System.out.println("Autocancel core start");
                     System.out.println(String.format("Policy: %s, Predict: %s", Settings.getSetting("default_policy"), Settings.getSetting("predict_progress")));
+                    CancelLogger.logExperimentHeader();
                     AutoCancel.doStart();
                     AutoCancelCore autoCancelCore = AutoCancelCoreHolder.getAutoCancelCore();
                     autoCancelCore.initialize(MainManager.this);
