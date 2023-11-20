@@ -16,7 +16,12 @@ public class Control {
         }
     }
 
-    public void retry(Object task) {
-        if 
+    public void retry(TaskInfo taskInfo) {
+        if (taskInfo.hasRequestInfo()) {
+
+        }
+        else {
+            System.out.println(String.format("Cannot retry unsupported task %s", taskInfo.getName()));
+        }
     }
 }

@@ -76,6 +76,7 @@ public class MainManager {
                 }
                 if (!exitWhenSleep) {
                     System.out.println("Autocancel core start");
+                    System.out.println(String.format("Policy: %s, Predict: %s", Settings.getSetting("default_policy"), Settings.getSetting("predict_progress")));
                     AutoCancel.doStart();
                     AutoCancelCore autoCancelCore = AutoCancelCoreHolder.getAutoCancelCore();
                     autoCancelCore.initialize(MainManager.this);

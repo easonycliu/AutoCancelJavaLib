@@ -116,7 +116,7 @@ public class TaskInfo {
         return content;
     }
 
-    public class RequestInfo {
+    public static class RequestInfo {
         private String path;
 
         private Map<String, List<String>> headers;
@@ -125,7 +125,7 @@ public class TaskInfo {
 
         private String content;
 
-        RequestInfo(
+        public RequestInfo(
             String path,
             Map<String, List<String>> headers,
             Map<String, String> params,
