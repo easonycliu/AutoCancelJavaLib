@@ -11,12 +11,14 @@ public class CancelLogger {
 
     private static final FileWriter writer;
 
+    private static Boolean started = false;
+
     private static Integer experimentTime = 0;
 
     static {
         FileWriter tmpWriter = null;
         try {
-            tmpWriter = new FileWriter(String.format("%s.log", Paths.get(CancelLogger.rootPath, System.getProperty("experiment.mode")).toString()), true);
+            tmpWriter = new FileWriter(String.format("%s.csv", Paths.get(CancelLogger.rootPath, System.getProperty("autocancel.log")).toString()));
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
@@ -26,8 +28,15 @@ public class CancelLogger {
         }
     }
 
-    public static void addExperimentTime() {
-        CancelLogger.experimentTime += 1;
+    public static void experimentStart() {
+        if (!CancelLogger.started) {
+            CancelLogger.experimentTime += 1;
+            CancelLogger.started = true;
+        }
+    }
+
+    public static void experimentStop() {
+        CancelLogger.started = false;
     }
 
     public static void logExperimentHeader() {

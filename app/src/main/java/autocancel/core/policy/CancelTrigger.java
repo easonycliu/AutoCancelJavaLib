@@ -12,11 +12,11 @@ public class CancelTrigger {
 
     private static final Double ABNORMAL_PERFORMANCE_DROP_ABSOLUTE = 300.0;
 
-    private static final Double RECOVER_TO_ABNORMAL_DROP_RATIO = 0.4;
+    private static final Double RECOVER_TO_ABNORMAL_DROP_RATIO = 0.6;
 
     private static final Long ONE_CYCLE_MILLI = 1000L;
 
-    private static final Long MAX_CONTINUOUS_ABNORMAL_CYCLE = 3L;
+    private static final Long MAX_CONTINUOUS_ABNORMAL_CYCLE = 5L;
 
     private static final Long PAST_PERFORMANCE_REF_CYCLE = 30L;
 
@@ -24,7 +24,7 @@ public class CancelTrigger {
 
     private static final Integer MAX_PAST_GLOBAL_PERFORMANCE_REF_NUM = 10;
 
-    private static final Integer AVERAGE_FILTER_SIZE = 3;
+    private static final Integer AVERAGE_FILTER_SIZE = 2;
 
     private AverageFilter averageFilter;
 
@@ -89,9 +89,10 @@ public class CancelTrigger {
                 // this.globalMaxThroughputQueue.clear();
 
                 this.performanceBuffer.lastCyclePerformance(System.currentTimeMillis(), finishedTaskNumber);
+                CancelLogger.experimentStart();
             }
             else {
-                CancelLogger.addExperimentTime();
+                CancelLogger.experimentStop();
             }
         }
         else {
@@ -114,7 +115,7 @@ public class CancelTrigger {
                     this.continuousAbnormalCycles = 0L;
                 }
                 System.out.println(String.format("Finished tasks: %f, Abnormal: %b", filteredFinishedTaskNumber, abnormal));
-                CancelLogger.logExperimentInfo(filteredFinishedTaskNumber, need, this.isRecovered(filteredFinishedTaskNumber));
+                CancelLogger.logExperimentInfo(Double.valueOf(finishedTaskNumber), need, this.isRecovered(Double.valueOf(finishedTaskNumber)));
             }
         }
         

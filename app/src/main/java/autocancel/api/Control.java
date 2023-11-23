@@ -12,7 +12,7 @@ public class Control {
 
     public void cancel(Object task) {
         if (task != null) {
-            if (!System.getProperty("experiment.mode").equals("no_cancel")) {
+            if (System.getProperty("cancel.enable").equals("true")) {
                 this.canceller.accept(task);
             }
         }
