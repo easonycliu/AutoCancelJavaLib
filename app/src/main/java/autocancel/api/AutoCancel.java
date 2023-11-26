@@ -4,6 +4,7 @@ import autocancel.manager.MainManager;
 import autocancel.utils.id.CancellableID;
 import autocancel.utils.logger.Logger;
 import autocancel.utils.resource.QueueEvent;
+import autocancel.utils.Settings;
 
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -23,9 +24,11 @@ public class AutoCancel {
     private static Control controller = null;
 
     public static void start(BiFunction<Object, Object, TaskInfo> taskInfoFunction, Consumer<Object> canceller) {
-        AutoCancel.mainManager.start(null);
-        AutoCancel.taskTracker = new TaskTracker(mainManager, taskInfoFunction);
-        AutoCancel.controller = new Control(canceller);
+        if (Settings.getFromJVMOrDefault("autocancel.start", "true").equals("true")) {
+            AutoCancel.mainManager.start(null);
+            AutoCancel.taskTracker = new TaskTracker(mainManager, taskInfoFunction);
+            AutoCancel.controller = new Control(canceller);
+        }
     }
 
     public static void doStart() {

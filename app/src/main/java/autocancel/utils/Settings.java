@@ -36,7 +36,7 @@ public class Settings {
         return Settings.settings.get(name);
     }
 
-    private static String getFromJVMOrDefault(String key, String defaultSetting) {
+    public static String getFromJVMOrDefault(String key, String defaultSetting) {
         String setting = System.getProperty(key);
         if (setting == null) {
             setting = defaultSetting;
