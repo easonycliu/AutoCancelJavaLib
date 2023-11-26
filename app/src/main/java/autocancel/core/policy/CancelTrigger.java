@@ -1,5 +1,7 @@
 package autocancel.core.policy;
 
+import autocancel.utils.Settings;
+
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.PriorityQueue;
@@ -8,9 +10,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class CancelTrigger {
-    private static final Double ABNORMAL_PERFORMANCE_DROP_PROTION = 0.5;
+    private static final Double ABNORMAL_PERFORMANCE_DROP_PROTION = Double.valueOf(Settings.getFromJVMOrDefault("abnormal.protion", "0.5"));
 
-    private static final Double ABNORMAL_PERFORMANCE_DROP_ABSOLUTE = 200.0;
+    private static final Double ABNORMAL_PERFORMANCE_DROP_ABSOLUTE = Double.valueOf(Settings.getFromJVMOrDefault("abnormal.absolute", "200"));
 
     private static final Double RECOVER_TO_ABNORMAL_DROP_RATIO = 0.6;
 
