@@ -3,6 +3,8 @@ package autocancel.core.utils;
 import autocancel.utils.logger.Logger;
 import autocancel.utils.resource.Resource;
 import autocancel.utils.resource.ResourceName;
+import autocancel.utils.resource.ResourceType;
+import autocancel.utils.Settings;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -25,6 +27,13 @@ public class ResourcePool {
         } else {
             Logger.systemWarn(
                     "Resource " + resource.getResourceName().toString() + " has added to resource pool, skip");
+        }
+    }
+
+    public void addBuiltinResource() {
+        for (Map.Entry<?, ?> entry : ((Map<?, ?>) Settings.getSetting("monitor_physical_resources")).entrySet()) {
+            this.addResource(Resource.createResource(ResourceType.valueOf((String) entry.getKey()), 
+            ResourceName.valueOf((String) entry.getKey())));
         }
     }
 

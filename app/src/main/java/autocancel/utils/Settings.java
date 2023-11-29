@@ -24,9 +24,10 @@ public class Settings {
         Map.entry(
             "monitor_actions", 
             Set.of(
-                "indices:data/read/search",
-                "indices:data/write/bulk",
-                "indices:data/write/index"
+                // "indices:data/read/search",
+                // "indices:data/write/bulk",
+                // "indices:data/write/index"
+                "/query"
             )
         )
     );
