@@ -33,7 +33,7 @@ public class AutoCancel {
         }
     }
 
-	public void onRequestReceive(Object task, Object request) {
+	public static void onRequestReceive(Object task, Object request) {
 		if (AutoCancel.started) {
 			TaskInfo taskInfo = AutoCancel.taskTracker.getTaskInfo(task);
 			CancellableID cid = taskInfo.getTaskID();
@@ -45,7 +45,7 @@ public class AutoCancel {
 		}
 	}
 
-	public void setRequestSender(Consumer<Object> requestSender) {
+	public static void setRequestSender(Consumer<Object> requestSender) {
 		if (AutoCancel.started) {
 			AutoCancel.requestManager.setRequestSender(requestSender);
 		}
@@ -55,7 +55,7 @@ public class AutoCancel {
 		}
 	}
 
-	public void reexecuteRequestOfTask(Object task) {
+	public static void reexecuteRequestOfTask(Object task) {
 		if (AutoCancel.started) {
 			TaskInfo taskInfo = AutoCancel.taskTracker.getTaskInfo(task);
 			CancellableID cid = taskInfo.getTaskID();
