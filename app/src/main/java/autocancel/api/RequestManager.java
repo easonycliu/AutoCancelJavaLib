@@ -23,17 +23,16 @@ public class RequestManager {
 
 	public void setRequestSender(Consumer<Object> requestSender) {
 		if (this.requestSender == null) {
-			this.requestSender = requestSender;
 			System.out.println("Request sender set");
+			this.requestSender = requestSender;
 		}
 	}
 
 	public void reexecuteRequestOfTask(CancellableID cid) {
 		if (this.requestSender != null) {
+			System.out.println("Sending request");
 			Object request = requestMap.get(cid);
-			if (request != null) {
-				this.requestSender.accept(request);
-			}
+			this.requestSender.accept(request);
 		}
 	}
 

@@ -33,11 +33,22 @@ public class AutoCancel {
         }
     }
 
+	public static void setRequestSender(Consumer<Object> requestSender) {
+			AutoCancel.requestManager.setRequestSender(requestSender);
+	}
+
 	public static void onRequestReceive(Object task, Object request) {
 		if (AutoCancel.started) {
 			TaskInfo taskInfo = AutoCancel.taskTracker.getTaskInfo(task);
 			CancellableID cid = taskInfo.getTaskID();
-			AutoCancel.requestManager.onRequestReceive(cid, request);
+			if (!cid.equals(new CancellableID())) {
+				if (request != null) {
+					AutoCancel.requestManager.onRequestReceive(cid, request);
+				}
+			}
+			else {
+				System.out.println("Cannot find cancellable id from task");
+			}
 		}
 		else if (warnNotStarted) {
 			Logger.systemWarn("You should start lib AutoCancel first.");
@@ -45,20 +56,9 @@ public class AutoCancel {
 		}
 	}
 
-	public static void setRequestSender(Consumer<Object> requestSender) {
+	public static void reexecuteRequestOfTask(Long taskID) {
 		if (AutoCancel.started) {
-			AutoCancel.requestManager.setRequestSender(requestSender);
-		}
-		else if (warnNotStarted) {
-			Logger.systemWarn("You should start lib AutoCancel first.");
-			AutoCancel.warnNotStarted = false;
-		}
-	}
-
-	public static void reexecuteRequestOfTask(Object task) {
-		if (AutoCancel.started) {
-			TaskInfo taskInfo = AutoCancel.taskTracker.getTaskInfo(task);
-			CancellableID cid = taskInfo.getTaskID();
+			CancellableID cid = new CancellableID(taskID);
 			AutoCancel.requestManager.reexecuteRequestOfTask(cid);
 		}
 		else if (warnNotStarted) {
