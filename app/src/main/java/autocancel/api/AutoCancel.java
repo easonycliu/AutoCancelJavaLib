@@ -6,7 +6,6 @@ import autocancel.utils.logger.Logger;
 import autocancel.utils.resource.QueueEvent;
 import autocancel.utils.Settings;
 
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
@@ -36,6 +35,8 @@ public class AutoCancel {
 
 	public void onRequestReceive(Object task, Object request) {
 		if (AutoCancel.started) {
+			TaskInfo taskInfo = AutoCancel.taskTracker.getTaskInfo(task);
+			CancellableID cid = taskInfo.getTaskID();
 			AutoCancel.requestManager.onRequestReceive(cid, request);
 		}
 		else if (warnNotStarted) {
@@ -56,6 +57,8 @@ public class AutoCancel {
 
 	public void reexecuteRequestOfTask(Object task) {
 		if (AutoCancel.started) {
+			TaskInfo taskInfo = AutoCancel.taskTracker.getTaskInfo(task);
+			CancellableID cid = taskInfo.getTaskID();
 			AutoCancel.requestManager.reexecuteRequestOfTask(cid);
 		}
 		else if (warnNotStarted) {
