@@ -14,17 +14,17 @@ public class AutoCancel {
     
     private static Boolean started = false;
 
+    private static Boolean warnNotStarted = true;
+
     private static MainManager mainManager = new MainManager();
 
     private static TaskTracker taskTracker = null;
 
     private static Resource resourceTracker = new Resource(AutoCancel.mainManager);
 
-    private static Boolean warnNotStarted = true;
-
     private static Control controller = null;
 
-	private static BiConsumer<Object, Object> requestSender = null;
+	private static RequestManager requestManager = new RequestManager();
 
     public static void start(BiFunction<Object, Object, TaskInfo> taskInfoFunction, Consumer<Object> canceller) {
         if (Settings.getFromJVMOrDefault("autocancel.start", "true").equals("true")) {
@@ -34,17 +34,33 @@ public class AutoCancel {
         }
     }
 
-	public static void setRequestSender(BiConsumer<Object, Object> requestSender) {
-		if (AutoCancel.requestSender == null) {
-			AutoCancel.requestSender = requestSender;
-			System.out.println("Request sender set");
+	public void onRequestReceive(Object task, Object request) {
+		if (AutoCancel.started) {
+			AutoCancel.requestManager.onRequestReceive(cid, request);
+		}
+		else if (warnNotStarted) {
+			Logger.systemWarn("You should start lib AutoCancel first.");
+			AutoCancel.warnNotStarted = false;
 		}
 	}
 
-	public static void reexecuteRequest(Object request, Object channel) {
-		if (AutoCancel.requestSender != null) {
-			AutoCancel.requestSender.accept(request, channel);
-			System.out.println(String.format("Reexecute request %s", request.toString()));
+	public void setRequestSender(Consumer<Object> requestSender) {
+		if (AutoCancel.started) {
+			AutoCancel.requestManager.setRequestSender(requestSender);
+		}
+		else if (warnNotStarted) {
+			Logger.systemWarn("You should start lib AutoCancel first.");
+			AutoCancel.warnNotStarted = false;
+		}
+	}
+
+	public void reexecuteRequestOfTask(Object task) {
+		if (AutoCancel.started) {
+			AutoCancel.requestManager.reexecuteRequestOfTask(cid);
+		}
+		else if (warnNotStarted) {
+			Logger.systemWarn("You should start lib AutoCancel first.");
+			AutoCancel.warnNotStarted = false;
 		}
 	}
 
