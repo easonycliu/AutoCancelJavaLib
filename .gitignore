@@ -3,14 +3,15 @@
 
 # Ignore Gradle build output directory
 build
-app
 bin
 
 .vscode
 .settings
 .project
+.classpath
 
 jidinfo
 milestone
 /scripts
 /logs
+
