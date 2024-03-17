@@ -38,6 +38,10 @@ public class CancellableGroup {
 
 	private Long exitTimeNano;
 
+	private Long cancelTime;
+
+	private Long cancelTimeNano;
+
 	public CancellableGroup(Cancellable root) {
 		root.setLevel(0);
 		this.root = root;
@@ -64,6 +68,10 @@ public class CancellableGroup {
 		this.exitTime = 0L;
 
 		this.exitTimeNano = 0L;
+
+		this.cancelTime = 0L;
+
+		this.cancelTimeNano = 0L;
 	}
 
 	public void exit() {
@@ -75,7 +83,12 @@ public class CancellableGroup {
 	}
 
 	public Boolean isCancelled() {
-		return (this.isCanceled == null) ? false : this.isCanceled.get();
+		Boolean cancelled = (this.isCanceled == null) ? false : this.isCanceled.get();
+		if (cancelled) {
+			this.cancelTime = (this.cancelTime == 0L) ? System.currentTimeMillis() : this.cancelTime;
+			this.cancelTimeNano = (this.cancelTimeNano == 0L) ? System.nanoTime() : this.cancelTimeNano;
+		}
+		return cancelled;
 	}
 
 	public Boolean isExpired() {
@@ -197,6 +210,16 @@ public class CancellableGroup {
 	public void setExitTimeNano(Long exitTimeNano) {
 		assert this.exitTimeNano == 0L : "Exit time nano has been set, don't set twice";
 		this.exitTimeNano = exitTimeNano;
+	}
+
+	public Long getCancelTime() {
+		assert this.cancelTime != 0L : "Check whether the cancellable group has exited before get cancel time";
+		return this.cancelTime;
+	}
+
+	public Long getCancelTimeNano() {
+		assert this.cancelTimeNano != 0L : "Check whether the cancellable group has exited before get cancel time nano";
+		return this.cancelTimeNano;
 	}
 
 	public void putCancellable(Cancellable cancellable) {
