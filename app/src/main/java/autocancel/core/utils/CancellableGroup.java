@@ -72,8 +72,7 @@ public class CancellableGroup {
 	public Boolean isExpired() {
 		Boolean expired = false;
 		if (!this.exitTimeNano.equals(0L)
-				&& System.nanoTime() - this.exitTimeNano
-						> ((Long) Settings.getSetting("save_history_ms") * 1000000)) {
+				&& System.nanoTime() - this.exitTimeNano > ((Long) Settings.getSetting("save_history_ms") * 1000000)) {
 			expired = true;
 		}
 		return expired;
@@ -88,8 +87,8 @@ public class CancellableGroup {
 		this.resourcePool.refreshResources(resourceRefreshInfo, CancellableGroup.logger);
 	}
 
-	public void updateResource(ResourceType resourceType, ResourceName resourceName,
-			Map<String, Object> resourceUpdateInfo) {
+	public void updateResource(
+			ResourceType resourceType, ResourceName resourceName, Map<String, Object> resourceUpdateInfo) {
 		if (!this.isExit()) {
 			if (!this.resourcePool.isResourceExist(resourceName)) {
 				this.resourcePool.addResource(Resource.createResource(resourceType, resourceName));
@@ -115,9 +114,8 @@ public class CancellableGroup {
 
 	public Double getResourceSlowdown(ResourceName resourceName) {
 		Double slowdown = 0.0;
-		Map<String, Object> cancellableGroupLevelInfo =
-				Map.of("start_time", this.startTime, "start_time_nano", this.startTimeNano,
-						"exit_time", this.exitTime, "exit_time_nano", this.exitTimeNano);
+		Map<String, Object> cancellableGroupLevelInfo = Map.of("start_time", this.startTime, "start_time_nano",
+				this.startTimeNano, "exit_time", this.exitTime, "exit_time_nano", this.exitTimeNano);
 		slowdown = this.resourcePool.getSlowdown(resourceName, cancellableGroupLevelInfo);
 		// System.out.println(String.format("%s has slowdown %f on resource %s",
 		// this.root.toString(), slowdown, resourceName));
@@ -189,13 +187,12 @@ public class CancellableGroup {
 
 	public void putCancellable(Cancellable cancellable) {
 		assert cancellable.getRootID().equals(this.root.getID())
-			: String.format(
-					"Putting a cancellable with id %d into a wrong group with root cancellable id %d",
+			: String.format("Putting a cancellable with id %d into a wrong group with root cancellable id %d",
 					cancellable.getID(), this.root.getID());
 
 		assert !this.cancellables.containsKey(cancellable.getID())
-			: String.format("Cancellable %d has been putted into this group %d",
-					cancellable.getID(), this.root.getID());
+			: String.format(
+					"Cancellable %d has been putted into this group %d", cancellable.getID(), this.root.getID());
 
 		Integer level = this.getCancellableLevel(cancellable);
 		cancellable.setLevel(level);
@@ -223,9 +220,8 @@ public class CancellableGroup {
 			// Or the remain time is natually 0
 			Double progress = progressTracker.getProgress();
 			Double remainWork = 1.0 - progress;
-			remainTime = Double.valueOf((remainWork / progress)
-									   * (System.currentTimeMillis() - this.startTime))
-								 .longValue();
+			remainTime =
+					Double.valueOf((remainWork / progress) * (System.currentTimeMillis() - this.startTime)).longValue();
 		}
 		return remainTime;
 	}
@@ -238,9 +234,8 @@ public class CancellableGroup {
 			// Or the remain time is natually 0
 			Double progress = progressTracker.getProgress();
 			Double remainWork = 1.0 - progress;
-			remainTimeNano = Double.valueOf((remainWork / progress)
-										   * (System.nanoTime() - this.startTimeNano))
-									 .longValue();
+			remainTimeNano =
+					Double.valueOf((remainWork / progress) * (System.nanoTime() - this.startTimeNano)).longValue();
 		}
 		return remainTimeNano;
 	}

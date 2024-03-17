@@ -24,10 +24,7 @@ public class BasePolicy extends Policy {
 	public CancellableID getCancelTarget() {
 		Map<ResourceName, Double> resourceContentionLevel = Policy.infoCenter.getContentionLevel();
 		Map.Entry<ResourceName, Double> maxContentionLevel =
-				resourceContentionLevel.entrySet()
-						.stream()
-						.max(Map.Entry.comparingByValue())
-						.orElse(null);
+				resourceContentionLevel.entrySet().stream().max(Map.Entry.comparingByValue()).orElse(null);
 		ResourceName resourceName = null;
 		if (maxContentionLevel != null) {
 			resourceName = maxContentionLevel.getKey();
@@ -43,14 +40,10 @@ public class BasePolicy extends Policy {
 			Map<CancellableID, Double> cancellableGroupResourceMeasure =
 					BasePolicy.getCancellableGroupResourceMeasure(resourceName);
 			Map.Entry<CancellableID, Double> maxResourceUsage =
-					cancellableGroupResourceMeasure.entrySet()
-							.stream()
-							.max(Map.Entry.comparingByValue())
-							.orElse(null);
+					cancellableGroupResourceMeasure.entrySet().stream().max(Map.Entry.comparingByValue()).orElse(null);
 			if (maxResourceUsage != null) {
 				target = maxResourceUsage.getKey();
-				System.out.println(String.format(
-						"Detect abnormal performance behaviour, cancel %s, %s usage %f",
+				System.out.println(String.format("Detect abnormal performance behaviour, cancel %s, %s usage %f",
 						target.toString(), resourceName.toString(), maxResourceUsage.getValue()));
 			}
 		}
@@ -66,8 +59,7 @@ public class BasePolicy extends Policy {
 		return target;
 	}
 
-	public static Map<CancellableID, Double> getCancellableGroupResourceMeasure(
-			ResourceName resourceName) {
+	public static Map<CancellableID, Double> getCancellableGroupResourceMeasure(ResourceName resourceName) {
 		if (Boolean.valueOf((String) Settings.getSetting("predict_progress"))) {
 			return Policy.infoCenter.getCancellableGroupResourceBenefit(resourceName);
 		} else {

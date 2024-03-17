@@ -34,8 +34,7 @@ public class CPUTimeInfo {
 
 	public void update(Integer version, Long cpuTime) {
 		if (cpuTime > 0) {
-			assert version >= this.version
-					&& cpuTime >= this.cpuTime : "version and cpu time should never decrease.";
+			assert version >= this.version && cpuTime >= this.cpuTime : "version and cpu time should never decrease.";
 
 			this.previousVersion = this.version;
 			this.previousCPUTime = this.cpuTime;
@@ -59,7 +58,6 @@ public class CPUTimeInfo {
 
 	@SuppressWarnings("BoxedPrimitiveEquality")
 	public Boolean comparable(CPUTimeInfo cpuTimeInfo) {
-		return this.previousVersion == cpuTimeInfo.getPreviousVersion()
-				&& this.version == cpuTimeInfo.getVersion();
+		return this.previousVersion == cpuTimeInfo.getPreviousVersion() && this.version == cpuTimeInfo.getVersion();
 	}
 }

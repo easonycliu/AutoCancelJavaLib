@@ -6,8 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public class JVMHeapResource extends MemoryResource {
-	private static List<GarbageCollectorMXBean> gcMXBeans =
-			ManagementFactory.getGarbageCollectorMXBeans();
+	private static List<GarbageCollectorMXBean> gcMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
 
 	private Long startGCTime;
 
@@ -27,8 +26,7 @@ public class JVMHeapResource extends MemoryResource {
 		Double slowdown = 0.0;
 		Long startTime = (Long) slowdownInfo.get("start_time");
 		if (startTime != null) {
-			slowdown = Double.valueOf(this.currentGCTime - this.startGCTime)
-					/ (this.currentTime - startTime);
+			slowdown = Double.valueOf(this.currentGCTime - this.startGCTime) / (this.currentTime - startTime);
 		}
 		return slowdown;
 	}

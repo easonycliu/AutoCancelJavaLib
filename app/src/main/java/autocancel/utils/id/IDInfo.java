@@ -23,14 +23,13 @@ public class IDInfo<ObjectID extends ID> {
 
 	@Override
 	public String toString() {
-		return String.format("Time: %s. Status: %s. ID: %s", this.timestamp.toString(),
-				this.status.toString(), this.id.toString());
+		return String.format(
+				"Time: %s. Status: %s. ID: %s", this.timestamp.toString(), this.status.toString(), this.id.toString());
 	}
 
 	@Override
 	public boolean equals(Object o) {
-		return this.id.getClass() == ((IDInfo<?>) o).getID().getClass()
-				&& this.id.equals(((IDInfo<?>) o).getID());
+		return this.id.getClass() == ((IDInfo<?>) o).getID().getClass() && this.id.equals(((IDInfo<?>) o).getID());
 	}
 
 	@Override

@@ -80,8 +80,7 @@ public class QueueResource extends Resource {
 							return timeValue;
 						});
 					} catch (IndexOutOfBoundsException e) {
-						Logger.systemWarn(
-								String.format("Unmatched start - end events in queue resource"));
+						Logger.systemWarn(String.format("Unmatched start - end events in queue resource"));
 					}
 				}
 				return dataPointValue;
@@ -111,8 +110,7 @@ public class QueueResource extends Resource {
 
 	@Override
 	public String toString() {
-		return String.format(
-				"Resource Type: %s, Name: %s, Total wait time: %d, Total occupy time: %d",
+		return String.format("Resource Type: %s, Name: %s, Total wait time: %d, Total occupy time: %d",
 				this.getResourceType().toString(), this.getResourceName().toString(),
 				this.totalEventTime.getOrDefault(QueueEvent.QUEUE, 0L),
 				this.totalEventTime.getOrDefault(QueueEvent.OCCUPY, 0L));

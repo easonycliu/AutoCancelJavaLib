@@ -20,8 +20,7 @@ public class CancelLogger {
 		try {
 			tmpWriter = new FileWriter(
 					String.format("%s.csv",
-							Paths.get(CancelLogger.rootPath, System.getProperty("autocancel.log"))
-									.toString()),
+							Paths.get(CancelLogger.rootPath, System.getProperty("autocancel.log")).toString()),
 					Charset.forName("UTF-8"));
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -43,8 +42,7 @@ public class CancelLogger {
 
 	public static void logExperimentHeader() {
 		try {
-			CancelLogger.writer.append(
-					String.format("%s,%s,%s,%s\n", "Times", "Throughput", "Cancel", "Recover"));
+			CancelLogger.writer.append(String.format("%s,%s,%s,%s\n", "Times", "Throughput", "Cancel", "Recover"));
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -52,8 +50,8 @@ public class CancelLogger {
 
 	public static void logExperimentInfo(Double throughput, Boolean cancel, Boolean recover) {
 		try {
-			CancelLogger.writer.append(String.format(
-					"%d,%f,%b,%b\n", CancelLogger.experimentTime, throughput, cancel, recover));
+			CancelLogger.writer.append(
+					String.format("%d,%f,%b,%b\n", CancelLogger.experimentTime, throughput, cancel, recover));
 			CancelLogger.writer.flush();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());

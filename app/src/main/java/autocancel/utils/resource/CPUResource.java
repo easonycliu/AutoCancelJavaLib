@@ -63,9 +63,9 @@ public class CPUResource extends Resource {
 									  * this.cpuDataPoints.size())
 							/ this.totalSystemTime;
 			if (this.usedSystemTime > this.totalSystemTime) {
-				System.out.println(String.format(
-						"Find abnormal slowdown in cpu, used system time: %d, total system time: %d",
-						this.usedSystemTime, this.totalSystemTime));
+				System.out.println(
+						String.format("Find abnormal slowdown in cpu, used system time: %d, total system time: %d",
+								this.usedSystemTime, this.totalSystemTime));
 			}
 			// GC Time + used system time may larger than total system time
 			// TODO: Find a better way to handle GC time
@@ -117,16 +117,13 @@ public class CPUResource extends Resource {
 				this.totalSystemTime += cpuTimeSystem;
 				this.usedSystemTime += cpuTimeThread;
 				this.usedSystemTimeDecay =
-						(long) ((Double) Settings.getSetting("resource_usage_decay")
-										* this.usedSystemTimeDecay
+						(long) ((Double) Settings.getSetting("resource_usage_decay") * this.usedSystemTimeDecay
 								+ cpuTimeThread);
 			}
 		} else {
 			if (cpuTimeSystem != null && cpuTimeThread != null && threadID != null) {
 				if (start) {
-					if (this.cpuDataPoints.put(
-								threadID, new CPUDataPoint(cpuTimeSystem, cpuTimeThread))
-							!= null) {
+					if (this.cpuDataPoints.put(threadID, new CPUDataPoint(cpuTimeSystem, cpuTimeThread)) != null) {
 						Logger.systemWarn("Different runnables on the same thread simutanously");
 					}
 				} else {
@@ -141,18 +138,16 @@ public class CPUResource extends Resource {
 						if (cpuTimeThread - startTimeThread > cpuTimeSystem - startTimeSystem) {
 							System.out.println(String.format(
 									"Find abnormal metrics in setResourceUpdateInfo, thread used system time: %d, thread total system time: %d",
-									cpuTimeThread - startTimeThread,
-									cpuTimeSystem - startTimeSystem));
+									cpuTimeThread - startTimeThread, cpuTimeSystem - startTimeSystem));
 						}
 					} else {
-						Logger.systemWarn(
-								String.format("Unmatched start - end events in cpu resource"));
+						Logger.systemWarn(String.format("Unmatched start - end events in cpu resource"));
 					}
 				}
 			} else {
-				Logger.systemWarn(String.format(
-						"Is null for cpu_time_system: %b, cpu_time_thread: %b, thread_id: %b, start: %b",
-						cpuTimeSystem == null, cpuTimeThread == null, threadID == null));
+				Logger.systemWarn(
+						String.format("Is null for cpu_time_system: %b, cpu_time_thread: %b, thread_id: %b, start: %b",
+								cpuTimeSystem == null, cpuTimeThread == null, threadID == null));
 			}
 		}
 	}
@@ -169,17 +164,17 @@ public class CPUResource extends Resource {
 			Long cpuTimeThreadAdd = threadMXBean.getThreadCpuTime(key.toLong());
 			Long cpuTimeSystemAdd = System.nanoTime();
 			if (cpuTimeThreadAdd > cpuTimeSystemAdd) {
-				System.out.println(String.format(
-						"Find abnormal in refresh, cpu time thread add: %d, cpu time system add: %d",
-						cpuTimeThreadAdd, cpuTimeSystemAdd));
+				System.out.println(
+						String.format("Find abnormal in refresh, cpu time thread add: %d, cpu time system add: %d",
+								cpuTimeThreadAdd, cpuTimeSystemAdd));
 			}
 			usedSystemTimeAtomic.addAndGet(value.refreshCPUTimeThread(cpuTimeThreadAdd));
 			totalSystemTimeAtomic.addAndGet(value.refreshCPUTimeSystem(cpuTimeSystemAdd));
 		});
 		Long usedSystemTimeTmp = usedSystemTimeAtomic.get();
-		this.usedSystemTimeDecay = (long) ((Double) Settings.getSetting("resource_usage_decay")
-						* this.usedSystemTimeDecay
-				+ (usedSystemTimeTmp - this.usedSystemTime));
+		this.usedSystemTimeDecay =
+				(long) ((Double) Settings.getSetting("resource_usage_decay") * this.usedSystemTimeDecay
+						+ (usedSystemTimeTmp - this.usedSystemTime));
 		this.totalSystemTime = totalSystemTimeAtomic.get();
 		this.usedSystemTime = usedSystemTimeTmp;
 
@@ -188,10 +183,9 @@ public class CPUResource extends Resource {
 
 	@Override
 	public String toString() {
-		return String.format(
-				"Resource Type: %s, name: %s, used system time: %d, used system time decay: %d",
-				this.getResourceType().toString(), this.getResourceName().toString(),
-				this.usedSystemTime, this.usedSystemTimeDecay);
+		return String.format("Resource Type: %s, name: %s, used system time: %d, used system time decay: %d",
+				this.getResourceType().toString(), this.getResourceName().toString(), this.usedSystemTime,
+				this.usedSystemTimeDecay);
 	}
 
 	class CPUDataPoint {

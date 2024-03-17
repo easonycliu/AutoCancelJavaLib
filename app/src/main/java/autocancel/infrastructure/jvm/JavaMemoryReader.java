@@ -84,8 +84,8 @@ public class JavaMemoryReader extends ResourceReader {
 				this.javaThreadHeapUsing.computeIfPresent(
 						jid, (key, value) -> { return Math.max(0, heapUsing - value); });
 			} else {
-				this.javaThreadHeapUsing.put(jid,
-						Math.max(0, this.sunThreadMXBean.getThreadAllocatedBytes(jid.unwrap())));
+				this.javaThreadHeapUsing.put(
+						jid, Math.max(0, this.sunThreadMXBean.getThreadAllocatedBytes(jid.unwrap())));
 			}
 		}
 	}

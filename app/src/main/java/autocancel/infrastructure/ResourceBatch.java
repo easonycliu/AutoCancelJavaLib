@@ -15,8 +15,7 @@ public class ResourceBatch {
 		this.resourceUpdateInfos = new HashMap<ResourceName, Map<String, Object>>();
 	}
 
-	public void setResourceValue(
-			ResourceName resourceName, Map<String, Object> resourceUpdateInfo) {
+	public void setResourceValue(ResourceName resourceName, Map<String, Object> resourceUpdateInfo) {
 		this.resourceUpdateInfos.put(resourceName, resourceUpdateInfo);
 	}
 

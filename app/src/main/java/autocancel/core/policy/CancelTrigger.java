@@ -49,20 +49,19 @@ public class CancelTrigger {
 		this.started = false;
 		this.performanceBuffer = new PerformanceBuffer(CancelTrigger.ONE_CYCLE_MILLI);
 		this.continuousAbnormalCycles = 0L;
-		this.cycleMaxThroughputQueue = new FixSizePriorityQueue<ThroughputDataPoint>(
-				CancelTrigger.MAX_PAST_CYCLE_PERFORMANCE_REF_NUM,
-				(e1, e2) -> e1.getThroughput().intValue() - e2.getThroughput().intValue());
-		this.globalMaxThroughputQueue = new FixSizePriorityQueue<ThroughputDataPoint>(
-				CancelTrigger.MAX_PAST_GLOBAL_PERFORMANCE_REF_NUM,
-				(e1, e2) -> e1.getThroughput().intValue() - e2.getThroughput().intValue());
+		this.cycleMaxThroughputQueue =
+				new FixSizePriorityQueue<ThroughputDataPoint>(CancelTrigger.MAX_PAST_CYCLE_PERFORMANCE_REF_NUM,
+						(e1, e2) -> e1.getThroughput().intValue() - e2.getThroughput().intValue());
+		this.globalMaxThroughputQueue =
+				new FixSizePriorityQueue<ThroughputDataPoint>(CancelTrigger.MAX_PAST_GLOBAL_PERFORMANCE_REF_NUM,
+						(e1, e2) -> e1.getThroughput().intValue() - e2.getThroughput().intValue());
 	}
 
 	public Boolean isAbnormal(Double throughput) {
 		Boolean abnormal = false;
-		Double normalThroughput = this.cycleMaxThroughputQueue.mean(
-				(element) -> Double.valueOf(element.getThroughput()));
-		if (normalThroughput * (1.0 - CancelTrigger.ABNORMAL_PERFORMANCE_DROP_PORTION)
-				> throughput) {
+		Double normalThroughput =
+				this.cycleMaxThroughputQueue.mean((element) -> Double.valueOf(element.getThroughput()));
+		if (normalThroughput * (1.0 - CancelTrigger.ABNORMAL_PERFORMANCE_DROP_PORTION) > throughput) {
 			abnormal = true;
 		}
 		if (normalThroughput - CancelTrigger.ABNORMAL_PERFORMANCE_DROP_ABSOLUTE > throughput) {
@@ -73,11 +72,10 @@ public class CancelTrigger {
 
 	public Boolean isRecovered(Double throughput) {
 		Boolean recovered = false;
-		Double normalThroughput = this.globalMaxThroughputQueue.mean(
-				(element) -> Double.valueOf(element.getThroughput()));
+		Double normalThroughput =
+				this.globalMaxThroughputQueue.mean((element) -> Double.valueOf(element.getThroughput()));
 		if (normalThroughput * (1.0 - CancelTrigger.RECOVER_PERFORMANCE_DROP_PORTION) < throughput
-				&& normalThroughput - CancelTrigger.RECOVER_PERFORMANCE_DROP_ABSOLUTE
-						< throughput) {
+				&& normalThroughput - CancelTrigger.RECOVER_PERFORMANCE_DROP_ABSOLUTE < throughput) {
 			recovered = true;
 		}
 		return recovered;
@@ -92,8 +90,7 @@ public class CancelTrigger {
 				this.performanceBuffer.clear();
 				this.continuousAbnormalCycles = 0L;
 
-				this.performanceBuffer.lastCyclePerformance(
-						System.currentTimeMillis(), finishedTaskNumber);
+				this.performanceBuffer.lastCyclePerformance(System.currentTimeMillis(), finishedTaskNumber);
 				CancelLogger.experimentStart();
 			} else {
 				this.cycleMaxThroughputQueue.clear();
@@ -102,29 +99,25 @@ public class CancelTrigger {
 			}
 		} else {
 			long currentTimeMilli = System.currentTimeMillis();
-			long lastCyclePerformance = this.performanceBuffer.lastCyclePerformance(
-					currentTimeMilli, finishedTaskNumber);
+			long lastCyclePerformance =
+					this.performanceBuffer.lastCyclePerformance(currentTimeMilli, finishedTaskNumber);
 			if (lastCyclePerformance >= 0) {
 				this.cycleMaxThroughputQueue.removeIf((element) -> element.isExpired());
-				this.cycleMaxThroughputQueue.enQueue(
-						new ThroughputDataPoint(lastCyclePerformance, currentTimeMilli));
-				this.globalMaxThroughputQueue.enQueue(
-						new ThroughputDataPoint(lastCyclePerformance, currentTimeMilli));
-				Double filteredFinishedTaskNumber =
-						this.averageFilter.putAndGet(lastCyclePerformance);
+				this.cycleMaxThroughputQueue.enQueue(new ThroughputDataPoint(lastCyclePerformance, currentTimeMilli));
+				this.globalMaxThroughputQueue.enQueue(new ThroughputDataPoint(lastCyclePerformance, currentTimeMilli));
+				Double filteredFinishedTaskNumber = this.averageFilter.putAndGet(lastCyclePerformance);
 				Boolean abnormal = this.isAbnormal(filteredFinishedTaskNumber);
 				if (abnormal) {
 					this.continuousAbnormalCycles += 1;
-					if (this.continuousAbnormalCycles
-							> CancelTrigger.MAX_CONTINUOUS_ABNORMAL_CYCLE) {
+					if (this.continuousAbnormalCycles > CancelTrigger.MAX_CONTINUOUS_ABNORMAL_CYCLE) {
 						need = true;
 						this.started = false;
 					}
 				} else {
 					this.continuousAbnormalCycles = 0L;
 				}
-				System.out.println(String.format(
-						"Finished tasks: %f, Abnormal: %b", filteredFinishedTaskNumber, abnormal));
+				System.out.println(
+						String.format("Finished tasks: %f, Abnormal: %b", filteredFinishedTaskNumber, abnormal));
 				CancelLogger.logExperimentInfo(Double.valueOf(lastCyclePerformance), need,
 						this.isRecovered(Double.valueOf(lastCyclePerformance)));
 			}
@@ -182,8 +175,7 @@ public class CancelTrigger {
 
 		public Boolean isExpired() {
 			return CancelTrigger.PAST_PERFORMANCE_REF_CYCLE.compareTo(
-						   (System.currentTimeMillis() - this.timestamp)
-						   / CancelTrigger.ONE_CYCLE_MILLI)
+						   (System.currentTimeMillis() - this.timestamp) / CancelTrigger.ONE_CYCLE_MILLI)
 					< 0;
 		}
 	}

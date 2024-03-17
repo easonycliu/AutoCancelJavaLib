@@ -24,8 +24,8 @@ public class TaskInfo {
 
 	private RequestInfo requestInfo;
 
-	public TaskInfo(Object task, Long taskID, Long parentID, String action, Long startTimeNano,
-			Long startTime, Boolean isCancellable, String name, RequestInfo requestInfo) {
+	public TaskInfo(Object task, Long taskID, Long parentID, String action, Long startTimeNano, Long startTime,
+			Boolean isCancellable, String name, RequestInfo requestInfo) {
 		this.task = task;
 		this.taskID = new CancellableID(taskID);
 		this.parentID = new CancellableID(parentID);
@@ -115,8 +115,7 @@ public class TaskInfo {
 
 		private String content;
 
-		public RequestInfo(String path, Map<String, List<String>> headers,
-				Map<String, String> params, String content) {
+		public RequestInfo(String path, Map<String, List<String>> headers, Map<String, String> params, String content) {
 			this.path = path;
 			this.headers = headers;
 			this.params = params;

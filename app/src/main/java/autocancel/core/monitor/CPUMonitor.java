@@ -23,8 +23,8 @@ public class CPUMonitor implements Monitor {
 		List<OperationRequest> requests = new ArrayList<OperationRequest>();
 		for (Map<String, Object> resourceUpdateInfo : resourceUpdateInfos) {
 			OperationRequest request = new OperationRequest(OperationMethod.UPDATE,
-					Map.of("cancellable_id", cid, "resource_name", ResourceName.CPU,
-							"resource_type", ResourceType.CPU));
+					Map.of("cancellable_id", cid, "resource_name", ResourceName.CPU, "resource_type",
+							ResourceType.CPU));
 			request.addRequestParam("update_group_resource", resourceUpdateInfo);
 			requests.add(request);
 		}

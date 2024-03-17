@@ -34,8 +34,7 @@ public class IDManager {
 	}
 
 	public CancellableID getCancellableIDOfJavaThreadID(JavaThreadID jid) {
-		CancellableID cancellableID =
-				this.javaThreadIDToCancellableID.getOrDefault(jid, new CancellableID());
+		CancellableID cancellableID = this.javaThreadIDToCancellableID.getOrDefault(jid, new CancellableID());
 
 		return cancellableID;
 	}

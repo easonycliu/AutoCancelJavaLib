@@ -38,13 +38,11 @@ public class MainMonitor {
 	public void updateTasksResources() {
 		this.mainManager.startNewVersion();
 		for (Cancellable cancellable : this.cancellables.values()) {
-			assert this.rootCancellableToCancellableGroup
-					.containsKey(cancellable.getRootID())
+			assert this.rootCancellableToCancellableGroup.containsKey(cancellable.getRootID())
 				: String.format("Ungrouped cancellable %s", cancellable.getID().toString());
 			// TODO: Problematic point: nullptr
 			for (ResourceName resourceName :
-					this.rootCancellableToCancellableGroup.get(cancellable.getRootID())
-							.getResourceNames()) {
+					this.rootCancellableToCancellableGroup.get(cancellable.getRootID()).getResourceNames()) {
 				if (this.monitors.containsKey(resourceName)) {
 					this.monitorUpdateToCoreBuffer.addAll(
 							this.monitors.get(resourceName).updateResource(cancellable.getID()));

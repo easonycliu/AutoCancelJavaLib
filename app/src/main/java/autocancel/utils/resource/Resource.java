@@ -13,8 +13,7 @@ public abstract class Resource {
 	protected final ResourceName resourceName;
 
 	// TODO: REMOVE
-	protected static final List<String> acceptedInfoKeywords =
-			Arrays.asList("wait_time", "occupy_time");
+	protected static final List<String> acceptedInfoKeywords = Arrays.asList("wait_time", "occupy_time");
 
 	public Resource(ResourceType resourceType, ResourceName resourceName) {
 		this.resourceType = resourceType;
@@ -41,8 +40,7 @@ public abstract class Resource {
 				break;
 			case MEMORY:
 				if (name.equals(ResourceName.MEMORY)) {
-					if ((String) ((Map<?, ?>) Settings.getSetting("monitor_physical_resources"))
-									.get("MEMORY")
+					if ((String) ((Map<?, ?>) Settings.getSetting("monitor_physical_resources")).get("MEMORY")
 							== "JVM") {
 						resource = new JVMHeapResource();
 					} else {

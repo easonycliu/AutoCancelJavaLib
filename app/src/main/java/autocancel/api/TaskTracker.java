@@ -18,8 +18,7 @@ public class TaskTracker {
 
 	private BiFunction<Object, Object, TaskInfo> taskInfoFunction;
 
-	public TaskTracker(
-			MainManager mainManager, BiFunction<Object, Object, TaskInfo> taskInfoFunction) {
+	public TaskTracker(MainManager mainManager, BiFunction<Object, Object, TaskInfo> taskInfoFunction) {
 		this.mainManager = mainManager;
 		this.queueCancellable = new ConcurrentHashMap<Runnable, CancellableID>();
 		this.taskMap = new ConcurrentHashMap<CancellableID, TaskInfo>();
@@ -33,9 +32,8 @@ public class TaskTracker {
 		if (taskInfo != null) {
 			this.taskMap.put(taskInfo.getTaskID(), taskInfo);
 
-			this.mainManager.createCancellableIDOnCurrentJavaThreadID(taskInfo.getTaskID(),
-					taskInfo.getIsCancellable(), taskInfo.getName(), taskInfo.getAction(),
-					taskInfo.getParentTaskID(), taskInfo.getStartTimeNano(),
+			this.mainManager.createCancellableIDOnCurrentJavaThreadID(taskInfo.getTaskID(), taskInfo.getIsCancellable(),
+					taskInfo.getName(), taskInfo.getAction(), taskInfo.getParentTaskID(), taskInfo.getStartTimeNano(),
 					taskInfo.getStartTime());
 
 			Logger.systemTrace("Created " + task.toString());
@@ -72,8 +70,7 @@ public class TaskTracker {
 		CancellableID cid = this.mainManager.getCancellableIDOnCurrentJavaThreadID();
 
 		if (cid.isValid()) {
-			assert this.queueCancellable.put(runnable, cid)
-					== null : "Duplicated runnable from threadpool";
+			assert this.queueCancellable.put(runnable, cid) == null : "Duplicated runnable from threadpool";
 		} else {
 			Logger.systemTrace("Cannot found corresponding cancellable from current thread");
 		}

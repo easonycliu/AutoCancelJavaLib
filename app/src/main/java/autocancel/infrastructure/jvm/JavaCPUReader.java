@@ -43,8 +43,8 @@ public class JavaCPUReader extends ResourceReader {
 				if (systemCPUTimeDiff != 0L) {
 					threadCPUUsage = Double.valueOf(threadCPUTimeDiff) / systemCPUTimeDiff;
 				}
-				cpuUpdateInfo = Map.of("cpu_time_system", systemCPUTimeDiff, "cpu_time_thread",
-						threadCPUTimeDiff, "thread_id", id, "cpu_usage_thread", threadCPUUsage);
+				cpuUpdateInfo = Map.of("cpu_time_system", systemCPUTimeDiff, "cpu_time_thread", threadCPUTimeDiff,
+						"thread_id", id, "cpu_usage_thread", threadCPUUsage);
 			}
 		}
 
@@ -76,8 +76,7 @@ public class JavaCPUReader extends ResourceReader {
 				CPUTimeInfo cpuTimeInfo = this.javaThreadCPUTime.get(jid);
 				cpuTimeInfo.update(version, this.threadMXBean.getThreadCpuTime(thread));
 			} else {
-				this.javaThreadCPUTime.put(
-						jid, new CPUTimeInfo(version, this.threadMXBean.getThreadCpuTime(thread)));
+				this.javaThreadCPUTime.put(jid, new CPUTimeInfo(version, this.threadMXBean.getThreadCpuTime(thread)));
 			}
 		}
 	}

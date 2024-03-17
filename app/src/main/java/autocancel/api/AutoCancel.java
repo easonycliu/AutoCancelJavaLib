@@ -24,8 +24,7 @@ public class AutoCancel {
 
 	private static RequestManager requestManager = new RequestManager();
 
-	public static void start(
-			BiFunction<Object, Object, TaskInfo> taskInfoFunction, Consumer<Object> canceller) {
+	public static void start(BiFunction<Object, Object, TaskInfo> taskInfoFunction, Consumer<Object> canceller) {
 		if (Settings.getFromJVMOrDefault("autocancel.start", "true").equals("true")) {
 			AutoCancel.mainManager.start(null);
 			AutoCancel.taskTracker = new TaskTracker(mainManager, taskInfoFunction);
@@ -158,8 +157,7 @@ public class AutoCancel {
 	public static void addMemoryUsage(
 			String name, Long evictTime, Long totalMemory, Long usingMemory, Long reuseMemory) {
 		if (AutoCancel.started) {
-			AutoCancel.resourceTracker.addMemoryUsage(
-					name, evictTime, totalMemory, usingMemory, reuseMemory);
+			AutoCancel.resourceTracker.addMemoryUsage(name, evictTime, totalMemory, usingMemory, reuseMemory);
 		} else if (warnNotStarted) {
 			Logger.systemWarn("You should start lib AutoCancel first.");
 			AutoCancel.warnNotStarted = false;

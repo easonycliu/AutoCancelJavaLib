@@ -24,16 +24,15 @@ public class ResourcePool {
 		if (!this.resources.containsKey(resource.getResourceName())) {
 			this.resources.put(resource.getResourceName(), resource);
 		} else {
-			Logger.systemWarn("Resource " + resource.getResourceName().toString()
-					+ " has added to resource pool, skip");
+			Logger.systemWarn(
+					"Resource " + resource.getResourceName().toString() + " has added to resource pool, skip");
 		}
 	}
 
 	public void addBuiltinResource() {
-		for (Map.Entry<?, ?> entry :
-				((Map<?, ?>) Settings.getSetting("monitor_physical_resources")).entrySet()) {
-			this.addResource(Resource.createResource(ResourceType.valueOf((String) entry.getKey()),
-					ResourceName.valueOf((String) entry.getKey())));
+		for (Map.Entry<?, ?> entry : ((Map<?, ?>) Settings.getSetting("monitor_physical_resources")).entrySet()) {
+			this.addResource(Resource.createResource(
+					ResourceType.valueOf((String) entry.getKey()), ResourceName.valueOf((String) entry.getKey())));
 		}
 	}
 
@@ -41,8 +40,7 @@ public class ResourcePool {
 		return this.resources.containsKey(resourceName);
 	}
 
-	public Double getSlowdown(
-			ResourceName resourceName, Map<String, Object> cancellableGroupLevelInfo) {
+	public Double getSlowdown(ResourceName resourceName, Map<String, Object> cancellableGroupLevelInfo) {
 		Double slowDown = 0.0;
 		if (!this.global) {
 			if (this.resources.containsKey(resourceName)) {
@@ -66,8 +64,7 @@ public class ResourcePool {
 		return resourceUsage;
 	}
 
-	public void setResourceUpdateInfo(
-			ResourceName resourceName, Map<String, Object> resourceUpdateInfo) {
+	public void setResourceUpdateInfo(ResourceName resourceName, Map<String, Object> resourceUpdateInfo) {
 		if (this.resources.containsKey(resourceName)) {
 			this.resources.get(resourceName).setResourceUpdateInfo(resourceUpdateInfo);
 		} else {

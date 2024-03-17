@@ -23,34 +23,31 @@ public class Resource {
 		Long cpuTimeSystem = System.nanoTime();
 		Long cpuTimeThread = threadMXBean.getCurrentThreadCpuTime();
 		this.mainManager.updateCancellableGroupResource(ResourceType.CPU, name,
-				Map.of("cpu_time_system", cpuTimeSystem, "cpu_time_thread", cpuTimeThread,
-						"thread_id", new JavaThreadID(Thread.currentThread().getId()), "start",
-						true));
+				Map.of("cpu_time_system", cpuTimeSystem, "cpu_time_thread", cpuTimeThread, "thread_id",
+						new JavaThreadID(Thread.currentThread().getId()), "start", true));
 	}
 
 	public void endCPUUsing(String name) {
 		Long cpuTimeThread = threadMXBean.getCurrentThreadCpuTime();
 		Long cpuTimeSystem = System.nanoTime();
 		this.mainManager.updateCancellableGroupResource(ResourceType.CPU, name,
-				Map.of("cpu_time_system", cpuTimeSystem, "cpu_time_thread", cpuTimeThread,
-						"thread_id", new JavaThreadID(Thread.currentThread().getId()), "start",
-						false));
+				Map.of("cpu_time_system", cpuTimeSystem, "cpu_time_thread", cpuTimeThread, "thread_id",
+						new JavaThreadID(Thread.currentThread().getId()), "start", false));
 	}
 
-	public void addMemoryUsage(
-			String name, Long evictTime, Long totalMemory, Long usingMemory, Long reuseMemory) {
+	public void addMemoryUsage(String name, Long evictTime, Long totalMemory, Long usingMemory, Long reuseMemory) {
 		this.mainManager.updateCancellableGroupResource(ResourceType.MEMORY, name,
-				Map.of("total_memory", totalMemory, "using_memory", usingMemory, "reuse_memory",
-						reuseMemory, "evict_time", evictTime));
+				Map.of("total_memory", totalMemory, "using_memory", usingMemory, "reuse_memory", reuseMemory,
+						"evict_time", evictTime));
 	}
 
 	public void startQueueEvent(String name, QueueEvent event) {
-		this.mainManager.updateCancellableGroupResource(ResourceType.QUEUE, name,
-				Map.of("cpu_time_system", System.nanoTime(), "event", event, "start", true));
+		this.mainManager.updateCancellableGroupResource(
+				ResourceType.QUEUE, name, Map.of("cpu_time_system", System.nanoTime(), "event", event, "start", true));
 	}
 
 	public void endQueueEvent(String name, QueueEvent event) {
-		this.mainManager.updateCancellableGroupResource(ResourceType.QUEUE, name,
-				Map.of("cpu_time_system", System.nanoTime(), "event", event, "start", false));
+		this.mainManager.updateCancellableGroupResource(
+				ResourceType.QUEUE, name, Map.of("cpu_time_system", System.nanoTime(), "event", event, "start", false));
 	}
 }

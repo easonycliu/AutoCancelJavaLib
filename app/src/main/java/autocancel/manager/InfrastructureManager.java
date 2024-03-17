@@ -24,13 +24,10 @@ public class InfrastructureManager {
 		this.infrastructures = Map.of("JVM", new JavaThreadStatusReader());
 	}
 
-	public Map<String, Object> getSpecifiedResourceLatest(
-			JavaThreadID jid, ResourceName resourceName) {
+	public Map<String, Object> getSpecifiedResourceLatest(JavaThreadID jid, ResourceName resourceName) {
 		AbstractInfrastructure infrastructure = this.getInfrastructure(resourceName);
-		assert infrastructure
-				!= null : String.format("Unsupported resource name: %s", resourceName.toString());
-		Map<String, Object> resourceUpdateInfo =
-				infrastructure.getResource(jid, resourceName, this.version.get());
+		assert infrastructure != null : String.format("Unsupported resource name: %s", resourceName.toString());
+		Map<String, Object> resourceUpdateInfo = infrastructure.getResource(jid, resourceName, this.version.get());
 		return resourceUpdateInfo;
 	}
 
@@ -40,8 +37,7 @@ public class InfrastructureManager {
 
 	private AbstractInfrastructure getInfrastructure(ResourceName resourceName) {
 		AbstractInfrastructure infrastructure = this.infrastructures.get(
-				(String) ((Map<?, ?>) Settings.getSetting("monitor_physical_resources"))
-						.get(resourceName.toString()));
+				(String) ((Map<?, ?>) Settings.getSetting("monitor_physical_resources")).get(resourceName.toString()));
 
 		if (infrastructure == null) {
 			System.out.println("Invalid infrastructure name " + resourceName.toString());

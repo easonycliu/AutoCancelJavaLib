@@ -17,8 +17,8 @@ public class OperationRequest {
 
 	private final Long nanoTime;
 
-	private static final List<String> acceptedBasicInfoKeywords = Arrays.asList(
-			"cancellable_id", "parent_cancellable_id", "resource_name", "resource_type");
+	private static final List<String> acceptedBasicInfoKeywords =
+			Arrays.asList("cancellable_id", "parent_cancellable_id", "resource_name", "resource_type");
 
 	public OperationRequest(OperationMethod operation, Map<String, Object> basicInfo) {
 		this.operation = operation;
@@ -82,11 +82,9 @@ public class OperationRequest {
 
 	@Override
 	public String toString() {
-		String strRequest =
-				String.format("Time: %d, %s. ", this.nanoTime, this.operation.toString());
+		String strRequest = String.format("Time: %d, %s. ", this.nanoTime, this.operation.toString());
 		for (Map.Entry<String, Object> entry : this.params.entrySet()) {
-			strRequest = strRequest
-					+ String.format("%s: %s; ", entry.getKey(), entry.getValue().toString());
+			strRequest = strRequest + String.format("%s: %s; ", entry.getKey(), entry.getValue().toString());
 		}
 		return strRequest;
 	}

@@ -59,8 +59,7 @@ public class App {
 			@Override
 			public void run() {
 				AutoCancel.onTaskStartInThread(r);
-				System.out.println(
-						String.format("Thread name : %s", Thread.currentThread().getName()));
+				System.out.println(String.format("Thread name : %s", Thread.currentThread().getName()));
 				try {
 					Thread.sleep(100);
 				} catch (Exception e) {
@@ -136,7 +135,6 @@ public class App {
 		}
 		Long currentThreadTotal = threadMXBean.getCurrentThreadCpuTime() - currentThreadStart;
 		Long total = System.nanoTime() - start;
-		System.out.println(
-				String.format("Current thread: %d, Total: %d", currentThreadTotal, total));
+		System.out.println(String.format("Current thread: %d, Total: %d", currentThreadTotal, total));
 	}
 }

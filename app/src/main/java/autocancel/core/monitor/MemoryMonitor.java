@@ -23,8 +23,8 @@ public class MemoryMonitor implements Monitor {
 		List<OperationRequest> requests = new ArrayList<OperationRequest>();
 		for (Map<String, Object> resourceUpdateInfo : resourceUpdateInfos) {
 			OperationRequest request = new OperationRequest(OperationMethod.UPDATE,
-					Map.of("cancellable_id", cid, "resource_name", ResourceName.MEMORY,
-							"resource_type", ResourceType.MEMORY));
+					Map.of("cancellable_id", cid, "resource_name", ResourceName.MEMORY, "resource_type",
+							ResourceType.MEMORY));
 			request.addRequestParam("update_group_resource", resourceUpdateInfo);
 			requests.add(request);
 		}

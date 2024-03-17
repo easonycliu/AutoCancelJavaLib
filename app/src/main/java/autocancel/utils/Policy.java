@@ -26,8 +26,7 @@ public abstract class Policy {
 				policy = new MOOPolicy();
 				break;
 			default:
-				Logger.systemWarn(
-						"Cannot find default policy by setting, fall back to base policy");
+				Logger.systemWarn("Cannot find default policy by setting, fall back to base policy");
 				policy = new BasePolicy();
 				break;
 		}

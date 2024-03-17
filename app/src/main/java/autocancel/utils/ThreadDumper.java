@@ -18,15 +18,13 @@ public class ThreadDumper implements Runnable {
 				Arrays.stream(infos)
 						.map((info) -> {
 							StringBuilder sb = new StringBuilder("\"" + info.getThreadName() + "\""
-									+ (info.isDaemon() ? " daemon" : "")
-									+ " prio=" + info.getPriority() + " Id=" + info.getThreadId()
-									+ " " + info.getThreadState());
+									+ (info.isDaemon() ? " daemon" : "") + " prio=" + info.getPriority()
+									+ " Id=" + info.getThreadId() + " " + info.getThreadState());
 							if (info.getLockName() != null) {
 								sb.append(" on " + info.getLockName());
 							}
 							if (info.getLockOwnerName() != null) {
-								sb.append(" owned by \"" + info.getLockOwnerName()
-										+ "\" Id=" + info.getLockOwnerId());
+								sb.append(" owned by \"" + info.getLockOwnerName() + "\" Id=" + info.getLockOwnerId());
 							}
 							if (info.isSuspended()) {
 								sb.append(" (suspended)");

@@ -22,8 +22,7 @@ public class Progress {
 					this.finishWork += (Long) entry.getValue();
 					break;
 				default:
-					System.out.println(
-							String.format("Failed to handle update info %s", entry.getKey()));
+					System.out.println(String.format("Failed to handle update info %s", entry.getKey()));
 					break;
 			}
 		}

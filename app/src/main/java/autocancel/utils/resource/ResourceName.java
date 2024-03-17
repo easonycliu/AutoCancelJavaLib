@@ -7,8 +7,8 @@ public class ResourceName {
 	public static final ResourceName MEMORY = new ResourceName("MEMORY");
 	public static final ResourceName NULL = new ResourceName("NULL");
 
-	private static final Map<String, ResourceName> builtinNames = Map.of(
-			"CPU", ResourceName.CPU, "MEMORY", ResourceName.MEMORY, "NULL", ResourceName.NULL);
+	private static final Map<String, ResourceName> builtinNames =
+			Map.of("CPU", ResourceName.CPU, "MEMORY", ResourceName.MEMORY, "NULL", ResourceName.NULL);
 
 	private final String resourceName;
 

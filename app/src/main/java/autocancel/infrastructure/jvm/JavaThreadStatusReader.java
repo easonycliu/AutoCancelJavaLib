@@ -26,8 +26,7 @@ public class JavaThreadStatusReader extends AbstractInfrastructure {
 	}
 
 	public Map<ResourceName, ResourceReader> initializeResourceReaders() {
-		Map<ResourceName, ResourceReader> resourceReaders =
-				new HashMap<ResourceName, ResourceReader>();
+		Map<ResourceName, ResourceReader> resourceReaders = new HashMap<ResourceName, ResourceReader>();
 		resourceReaders.put(ResourceName.CPU, new JavaCPUReader());
 		resourceReaders.put(ResourceName.MEMORY, new JavaMemoryReader());
 
@@ -49,8 +48,7 @@ public class JavaThreadStatusReader extends AbstractInfrastructure {
 	protected void updateResource(ID id, Integer version) {
 		ResourceBatch resourceBatch = new ResourceBatch(version);
 		for (ResourceName resourceName : this.resourceNames) {
-			Map<String, Object> resourceUpdateInfo =
-					this.resourceReaders.get(resourceName).readResource(id, version);
+			Map<String, Object> resourceUpdateInfo = this.resourceReaders.get(resourceName).readResource(id, version);
 			resourceBatch.setResourceValue(resourceName, resourceUpdateInfo);
 		}
 
