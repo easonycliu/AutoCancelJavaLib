@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import autocancel.utils.Settings;
 import autocancel.utils.id.CancellableID;
@@ -26,6 +27,8 @@ public class CancellableGroup {
 	private Boolean isCancellable;
 
 	private Boolean exited;
+
+	private Supplier<Boolean> isCanceled;
 
 	private Long startTime;
 
@@ -50,6 +53,8 @@ public class CancellableGroup {
 
 		this.isCancellable = null;
 
+		this.isCanceled = null;
+
 		this.exited = false;
 
 		this.startTime = 0L;
@@ -67,6 +72,10 @@ public class CancellableGroup {
 
 	public Boolean isExit() {
 		return this.exited;
+	}
+
+	public Boolean isCancelled() {
+		return (this.isCanceled == null) ? false : this.isCanceled.get();
 	}
 
 	public Boolean isExpired() {
@@ -135,6 +144,11 @@ public class CancellableGroup {
 
 	public void setIsCancellable(Boolean isCancellable) {
 		this.isCancellable = isCancellable;
+	}
+
+	public void setIsCanceled(Supplier<Boolean> isCanceled) {
+		assert this.isCanceled == null : "isCanceled has been set, don't set twice";
+		this.isCanceled = isCanceled;
 	}
 
 	public Long getStartTime() {
