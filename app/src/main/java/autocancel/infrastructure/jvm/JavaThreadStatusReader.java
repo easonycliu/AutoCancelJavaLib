@@ -1,59 +1,59 @@
 package autocancel.infrastructure.jvm;
 
-import autocancel.infrastructure.AbstractInfrastructure;
-import autocancel.utils.Settings;
-import autocancel.utils.resource.ResourceName;
-import autocancel.infrastructure.ResourceBatch;
-import autocancel.infrastructure.ResourceReader;
-import autocancel.utils.id.ID;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import autocancel.infrastructure.AbstractInfrastructure;
+import autocancel.infrastructure.ResourceBatch;
+import autocancel.infrastructure.ResourceReader;
+import autocancel.utils.Settings;
+import autocancel.utils.id.ID;
+import autocancel.utils.resource.ResourceName;
+
 public class JavaThreadStatusReader extends AbstractInfrastructure {
+	private List<ResourceName> resourceNames;
 
-    private List<ResourceName> resourceNames;
+	private Map<ResourceName, ResourceReader> resourceReaders;
 
-    private Map<ResourceName, ResourceReader> resourceReaders;
+	public JavaThreadStatusReader() {
+		super();
 
-    public JavaThreadStatusReader() {
-        super();
+		this.resourceNames = this.getRequiredResourceNames();
 
-        this.resourceNames = this.getRequiredResourceNames();
+		this.resourceReaders = this.initializeResourceReaders();
+	}
 
-        this.resourceReaders = this.initializeResourceReaders();
-    }
+	public Map<ResourceName, ResourceReader> initializeResourceReaders() {
+		Map<ResourceName, ResourceReader> resourceReaders =
+				new HashMap<ResourceName, ResourceReader>();
+		resourceReaders.put(ResourceName.CPU, new JavaCPUReader());
+		resourceReaders.put(ResourceName.MEMORY, new JavaMemoryReader());
 
-    public Map<ResourceName, ResourceReader> initializeResourceReaders() {
-        Map<ResourceName, ResourceReader> resourceReaders = new HashMap<ResourceName, ResourceReader>();
-        resourceReaders.put(ResourceName.CPU, new JavaCPUReader());
-        resourceReaders.put(ResourceName.MEMORY, new JavaMemoryReader());
+		return resourceReaders;
+	}
 
-        return resourceReaders;
-    }
+	private List<ResourceName> getRequiredResourceNames() {
+		Map<?, ?> monitorResources = (Map<?, ?>) Settings.getSetting("monitor_physical_resources");
+		List<ResourceName> requiredResources = new ArrayList<ResourceName>();
+		for (Map.Entry<?, ?> entries : monitorResources.entrySet()) {
+			if (((String) entries.getValue()).equals("JVM")) {
+				requiredResources.add(ResourceName.valueOf((String) entries.getKey()));
+			}
+		}
+		return requiredResources;
+	}
 
-    private List<ResourceName> getRequiredResourceNames() {
-        Map<?, ?> monitorResources = (Map<?, ?>) Settings.getSetting("monitor_physical_resources");
-        List<ResourceName> requiredResources = new ArrayList<ResourceName>();
-        for (Map.Entry<?, ?> entries : monitorResources.entrySet()) {
-            if (((String) entries.getValue()).equals("JVM")) {
-                requiredResources.add(ResourceName.valueOf((String) entries.getKey()));
-            }
-        }
-        return requiredResources;
-    }
+	@Override
+	protected void updateResource(ID id, Integer version) {
+		ResourceBatch resourceBatch = new ResourceBatch(version);
+		for (ResourceName resourceName : this.resourceNames) {
+			Map<String, Object> resourceUpdateInfo =
+					this.resourceReaders.get(resourceName).readResource(id, version);
+			resourceBatch.setResourceValue(resourceName, resourceUpdateInfo);
+		}
 
-    @Override
-    protected void updateResource(ID id, Integer version) {
-        ResourceBatch resourceBatch = new ResourceBatch(version);
-        for (ResourceName resourceName : this.resourceNames) {
-            Map<String, Object> resourceUpdateInfo = this.resourceReaders.get(resourceName).readResource(id, version);
-            resourceBatch.setResourceValue(resourceName, resourceUpdateInfo);
-        }
-
-        this.setResourceBatch(id, resourceBatch);
-    }
-
+		this.setResourceBatch(id, resourceBatch);
+	}
 }

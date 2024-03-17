@@ -1,16 +1,16 @@
 package autocancel.infrastructure;
 
-import autocancel.utils.id.ID;
-
 import java.lang.management.ManagementFactory;
 import java.util.Map;
 
-public abstract class ResourceReader {
-    public abstract Map<String, Object> readResource(ID id, Integer version);
+import autocancel.utils.id.ID;
 
-    public String getJVMPID() {
-        String name = ManagementFactory.getRuntimeMXBean().getName();
-        String pid = name.split("@")[0];
-        return pid;
-    }
+public abstract class ResourceReader {
+	public abstract Map<String, Object> readResource(ID id, Integer version);
+
+	public String getJVMPID() {
+		String name = ManagementFactory.getRuntimeMXBean().getName();
+		String pid = name.split("@")[0];
+		return pid;
+	}
 }
