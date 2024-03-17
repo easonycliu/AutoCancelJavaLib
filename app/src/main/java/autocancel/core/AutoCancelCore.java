@@ -165,6 +165,7 @@ public class AutoCancelCore {
 			if (System.nanoTime() - toBeReexecutedCancellableGroup.getValue().getCancelTime()
 					> ((Long) Settings.getSetting("reexecute_after_ms") * 1000000)) {
 				toBeReexecutedRootCancellableIDs.add(toBeReexecutedCancellableGroup.getKey());
+				this.toBeReexecutedCancellableGroups.remove(toBeReexecutedCancellableGroup.getKey());
 			}
 		}
 		return toBeReexecutedRootCancellableIDs;
@@ -173,6 +174,10 @@ public class AutoCancelCore {
 	private void refreshCancellableGroups(Map<String, Object> refreshInfo) {
 		List<CancellableGroup> toBeRemovedCancellableGroups = new ArrayList<CancellableGroup>();
 		for (Map.Entry<CancellableID, CancellableGroup> entry : this.rootCancellableToCancellableGroup.entrySet()) {
+			if (entry.getValue().isCancelled() && !this.toBeReexecutedCancellableGroups.containsKey(entry.getKey())) {
+				this.toBeReexecutedCancellableGroups.put(entry.getKey(), entry.getValue());
+			}
+
 			if (entry.getValue().isExit()) {
 				toBeRemovedCancellableGroups.add(entry.getValue());
 				continue;
