@@ -160,6 +160,7 @@ public class AutoCancelCore {
 
 	public Vector<CancellableID> scheduleCancellableGroups() {
 		Vector<CancellableID> toBeReexecutedRootCancellableIDs = new Vector<CancellableID>();
+		Vector<CancellableID> toBeRemovedReexecutionCancellableGroups = new Vector<CancellableID>();
 		for (Map.Entry<CancellableID, CancellableGroup> toBeReexecutedCancellableGroup :
 				this.toBeReexecutedCancellableGroups.entrySet()) {
 			assert toBeReexecutedCancellableGroup.getValue().isCancelled()
@@ -167,9 +168,14 @@ public class AutoCancelCore {
 			if (System.nanoTime() - toBeReexecutedCancellableGroup.getValue().getCancelTimeNano()
 					> ((Long) Settings.getSetting("reexecute_after_ms") * 1000000)) {
 				toBeReexecutedRootCancellableIDs.add(toBeReexecutedCancellableGroup.getKey());
-				this.toBeReexecutedCancellableGroups.remove(toBeReexecutedCancellableGroup.getKey());
+				toBeRemovedReexecutionCancellableGroups.add(toBeReexecutedCancellableGroup.getKey());
 			}
 		}
+
+		for (CancellableID toBeRemovedReexecutionCancellableGroup : toBeRemovedReexecutionCancellableGroups) {
+			this.toBeReexecutedCancellableGroups.remove(toBeRemovedReexecutionCancellableGroup);
+		}
+
 		return toBeReexecutedRootCancellableIDs;
 	}
 

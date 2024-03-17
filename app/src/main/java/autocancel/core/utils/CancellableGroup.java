@@ -86,7 +86,8 @@ public class CancellableGroup {
 		Boolean cancelled = (this.isCanceled == null) ? false : this.isCanceled.get();
 		if (cancelled) {
 			this.cancelTime = (this.cancelTime.equals(Long.MAX_VALUE)) ? System.currentTimeMillis() : this.cancelTime;
-			this.cancelTimeNano = (this.cancelTimeNano.equals(Long.MAX_VALUE)) ? System.nanoTime() : this.cancelTimeNano;
+			this.cancelTimeNano =
+					(this.cancelTimeNano.equals(Long.MAX_VALUE)) ? System.nanoTime() : this.cancelTimeNano;
 		}
 		return cancelled;
 	}
