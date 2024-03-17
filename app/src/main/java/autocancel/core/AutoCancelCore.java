@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import autocancel.core.monitor.MainMonitor;
 import autocancel.core.performance.Performance;
@@ -331,40 +332,39 @@ public class AutoCancelCore {
 
 	private class ParamHandlers {
 		// These parameters' parsing order doesn't matter
-		private final Map<String, Consumer<OperationRequest>> paramHandlers = Map.of("basic_info",
-				request
-				-> {},
-				"is_cancellable",
-				request
-				-> this.isCancellable(request),
-				"cancellable_name",
-				request
-				-> this.cancellableName(request),
-				"cancellable_action",
-				request
-				-> this.cancellableAction(request),
-				"cancellable_start_time_nano",
-				request
-				-> this.cancellableStartTimeNano(request),
-				"cancellable_start_time",
-				request
-				-> this.cancellableStartTime(request),
-				"cancellable_exit_time_nano",
-				request
-				-> this.cancellableExitTimeNano(request),
-				"cancellable_exit_time",
-				request
-				-> this.cancellableExitTime(request),
-				"update_group_resource",
-				request
-				-> this.updateGroupResource(request),
-				"update_group_work", request -> this.updateGroupWork(request));
+		private final Map<String, Consumer<OperationRequest>> paramHandlers =
+				Map.ofEntries(Map.entry("basic_info", request -> {}),
+						Map.entry("is_cancellable", request -> this.isCancellable(request)),
+						Map.entry("is_canceled", request -> this.isCanceled(request)),
+						Map.entry("cancellable_name", request -> this.cancellableName(request)),
+						Map.entry("cancellable_action", request -> this.cancellableAction(request)),
+						Map.entry("cancellable_start_time_nano", request -> this.cancellableStartTimeNano(request)),
+						Map.entry("cancellable_start_time", request -> this.cancellableStartTime(request)),
+						Map.entry("cancellable_exit_time_nano", request -> this.cancellableExitTimeNano(request)),
+						Map.entry("cancellable_exit_time", request -> this.cancellableExitTime(request)),
+						Map.entry("update_group_resource", request -> this.updateGroupResource(request)),
+						Map.entry("update_group_work", request -> this.updateGroupWork(request)));
 
 		public ParamHandlers() {}
 
 		public void handle(String type, OperationRequest request) {
 			assert this.paramHandlers.containsKey(type) : "Invalid parameter " + type;
 			this.paramHandlers.get(type).accept(request);
+		}
+
+		@SuppressWarnings("unchecked")
+		private void isCanceled(OperationRequest request) {
+			Cancellable cancellable = cancellables.get(request.getCancellableID());
+			if (cancellable.isRoot()) {
+				// Set isCanceled for cancellable group
+				Supplier<Boolean> isCanceled = (Supplier<Boolean>) request.getParams().get("is_canceled");
+				try {
+					rootCancellableToCancellableGroup.get(cancellable.getID()).setIsCanceled(isCanceled);
+				} catch (NullPointerException e) {
+					System.out.println("Cannot find cancellable group for " + cancellable.toString() + " at "
+							+ e.getStackTrace()[0]);
+				}
+			}
 		}
 
 		private void isCancellable(OperationRequest request) {
