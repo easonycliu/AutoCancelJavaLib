@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 import autocancel.api.AutoCancel;
 import autocancel.core.AutoCancelCore;
@@ -120,13 +121,15 @@ public class MainManager {
 		this.infrastructureManager.startNewVersion();
 	}
 
-	private CancellableID createCancellable(CancellableID cid, JavaThreadID jid, Boolean isCancellable, String name,
-			String action, CancellableID parentID, Long startTimeNano, Long startTime) {
+	private CancellableID createCancellable(CancellableID cid, JavaThreadID jid, Boolean isCancellable,
+			Supplier<Boolean> isCanceled, String name, String action, CancellableID parentID, Long startTimeNano,
+			Long startTime) {
 		this.idManager.setCancellableIDAndJavaThreadID(cid, jid);
 
 		OperationRequest request = new OperationRequest(
 				OperationMethod.CREATE, Map.of("cancellable_id", cid, "parent_cancellable_id", parentID));
 		request.addRequestParam("is_cancellable", isCancellable);
+		request.addRequestParam("is_canceled", isCanceled);
 		request.addRequestParam("cancellable_name", name);
 		request.addRequestParam("cancellable_action", action);
 		request.addRequestParam("cancellable_start_time_nano", startTimeNano);
@@ -160,10 +163,11 @@ public class MainManager {
 		assert cid != null && cid.isValid() : "Task must be running before finishing.";
 	}
 
-	public void createCancellableIDOnCurrentJavaThreadID(CancellableID cid, Boolean isCancellable, String name,
-			String action, CancellableID parentID, Long startTimeNano, Long startTime) {
+	public void createCancellableIDOnCurrentJavaThreadID(CancellableID cid, Boolean isCancellable,
+			Supplier<Boolean> isCanceled, String name, String action, CancellableID parentID, Long startTimeNano,
+			Long startTime) {
 		JavaThreadID jid = new JavaThreadID(Thread.currentThread().getId());
-		this.createCancellable(cid, jid, isCancellable, name, action, parentID, startTimeNano, startTime);
+		this.createCancellable(cid, jid, isCancellable, isCanceled, name, action, parentID, startTimeNano, startTime);
 	}
 
 	public void destoryCancellableIDOnCurrentJavaThreadID(CancellableID cid) {

@@ -2,6 +2,7 @@ package autocancel.api;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import autocancel.utils.id.CancellableID;
 
@@ -20,12 +21,14 @@ public class TaskInfo {
 
 	private Boolean isCancellable;
 
+	private Supplier<Boolean> isCanceled;
+
 	private String name;
 
 	private RequestInfo requestInfo;
 
 	public TaskInfo(Object task, Long taskID, Long parentID, String action, Long startTimeNano, Long startTime,
-			Boolean isCancellable, String name, RequestInfo requestInfo) {
+			Boolean isCancellable, Supplier<Boolean> isCanceled, String name, RequestInfo requestInfo) {
 		this.task = task;
 		this.taskID = new CancellableID(taskID);
 		this.parentID = new CancellableID(parentID);
@@ -33,6 +36,7 @@ public class TaskInfo {
 		this.startTimeNano = startTimeNano;
 		this.startTime = startTime;
 		this.isCancellable = isCancellable;
+		this.isCanceled = isCanceled;
 		this.name = name;
 		this.requestInfo = requestInfo;
 	}
@@ -64,6 +68,10 @@ public class TaskInfo {
 
 	public Boolean getIsCancellable() {
 		return this.isCancellable;
+	}
+
+	public Supplier<Boolean> getIsCanceled() {
+		return this.isCanceled;
 	}
 
 	public String getName() {

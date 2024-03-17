@@ -33,8 +33,8 @@ public class TaskTracker {
 			this.taskMap.put(taskInfo.getTaskID(), taskInfo);
 
 			this.mainManager.createCancellableIDOnCurrentJavaThreadID(taskInfo.getTaskID(), taskInfo.getIsCancellable(),
-					taskInfo.getName(), taskInfo.getAction(), taskInfo.getParentTaskID(), taskInfo.getStartTimeNano(),
-					taskInfo.getStartTime());
+					taskInfo.getIsCanceled(), taskInfo.getName(), taskInfo.getAction(), taskInfo.getParentTaskID(),
+					taskInfo.getStartTimeNano(), taskInfo.getStartTime());
 
 			Logger.systemTrace("Created " + task.toString());
 		}
