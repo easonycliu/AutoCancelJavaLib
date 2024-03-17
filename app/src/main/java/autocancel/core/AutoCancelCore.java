@@ -49,6 +49,7 @@ public class AutoCancelCore {
 	public AutoCancelCore(MainManager mainManager) {
 		this.cancellables = new HashMap<CancellableID, Cancellable>();
 		this.rootCancellableToCancellableGroup = new HashMap<CancellableID, CancellableGroup>();
+		this.toBeReexecutedCancellableGroups = new HashMap<CancellableID, CancellableGroup>();
 		this.requestParser = new RequestParser();
 		this.logger = new Logger("corerequest");
 		this.performanceMetrix = new Performance();
@@ -65,6 +66,7 @@ public class AutoCancelCore {
 	public AutoCancelCore() {
 		this.cancellables = new HashMap<CancellableID, Cancellable>();
 		this.rootCancellableToCancellableGroup = new HashMap<CancellableID, CancellableGroup>();
+		this.toBeReexecutedCancellableGroups = new HashMap<CancellableID, CancellableGroup>();
 		this.requestParser = new RequestParser();
 		this.logger = new Logger("corerequest");
 		this.performanceMetrix = new Performance();
@@ -162,7 +164,7 @@ public class AutoCancelCore {
 				this.toBeReexecutedCancellableGroups.entrySet()) {
 			assert toBeReexecutedCancellableGroup.getValue().isCancelled()
 				: "Should get cancelled before adding into to be reexecuted group";
-			if (System.nanoTime() - toBeReexecutedCancellableGroup.getValue().getCancelTime()
+			if (System.nanoTime() - toBeReexecutedCancellableGroup.getValue().getCancelTimeNano()
 					> ((Long) Settings.getSetting("reexecute_after_ms") * 1000000)) {
 				toBeReexecutedRootCancellableIDs.add(toBeReexecutedCancellableGroup.getKey());
 				this.toBeReexecutedCancellableGroups.remove(toBeReexecutedCancellableGroup.getKey());
