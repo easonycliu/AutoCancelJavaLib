@@ -1,4 +1,4 @@
-root_dir=/home/eason/AutoCancelProject
+root_dir=$(realpath $(git rev-parse --show-toplevel)/..)
 target_dir=solr/solr/solrj/src/java/org/apache/solr/common
 class_prefix=org.apache.solr.common
 

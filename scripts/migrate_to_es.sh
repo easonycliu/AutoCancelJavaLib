@@ -1,4 +1,4 @@
-root_dir=/home/eason/AutoCancelProject
+root_dir=$(realpath $(git rev-parse --show-toplevel)/..)
 target_dir=elasticsearch/server/src/main/java/org/elasticsearch
 class_prefix=org.elasticsearch
 
