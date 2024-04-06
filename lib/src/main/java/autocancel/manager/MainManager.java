@@ -236,7 +236,7 @@ public class MainManager {
 			request.addRequestParam("update_group_resource", cancellableGroupUpdateInfo);
 			this.putManagerRequestToCore(request);
 		} else {
-			System.out.println("Cannot find cancellable id from current " + jid.toString());
+			Logger.systemWarn(String.format("Cannot find cancellable id from current %s", jid.toString()));
 			// TODO: do something more
 		}
 	}
@@ -249,7 +249,7 @@ public class MainManager {
 			request.addRequestParam("update_group_work", cancellableGroupWorkInfo);
 			this.putManagerRequestToCore(request);
 		} else {
-			System.out.println("Cannot find cancellable id from current " + jid.toString());
+			Logger.systemWarn(String.format("Cannot find cancellable id from current %s", jid.toString()));
 			// TODO: do something more
 		}
 	}
