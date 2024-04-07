@@ -11,14 +11,16 @@ import autocancel.utils.Settings;
 
 public class CancelTrigger {
 	private static final Double ABNORMAL_PERFORMANCE_DROP_PORTION =
-			Double.valueOf(Settings.getFromJVMOrDefault("abnormal.portion", "0.5"));
+		Double.valueOf(Settings.getFromJVMOrDefault("abnormal.portion", "0.5"));
 
 	private static final Double ABNORMAL_PERFORMANCE_DROP_ABSOLUTE =
-			Double.valueOf(Settings.getFromJVMOrDefault("abnormal.absolute", "400"));
+		Double.valueOf(Settings.getFromJVMOrDefault("abnormal.absolute", "400"));
 
 	private static final Double RECOVER_TO_ABNORMAL_DROP_RATIO = 0.6;
-	private static final Double RECOVER_PERFORMANCE_DROP_PORTION = RECOVER_TO_ABNORMAL_DROP_RATIO * ABNORMAL_PERFORMANCE_DROP_PORTION;
-	private static final Double RECOVER_PERFORMANCE_DROP_ABSOLUTE = RECOVER_TO_ABNORMAL_DROP_RATIO * ABNORMAL_PERFORMANCE_DROP_ABSOLUTE;
+	private static final Double RECOVER_PERFORMANCE_DROP_PORTION =
+		RECOVER_TO_ABNORMAL_DROP_RATIO * ABNORMAL_PERFORMANCE_DROP_PORTION;
+	private static final Double RECOVER_PERFORMANCE_DROP_ABSOLUTE =
+		RECOVER_TO_ABNORMAL_DROP_RATIO * ABNORMAL_PERFORMANCE_DROP_ABSOLUTE;
 
 	private static final Long ONE_CYCLE_MILLI = 1000L;
 
@@ -50,17 +52,17 @@ public class CancelTrigger {
 		this.performanceBuffer = new PerformanceBuffer(CancelTrigger.ONE_CYCLE_MILLI);
 		this.continuousAbnormalCycles = 0L;
 		this.cycleMaxThroughputQueue =
-				new FixSizePriorityQueue<ThroughputDataPoint>(CancelTrigger.MAX_PAST_CYCLE_PERFORMANCE_REF_NUM,
-						(e1, e2) -> e1.getThroughput().intValue() - e2.getThroughput().intValue());
+			new FixSizePriorityQueue<ThroughputDataPoint>(CancelTrigger.MAX_PAST_CYCLE_PERFORMANCE_REF_NUM,
+				(e1, e2) -> e1.getThroughput().intValue() - e2.getThroughput().intValue());
 		this.globalMaxThroughputQueue =
-				new FixSizePriorityQueue<ThroughputDataPoint>(CancelTrigger.MAX_PAST_GLOBAL_PERFORMANCE_REF_NUM,
-						(e1, e2) -> e1.getThroughput().intValue() - e2.getThroughput().intValue());
+			new FixSizePriorityQueue<ThroughputDataPoint>(CancelTrigger.MAX_PAST_GLOBAL_PERFORMANCE_REF_NUM,
+				(e1, e2) -> e1.getThroughput().intValue() - e2.getThroughput().intValue());
 	}
 
 	public Boolean isAbnormal(Double throughput) {
 		Boolean abnormal = false;
 		Double normalThroughput =
-				this.cycleMaxThroughputQueue.mean((element) -> Double.valueOf(element.getThroughput()));
+			this.cycleMaxThroughputQueue.mean((element) -> Double.valueOf(element.getThroughput()));
 		if (normalThroughput * (1.0 - CancelTrigger.ABNORMAL_PERFORMANCE_DROP_PORTION) > throughput) {
 			abnormal = true;
 		}
@@ -73,9 +75,9 @@ public class CancelTrigger {
 	public Boolean isRecovered(Double throughput) {
 		Boolean recovered = false;
 		Double normalThroughput =
-				this.globalMaxThroughputQueue.mean((element) -> Double.valueOf(element.getThroughput()));
+			this.globalMaxThroughputQueue.mean((element) -> Double.valueOf(element.getThroughput()));
 		if (normalThroughput * (1.0 - CancelTrigger.RECOVER_PERFORMANCE_DROP_PORTION) < throughput
-				&& normalThroughput - CancelTrigger.RECOVER_PERFORMANCE_DROP_ABSOLUTE < throughput) {
+			&& normalThroughput - CancelTrigger.RECOVER_PERFORMANCE_DROP_ABSOLUTE < throughput) {
 			recovered = true;
 		}
 		return recovered;
@@ -100,7 +102,7 @@ public class CancelTrigger {
 		} else {
 			long currentTimeMilli = System.currentTimeMillis();
 			long lastCyclePerformance =
-					this.performanceBuffer.lastCyclePerformance(currentTimeMilli, finishedTaskNumber);
+				this.performanceBuffer.lastCyclePerformance(currentTimeMilli, finishedTaskNumber);
 			if (lastCyclePerformance >= 0) {
 				this.cycleMaxThroughputQueue.removeIf((element) -> element.isExpired());
 				this.cycleMaxThroughputQueue.enQueue(new ThroughputDataPoint(lastCyclePerformance, currentTimeMilli));
@@ -117,9 +119,9 @@ public class CancelTrigger {
 					this.continuousAbnormalCycles = 0L;
 				}
 				System.out.println(
-						String.format("Finished tasks: %f, Abnormal: %b", filteredFinishedTaskNumber, abnormal));
-				CancelLogger.logExperimentInfo(Double.valueOf(lastCyclePerformance), need,
-						this.isRecovered(Double.valueOf(lastCyclePerformance)));
+					String.format("Finished tasks: %f, Abnormal: %b", filteredFinishedTaskNumber, abnormal));
+				CancelLogger.logExperimentInfo(
+					Double.valueOf(lastCyclePerformance), need, this.isRecovered(Double.valueOf(lastCyclePerformance)));
 			}
 		}
 
@@ -175,8 +177,8 @@ public class CancelTrigger {
 
 		public Boolean isExpired() {
 			return CancelTrigger.PAST_PERFORMANCE_REF_CYCLE.compareTo(
-						   (System.currentTimeMillis() - this.timestamp) / CancelTrigger.ONE_CYCLE_MILLI)
-					< 0;
+					   (System.currentTimeMillis() - this.timestamp) / CancelTrigger.ONE_CYCLE_MILLI)
+				< 0;
 		}
 	}
 

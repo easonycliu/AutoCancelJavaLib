@@ -18,7 +18,7 @@ public class OperationRequest {
 	private final Long nanoTime;
 
 	private static final List<String> acceptedBasicInfoKeywords =
-			Arrays.asList("cancellable_id", "parent_cancellable_id", "resource_name", "resource_type");
+		Arrays.asList("cancellable_id", "parent_cancellable_id", "resource_name", "resource_type");
 
 	public OperationRequest(OperationMethod operation, Map<String, Object> basicInfo) {
 		this.operation = operation;

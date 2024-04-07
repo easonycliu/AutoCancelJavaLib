@@ -24,7 +24,7 @@ public class IDInfo<ObjectID extends ID> {
 	@Override
 	public String toString() {
 		return String.format(
-				"Time: %s. Status: %s. ID: %s", this.timestamp.toString(), this.status.toString(), this.id.toString());
+			"Time: %s. Status: %s. ID: %s", this.timestamp.toString(), this.status.toString(), this.id.toString());
 	}
 
 	@Override

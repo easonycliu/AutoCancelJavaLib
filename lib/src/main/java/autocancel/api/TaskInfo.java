@@ -28,7 +28,7 @@ public class TaskInfo {
 	private RequestInfo requestInfo;
 
 	public TaskInfo(Object task, Long taskID, Long parentID, String action, Long startTimeNano, Long startTime,
-			Boolean isCancellable, Supplier<Boolean> isCanceled, String name, RequestInfo requestInfo) {
+		Boolean isCancellable, Supplier<Boolean> isCanceled, String name, RequestInfo requestInfo) {
 		this.task = task;
 		this.taskID = new CancellableID(taskID);
 		this.parentID = new CancellableID(parentID);

@@ -42,8 +42,8 @@ public abstract class MemoryResource extends Resource {
 					break;
 				case "using_memory":
 					this.usingMemory =
-							(long) Math.ceil((Double) Settings.getSetting("resource_usage_decay") * this.usingMemory)
-							+ (Long) entry.getValue();
+						(long) Math.ceil((Double) Settings.getSetting("resource_usage_decay") * this.usingMemory)
+						+ (Long) entry.getValue();
 					break;
 				case "reuse_memory":
 					// TODO: Find a method to get reused memory
@@ -70,7 +70,6 @@ public abstract class MemoryResource extends Resource {
 	@Override
 	public String toString() {
 		return String.format("Resource Type: %s, name: %s, total memory: %d, using memory: %d",
-				this.getResourceType().toString(), this.getResourceName().toString(), this.totalMemory,
-				this.usingMemory);
+			this.getResourceType().toString(), this.getResourceName().toString(), this.totalMemory, this.usingMemory);
 	}
 }

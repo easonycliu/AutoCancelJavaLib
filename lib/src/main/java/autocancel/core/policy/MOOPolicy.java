@@ -33,14 +33,14 @@ public class MOOPolicy extends Policy {
 		}
 		Map<CancellableID, Double> weightedSum = new HashMap<CancellableID, Double>();
 		for (Map.Entry<CancellableID, Map<ResourceName, Double>> cancellableGroupUsageEntry :
-				cancellableGroupMeasure.entrySet()) {
+			cancellableGroupMeasure.entrySet()) {
 			Double sum = MOOPolicy.calculateWeightedSum(weight, cancellableGroupUsageEntry.getValue());
 			// System.out.println(String.format("%s has sum: %f",
 			// cancellableGroupUsageEntry.getKey().toString(), sum));
 			weightedSum.put(cancellableGroupUsageEntry.getKey(), sum);
 		}
 		Map.Entry<CancellableID, Double> maxWeightedSum =
-				weightedSum.entrySet().stream().max(Map.Entry.comparingByValue()).orElse(null);
+			weightedSum.entrySet().stream().max(Map.Entry.comparingByValue()).orElse(null);
 		CancellableID target = null;
 		if (maxWeightedSum != null) {
 			target = maxWeightedSum.getKey();
@@ -57,18 +57,18 @@ public class MOOPolicy extends Policy {
 				System.out.println(entry.getKey() + "'s unified usage is " + entry.getValue());
 			}
 			System.out.println(String.format("%s's remain time is %d", target.toString(),
-					Policy.infoCenter.getCancellableGroupRemainTime().get(target)));
+				Policy.infoCenter.getCancellableGroupRemainTime().get(target)));
 			weightedSum.remove(target);
 			Map.Entry<CancellableID, Double> secondWeightedSum =
-					weightedSum.entrySet().stream().max(Map.Entry.comparingByValue()).orElse(null);
+				weightedSum.entrySet().stream().max(Map.Entry.comparingByValue()).orElse(null);
 			if (secondWeightedSum != null) {
 				for (Map.Entry<ResourceName, Double> entry :
-						cancellableGroupMeasure.get(secondWeightedSum.getKey()).entrySet()) {
-					System.out.println("Second weighted cancellable's " + entry.getKey() + "'s unified usage is "
-							+ entry.getValue());
+					cancellableGroupMeasure.get(secondWeightedSum.getKey()).entrySet()) {
+					System.out.println(
+						"Second weighted cancellable's " + entry.getKey() + "'s unified usage is " + entry.getValue());
 				}
 				System.out.println(String.format("Second %s's remain time is %d", secondWeightedSum.getKey().toString(),
-						Policy.infoCenter.getCancellableGroupRemainTime().get(secondWeightedSum.getKey())));
+					Policy.infoCenter.getCancellableGroupRemainTime().get(secondWeightedSum.getKey())));
 			}
 		}
 
@@ -76,7 +76,7 @@ public class MOOPolicy extends Policy {
 	}
 
 	private static Double calculateWeightedSum(
-			Map<ResourceName, Double> weight, Map<ResourceName, Double> resourceUsages) {
+		Map<ResourceName, Double> weight, Map<ResourceName, Double> resourceUsages) {
 		Double sum = 0.0;
 		for (Map.Entry<ResourceName, Double> usageEntry : resourceUsages.entrySet()) {
 			try {

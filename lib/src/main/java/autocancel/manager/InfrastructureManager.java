@@ -37,7 +37,7 @@ public class InfrastructureManager {
 
 	private AbstractInfrastructure getInfrastructure(ResourceName resourceName) {
 		AbstractInfrastructure infrastructure = this.infrastructures.get(
-				(String) ((Map<?, ?>) Settings.getSetting("monitor_physical_resources")).get(resourceName.toString()));
+			(String) ((Map<?, ?>) Settings.getSetting("monitor_physical_resources")).get(resourceName.toString()));
 
 		if (infrastructure == null) {
 			System.out.println("Invalid infrastructure name " + resourceName.toString());

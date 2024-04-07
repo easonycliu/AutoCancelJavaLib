@@ -25,14 +25,14 @@ public class ResourcePool {
 			this.resources.put(resource.getResourceName(), resource);
 		} else {
 			Logger.systemWarn(
-					"Resource " + resource.getResourceName().toString() + " has added to resource pool, skip");
+				"Resource " + resource.getResourceName().toString() + " has added to resource pool, skip");
 		}
 	}
 
 	public void addBuiltinResource() {
 		for (Map.Entry<?, ?> entry : ((Map<?, ?>) Settings.getSetting("monitor_physical_resources")).entrySet()) {
 			this.addResource(Resource.createResource(
-					ResourceType.valueOf((String) entry.getKey()), ResourceName.valueOf((String) entry.getKey())));
+				ResourceType.valueOf((String) entry.getKey()), ResourceName.valueOf((String) entry.getKey())));
 		}
 	}
 

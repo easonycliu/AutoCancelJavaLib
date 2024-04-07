@@ -41,7 +41,7 @@ public abstract class Resource {
 			case MEMORY:
 				if (name.equals(ResourceName.MEMORY)) {
 					if ((String) ((Map<?, ?>) Settings.getSetting("monitor_physical_resources")).get("MEMORY")
-							== "JVM") {
+						== "JVM") {
 						resource = new JVMHeapResource();
 					} else {
 						resource = new EvictableMemoryResource();

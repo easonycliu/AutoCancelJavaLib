@@ -42,7 +42,7 @@ public class QueueResource extends Resource {
 		Long startTimeNano = (Long) slowdownInfo.get("start_time_nano");
 		if (startTimeNano != null && this.cancellableIDSet.size() > 0) {
 			slowdown = Double.valueOf(this.totalEventTime.get(QueueEvent.QUEUE))
-					/ ((this.currentTimeNano - startTimeNano) * this.cancellableIDSet.size());
+				/ ((this.currentTimeNano - startTimeNano) * this.cancellableIDSet.size());
 		}
 
 		return slowdown;
@@ -87,7 +87,7 @@ public class QueueResource extends Resource {
 			});
 		} else {
 			Logger.systemWarn(String.format("Is null for cpu_time_system: %b, event: %b, start: %b",
-					cpuTimeSystem == null, event == null, start == null));
+				cpuTimeSystem == null, event == null, start == null));
 		}
 	}
 
@@ -111,8 +111,8 @@ public class QueueResource extends Resource {
 	@Override
 	public String toString() {
 		return String.format("Resource Type: %s, Name: %s, Total wait time: %d, Total occupy time: %d",
-				this.getResourceType().toString(), this.getResourceName().toString(),
-				this.totalEventTime.getOrDefault(QueueEvent.QUEUE, 0L),
-				this.totalEventTime.getOrDefault(QueueEvent.OCCUPY, 0L));
+			this.getResourceType().toString(), this.getResourceName().toString(),
+			this.totalEventTime.getOrDefault(QueueEvent.QUEUE, 0L),
+			this.totalEventTime.getOrDefault(QueueEvent.OCCUPY, 0L));
 	}
 }

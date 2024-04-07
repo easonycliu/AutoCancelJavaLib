@@ -44,7 +44,7 @@ public class JavaCPUReader extends ResourceReader {
 					threadCPUUsage = Double.valueOf(threadCPUTimeDiff) / systemCPUTimeDiff;
 				}
 				cpuUpdateInfo = Map.of("cpu_time_system", systemCPUTimeDiff, "cpu_time_thread", threadCPUTimeDiff,
-						"thread_id", id, "cpu_usage_thread", threadCPUUsage);
+					"thread_id", id, "cpu_usage_thread", threadCPUUsage);
 			}
 		}
 

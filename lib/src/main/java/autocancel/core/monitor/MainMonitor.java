@@ -24,7 +24,7 @@ public class MainMonitor {
 	private Map<ResourceName, Monitor> monitors;
 
 	public MainMonitor(MainManager mainManager, Map<CancellableID, Cancellable> cancellables,
-			Map<CancellableID, CancellableGroup> rootCancellableToCancellableGroup) {
+		Map<CancellableID, CancellableGroup> rootCancellableToCancellableGroup) {
 		this.monitorUpdateToCoreBuffer = new LinkedList<OperationRequest>();
 		this.mainManager = mainManager;
 		this.cancellables = cancellables;
@@ -42,10 +42,10 @@ public class MainMonitor {
 				: String.format("Ungrouped cancellable %s", cancellable.getID().toString());
 			// TODO: Problematic point: nullptr
 			for (ResourceName resourceName :
-					this.rootCancellableToCancellableGroup.get(cancellable.getRootID()).getResourceNames()) {
+				this.rootCancellableToCancellableGroup.get(cancellable.getRootID()).getResourceNames()) {
 				if (this.monitors.containsKey(resourceName)) {
 					this.monitorUpdateToCoreBuffer.addAll(
-							this.monitors.get(resourceName).updateResource(cancellable.getID()));
+						this.monitors.get(resourceName).updateResource(cancellable.getID()));
 				} else {
 					// Unsupported name in monitor
 					// But may be updated by app

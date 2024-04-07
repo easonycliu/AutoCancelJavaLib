@@ -28,7 +28,7 @@ public class Performance {
 	public String toString() {
 		Long currentTimeMilli = System.currentTimeMillis();
 		return String.format("%d requests has finish since %d to %d the throughput is %f / second",
-				this.finishedTaskNumber, this.timestampMilli, currentTimeMilli,
-				1000 * Double.valueOf(this.finishedTaskNumber) / (currentTimeMilli - this.timestampMilli));
+			this.finishedTaskNumber, this.timestampMilli, currentTimeMilli,
+			1000 * Double.valueOf(this.finishedTaskNumber) / (currentTimeMilli - this.timestampMilli));
 	}
 }

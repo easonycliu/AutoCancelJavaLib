@@ -78,7 +78,7 @@ public class MainManager {
 				if (!exitWhenSleep) {
 					System.out.println("Autocancel core start");
 					System.out.println(String.format("Policy: %s, Predict: %s", Settings.getSetting("default_policy"),
-							Settings.getSetting("predict_progress")));
+						Settings.getSetting("predict_progress")));
 					CancelLogger.logExperimentHeader();
 					AutoCancel.doStart();
 					AutoCancelCore autoCancelCore = AutoCancelCoreHolder.getAutoCancelCore();
@@ -89,7 +89,7 @@ public class MainManager {
 							autoCancelCore.startOneLoop();
 
 							Vector<CancellableID> toBeReexecutedRootCancellableIDs =
-									autoCancelCore.scheduleCancellableGroups();
+								autoCancelCore.scheduleCancellableGroups();
 							if (toBeReexecutedRootCancellableIDs.size() > 0) {
 								for (CancellableID toBeReexecutedRootCancellableID : toBeReexecutedRootCancellableIDs) {
 									AutoCancel.reexecuteRequestOfTask(toBeReexecutedRootCancellableID);
@@ -131,12 +131,12 @@ public class MainManager {
 	}
 
 	private CancellableID createCancellable(CancellableID cid, JavaThreadID jid, Boolean isCancellable,
-			Supplier<Boolean> isCanceled, String name, String action, CancellableID parentID, Long startTimeNano,
-			Long startTime) {
+		Supplier<Boolean> isCanceled, String name, String action, CancellableID parentID, Long startTimeNano,
+		Long startTime) {
 		this.idManager.setCancellableIDAndJavaThreadID(cid, jid);
 
 		OperationRequest request = new OperationRequest(
-				OperationMethod.CREATE, Map.of("cancellable_id", cid, "parent_cancellable_id", parentID));
+			OperationMethod.CREATE, Map.of("cancellable_id", cid, "parent_cancellable_id", parentID));
 		request.addRequestParam("is_cancellable", isCancellable);
 		request.addRequestParam("is_canceled", isCanceled);
 		request.addRequestParam("cancellable_name", name);
@@ -173,8 +173,8 @@ public class MainManager {
 	}
 
 	public void createCancellableIDOnCurrentJavaThreadID(CancellableID cid, Boolean isCancellable,
-			Supplier<Boolean> isCanceled, String name, String action, CancellableID parentID, Long startTimeNano,
-			Long startTime) {
+		Supplier<Boolean> isCanceled, String name, String action, CancellableID parentID, Long startTimeNano,
+		Long startTime) {
 		JavaThreadID jid = new JavaThreadID(Thread.currentThread().getId());
 		this.createCancellable(cid, jid, isCancellable, isCanceled, name, action, parentID, startTimeNano, startTime);
 	}
@@ -220,19 +220,19 @@ public class MainManager {
 		for (JavaThreadID javaThreadID : javaThreadIDs) {
 			if (javaThreadID.isValid()) {
 				resourceUpdateInfos.add(
-						this.infrastructureManager.getSpecifiedResourceLatest(javaThreadID, resourceName));
+					this.infrastructureManager.getSpecifiedResourceLatest(javaThreadID, resourceName));
 			}
 		}
 		return resourceUpdateInfos;
 	}
 
 	public void updateCancellableGroupResource(
-			ResourceType type, String name, Map<String, Object> cancellableGroupUpdateInfo) {
+		ResourceType type, String name, Map<String, Object> cancellableGroupUpdateInfo) {
 		JavaThreadID jid = new JavaThreadID(Thread.currentThread().getId());
 		CancellableID cid = this.idManager.getCancellableIDOfJavaThreadID(jid);
 		if (cid.isValid()) {
 			OperationRequest request = new OperationRequest(OperationMethod.UPDATE,
-					Map.of("cancellable_id", cid, "resource_name", ResourceName.valueOf(name), "resource_type", type));
+				Map.of("cancellable_id", cid, "resource_name", ResourceName.valueOf(name), "resource_type", type));
 			request.addRequestParam("update_group_resource", cancellableGroupUpdateInfo);
 			this.putManagerRequestToCore(request);
 		} else {

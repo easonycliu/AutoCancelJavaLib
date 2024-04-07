@@ -30,7 +30,7 @@ public class JavaMemoryReader extends ResourceReader {
 				}
 			} else {
 				Logger.systemWarn(
-						"Unsupported method getThreadAllocatedBytes() in class com.sun.management.ThreadMXBean");
+					"Unsupported method getThreadAllocatedBytes() in class com.sun.management.ThreadMXBean");
 			}
 		} else {
 			this.sunThreadMXBean = null;
@@ -82,10 +82,10 @@ public class JavaMemoryReader extends ResourceReader {
 			if (this.javaThreadHeapUsing.containsKey(jid)) {
 				Long heapUsing = this.sunThreadMXBean.getThreadAllocatedBytes(jid.unwrap());
 				this.javaThreadHeapUsing.computeIfPresent(
-						jid, (key, value) -> { return Math.max(0, heapUsing - value); });
+					jid, (key, value) -> { return Math.max(0, heapUsing - value); });
 			} else {
 				this.javaThreadHeapUsing.put(
-						jid, Math.max(0, this.sunThreadMXBean.getThreadAllocatedBytes(jid.unwrap())));
+					jid, Math.max(0, this.sunThreadMXBean.getThreadAllocatedBytes(jid.unwrap())));
 			}
 		}
 	}

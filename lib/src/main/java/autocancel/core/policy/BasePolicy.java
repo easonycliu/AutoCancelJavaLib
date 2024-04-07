@@ -24,7 +24,7 @@ public class BasePolicy extends Policy {
 	public CancellableID getCancelTarget() {
 		Map<ResourceName, Double> resourceContentionLevel = Policy.infoCenter.getContentionLevel();
 		Map.Entry<ResourceName, Double> maxContentionLevel =
-				resourceContentionLevel.entrySet().stream().max(Map.Entry.comparingByValue()).orElse(null);
+			resourceContentionLevel.entrySet().stream().max(Map.Entry.comparingByValue()).orElse(null);
 		ResourceName resourceName = null;
 		if (maxContentionLevel != null) {
 			resourceName = maxContentionLevel.getKey();
@@ -38,13 +38,13 @@ public class BasePolicy extends Policy {
 				System.out.println(entry.getKey() + "'s contention level is " + entry.getValue());
 			}
 			Map<CancellableID, Double> cancellableGroupResourceMeasure =
-					BasePolicy.getCancellableGroupResourceMeasure(resourceName);
+				BasePolicy.getCancellableGroupResourceMeasure(resourceName);
 			Map.Entry<CancellableID, Double> maxResourceUsage =
-					cancellableGroupResourceMeasure.entrySet().stream().max(Map.Entry.comparingByValue()).orElse(null);
+				cancellableGroupResourceMeasure.entrySet().stream().max(Map.Entry.comparingByValue()).orElse(null);
 			if (maxResourceUsage != null) {
 				target = maxResourceUsage.getKey();
 				System.out.println(String.format("Detect abnormal performance behaviour, cancel %s, %s usage %f",
-						target.toString(), resourceName.toString(), maxResourceUsage.getValue()));
+					target.toString(), resourceName.toString(), maxResourceUsage.getValue()));
 			}
 		}
 
