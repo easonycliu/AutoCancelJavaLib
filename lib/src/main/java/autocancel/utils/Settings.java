@@ -20,7 +20,7 @@ public class Settings {
 	}
 
 	private static Map<String, Object> getAppSettings() {
-		String app = System.getProperty("target.app");
+		String app = System.getProperty("autocancel.app");
 		if (app == null) {
 			return Map.ofEntries();
 		} else if (app.equals("elasticsearch")) {
