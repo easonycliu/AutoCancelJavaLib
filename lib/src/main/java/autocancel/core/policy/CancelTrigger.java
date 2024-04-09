@@ -69,7 +69,7 @@ public class CancelTrigger {
 		if (normalThroughput - CancelTrigger.ABNORMAL_PERFORMANCE_DROP_ABSOLUTE > throughput) {
 			abnormal = true;
 		}
-		return abnormal;
+		return System.getProperty("cancel.enable").equals("true") && abnormal;
 	}
 
 	public Boolean isRecovered(Double throughput) {
