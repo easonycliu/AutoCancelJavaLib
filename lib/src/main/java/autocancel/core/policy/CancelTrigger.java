@@ -11,10 +11,10 @@ import autocancel.utils.Settings;
 
 public class CancelTrigger {
 	private static final Double ABNORMAL_PERFORMANCE_DROP_PORTION =
-		Double.valueOf(Settings.getFromJVMOrDefault("abnormal.portion", "0.5"));
+		Double.valueOf(Settings.getFromJVMOrDefault("abnormal.portion", "0.25"));
 
 	private static final Double ABNORMAL_PERFORMANCE_DROP_ABSOLUTE =
-		Double.valueOf(Settings.getFromJVMOrDefault("abnormal.absolute", "400"));
+		Double.valueOf(Settings.getFromJVMOrDefault("abnormal.absolute", "200"));
 
 	private static final Double RECOVER_TO_ABNORMAL_DROP_RATIO = 0.6;
 	private static final Double RECOVER_PERFORMANCE_DROP_PORTION =
