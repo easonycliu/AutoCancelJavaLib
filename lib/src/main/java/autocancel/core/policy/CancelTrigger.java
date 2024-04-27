@@ -186,17 +186,9 @@ public class CancelTrigger {
 		}
 
 		public void enQueue(T e) {
-			if (this.minQueue.size() < this.size) {
-				this.minQueue.add(e);
-			} else {
-				T minElement = this.minQueue.poll();
-				if (minElement != null) {
-					if (this.comparator.compare(e, minElement) > 0) {
-						this.minQueue.add(e);
-					} else {
-						this.minQueue.add(minElement);
-					}
-				}
+			this.minQueue.add(e);
+			if (this.minQueue.size() > this.size) {
+				this.minQueue.poll();
 			}
 		}
 
