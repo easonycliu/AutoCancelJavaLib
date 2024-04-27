@@ -42,16 +42,16 @@ public class CancelLogger {
 
 	public static void logExperimentHeader() {
 		try {
-			CancelLogger.writer.append(String.format("%s,%s,%s,%s\n", "Times", "Throughput", "Cancel", "Recover"));
+			CancelLogger.writer.append(String.format("%s,%s,%s\n", "Times", "Throughput", "Cancel"));
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
 	}
 
-	public static void logExperimentInfo(Double throughput, Boolean cancel, Boolean recover) {
+	public static void logExperimentInfo(Double throughput, Boolean cancel) {
 		try {
 			CancelLogger.writer.append(
-				String.format("%d,%f,%b,%b\n", CancelLogger.experimentTime, throughput, cancel, recover));
+				String.format("%d,%f,%b\n", CancelLogger.experimentTime, throughput, cancel));
 			CancelLogger.writer.flush();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());

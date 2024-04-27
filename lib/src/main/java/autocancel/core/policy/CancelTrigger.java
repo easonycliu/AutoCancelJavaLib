@@ -38,8 +38,6 @@ public class CancelTrigger {
 
 	private FixSizePriorityQueue<ThroughputDataPoint> cycleMaxThroughputQueue;
 
-	private FixSizePriorityQueue<ThroughputDataPoint> globalMaxThroughputQueue;
-
 	public CancelTrigger() {
 		this.averageFilter = new AverageFilter(CancelTrigger.AVERAGE_FILTER_SIZE);
 		this.started = false;
@@ -47,9 +45,6 @@ public class CancelTrigger {
 		this.continuousAbnormalCycles = 0L;
 		this.cycleMaxThroughputQueue =
 			new FixSizePriorityQueue<ThroughputDataPoint>(CancelTrigger.MAX_PAST_CYCLE_PERFORMANCE_REF_NUM,
-				(e1, e2) -> e1.getThroughput().intValue() - e2.getThroughput().intValue());
-		this.globalMaxThroughputQueue =
-			new FixSizePriorityQueue<ThroughputDataPoint>(CancelTrigger.MAX_PAST_GLOBAL_PERFORMANCE_REF_NUM,
 				(e1, e2) -> e1.getThroughput().intValue() - e2.getThroughput().intValue());
 	}
 
@@ -61,16 +56,6 @@ public class CancelTrigger {
 			abnormal = true;
 		}
 		return System.getProperty("cancel.enable").equals("true") && abnormal;
-	}
-
-	public Boolean isRecovered(Double throughput) {
-		Boolean recovered = false;
-		Double normalThroughput =
-			this.globalMaxThroughputQueue.mean((element) -> Double.valueOf(element.getThroughput()));
-		if (normalThroughput * (1.0 - CancelTrigger.RECOVER_PERFORMANCE_DROP_PORTION) < throughput) {
-			recovered = true;
-		}
-		return recovered;
 	}
 
 	public Boolean triggered(long finishedTaskNumber) {
@@ -86,7 +71,6 @@ public class CancelTrigger {
 				CancelLogger.experimentStart();
 			} else {
 				this.cycleMaxThroughputQueue.clear();
-				this.globalMaxThroughputQueue.clear();
 				CancelLogger.experimentStop();
 			}
 		} else {
@@ -96,7 +80,6 @@ public class CancelTrigger {
 			if (lastCyclePerformance >= 0) {
 				this.cycleMaxThroughputQueue.removeIf((element) -> element.isExpired());
 				this.cycleMaxThroughputQueue.enQueue(new ThroughputDataPoint(lastCyclePerformance, currentTimeMilli));
-				this.globalMaxThroughputQueue.enQueue(new ThroughputDataPoint(lastCyclePerformance, currentTimeMilli));
 				Double filteredFinishedTaskNumber = this.averageFilter.putAndGet(lastCyclePerformance);
 				Boolean abnormal = this.isAbnormal(filteredFinishedTaskNumber);
 				if (abnormal) {
@@ -111,7 +94,7 @@ public class CancelTrigger {
 				System.out.println(
 					String.format("Finished tasks: %f, Abnormal: %b", filteredFinishedTaskNumber, abnormal));
 				CancelLogger.logExperimentInfo(
-					Double.valueOf(lastCyclePerformance), need, this.isRecovered(Double.valueOf(lastCyclePerformance)));
+					Double.valueOf(lastCyclePerformance), need);
 			}
 		}
 
