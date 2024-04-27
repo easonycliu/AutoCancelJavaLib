@@ -13,9 +13,6 @@ public class CancelTrigger {
 	private static final Double ABNORMAL_PERFORMANCE_DROP_PORTION =
 		Double.valueOf(Settings.getFromJVMOrDefault("abnormal.portion", "0.25"));
 
-	private static final Double RECOVER_TO_ABNORMAL_DROP_RATIO = 0.6;
-	private static final Double RECOVER_PERFORMANCE_DROP_PORTION =
-		RECOVER_TO_ABNORMAL_DROP_RATIO * ABNORMAL_PERFORMANCE_DROP_PORTION;
 	private static final Long ONE_CYCLE_MILLI = 1000L;
 
 	private static final Long MAX_CONTINUOUS_ABNORMAL_CYCLE = 5L;
@@ -23,8 +20,6 @@ public class CancelTrigger {
 	private static final Long PAST_PERFORMANCE_REF_CYCLE = 30L;
 
 	private static final Integer MAX_PAST_CYCLE_PERFORMANCE_REF_NUM = 3;
-
-	private static final Integer MAX_PAST_GLOBAL_PERFORMANCE_REF_NUM = 10;
 
 	private static final Integer AVERAGE_FILTER_SIZE = 2;
 
