@@ -11,11 +11,11 @@ import autocancel.utils.Settings;
 
 public class CancelTrigger {
 	private static final Double ABNORMAL_PERFORMANCE_DROP_PORTION =
-		Double.valueOf(Settings.getFromJVMOrDefault("abnormal.portion", "0.25"));
+		Double.valueOf(Settings.getFromJVMOrDefault("abnormal.portion", "0.2"));
 
 	private static final Long ONE_CYCLE_MILLI = 1000L;
 
-	private static final Long CONTINUOUS_ABNORMAL_TO_CANCEL_CYCLE = 5L;
+	private static final Long CONTINUOUS_ABNORMAL_TO_CANCEL_CYCLE = 2L;
 
 	private static final Long TRIGGER_INTERVAL_IN_CANCEL_CYCLE = 10L;
 
