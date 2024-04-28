@@ -15,7 +15,11 @@ public class CancelTrigger {
 
 	private static final Long ONE_CYCLE_MILLI = 1000L;
 
-	private static final Long MAX_CONTINUOUS_ABNORMAL_CYCLE = 5L;
+	private static final Long CONTINUOUS_ABNORMAL_TO_CANCEL_CYCLE = 5L;
+
+	private static final Long TRIGGER_INTERVAL_IN_CANCEL_CYCLE = 10L;
+
+	private static final Long CONTINUOUS_WORK_WITHOUT_CANCEL_CYCLE = 5L;
 
 	private static final Long PAST_PERFORMANCE_REF_CYCLE = 30L;
 
@@ -23,18 +27,25 @@ public class CancelTrigger {
 
 	private static final Integer AVERAGE_FILTER_SIZE = 2;
 
+	private Boolean cancelStart;
+
 	private AverageFilter averageFilter;
 
 	private PerformanceBuffer performanceBuffer;
 
 	private Long continuousAbnormalCycles;
 
+	private Long prevCancelTimestamp;
+
 	private FixSizePriorityQueue<ThroughputDataPoint> cycleMaxThroughputQueue;
 
 	public CancelTrigger() {
+		this.cancelStart = false;
 		this.averageFilter = new AverageFilter(CancelTrigger.AVERAGE_FILTER_SIZE);
 		this.performanceBuffer = new PerformanceBuffer(CancelTrigger.ONE_CYCLE_MILLI);
 		this.continuousAbnormalCycles = 0L;
+		this.prevCancelTimestamp =
+			System.currentTimeMillis() - CancelTrigger.ONE_CYCLE_MILLI * CancelTrigger.TRIGGER_INTERVAL_IN_CANCEL_CYCLE;
 		this.cycleMaxThroughputQueue =
 			new FixSizePriorityQueue<ThroughputDataPoint>(CancelTrigger.MAX_PAST_CYCLE_PERFORMANCE_REF_NUM,
 				(e1, e2) -> e1.getThroughput().intValue() - e2.getThroughput().intValue());
@@ -44,7 +55,8 @@ public class CancelTrigger {
 		Boolean abnormal = false;
 		Double normalThroughput =
 			this.cycleMaxThroughputQueue.mean((element) -> Double.valueOf(element.getThroughput()));
-		if (normalThroughput * (1.0 - CancelTrigger.ABNORMAL_PERFORMANCE_DROP_PORTION) - Double.MIN_VALUE > throughput) {
+		if (normalThroughput * (1.0 - CancelTrigger.ABNORMAL_PERFORMANCE_DROP_PORTION) - Double.MIN_VALUE
+			> throughput) {
 			abnormal = true;
 		}
 		return System.getProperty("cancel.enable").equals("true") && abnormal;
@@ -53,26 +65,38 @@ public class CancelTrigger {
 	public Boolean triggered(long finishedTaskNumber) {
 		Boolean need = false;
 		long currentTimeMilli = System.currentTimeMillis();
-		long lastCyclePerformance =
-			this.performanceBuffer.lastCyclePerformance(currentTimeMilli, finishedTaskNumber);
+		long lastCyclePerformance = this.performanceBuffer.lastCyclePerformance(currentTimeMilli, finishedTaskNumber);
 		if (lastCyclePerformance >= 0) {
 			this.cycleMaxThroughputQueue.removeIf((element) -> element.isExpired());
 			this.cycleMaxThroughputQueue.enQueue(new ThroughputDataPoint(lastCyclePerformance, currentTimeMilli));
 			Double filteredFinishedTaskNumber = this.averageFilter.putAndGet(lastCyclePerformance);
 			Boolean abnormal = this.isAbnormal(filteredFinishedTaskNumber);
-			if (abnormal) {
+			if (abnormal && !this.cancelStart) {
 				this.continuousAbnormalCycles += 1;
-				if (this.continuousAbnormalCycles > CancelTrigger.MAX_CONTINUOUS_ABNORMAL_CYCLE) {
-					need = true;
+				if (this.continuousAbnormalCycles > CancelTrigger.CONTINUOUS_ABNORMAL_TO_CANCEL_CYCLE) {
+					this.cancelStart = true;
 				}
 			} else {
 				this.continuousAbnormalCycles = 0L;
 			}
-			System.out.println(
-				String.format("Finished tasks: %f, Abnormal: %b", filteredFinishedTaskNumber, abnormal));
-			CancelLogger.logExperimentInfo(
-				Double.valueOf(lastCyclePerformance), need);
+
+			if (this.cancelStart) {
+				need = abnormal
+					&& ((currentTimeMilli - this.prevCancelTimestamp)
+						> (CancelTrigger.ONE_CYCLE_MILLI * CancelTrigger.TRIGGER_INTERVAL_IN_CANCEL_CYCLE));
+			}
+			System.out.println(String.format("Finished tasks: %f, Abnormal: %b", filteredFinishedTaskNumber, abnormal));
+			CancelLogger.logExperimentInfo(Double.valueOf(lastCyclePerformance), need);
 		}
+
+		if (need) {
+			this.prevCancelTimestamp = currentTimeMilli;
+		}
+
+		this.cancelStart = this.cancelStart
+			&& ((currentTimeMilli - this.prevCancelTimestamp) < (CancelTrigger.ONE_CYCLE_MILLI
+					* (CancelTrigger.TRIGGER_INTERVAL_IN_CANCEL_CYCLE
+						+ CancelTrigger.CONTINUOUS_WORK_WITHOUT_CANCEL_CYCLE)));
 
 		return need;
 	}
