@@ -21,6 +21,8 @@ public class CancelTrigger {
 
 	private static final Long CONTINUOUS_WORK_WITHOUT_CANCEL_CYCLE = 5L;
 
+	private static final Long CONTINUOUS_ZERO_STOP_CANCEL_CYCLE = 4L;
+
 	private static final Long PAST_PERFORMANCE_REF_CYCLE = 30L;
 
 	private static final Integer MAX_PAST_CYCLE_PERFORMANCE_REF_NUM = 3;
@@ -35,6 +37,8 @@ public class CancelTrigger {
 
 	private Long continuousAbnormalCycles;
 
+	private Long continuousZeroCycles;
+
 	private Long prevCancelTimestamp;
 
 	private FixSizePriorityQueue<ThroughputDataPoint> cycleMaxThroughputQueue;
@@ -44,6 +48,7 @@ public class CancelTrigger {
 		this.averageFilter = new AverageFilter(CancelTrigger.AVERAGE_FILTER_SIZE);
 		this.performanceBuffer = new PerformanceBuffer(CancelTrigger.ONE_CYCLE_MILLI);
 		this.continuousAbnormalCycles = 0L;
+		this.continuousZeroCycles = 0L;
 		this.prevCancelTimestamp =
 			System.currentTimeMillis() - CancelTrigger.ONE_CYCLE_MILLI * CancelTrigger.TRIGGER_INTERVAL_IN_CANCEL_CYCLE;
 		this.cycleMaxThroughputQueue =
@@ -67,6 +72,12 @@ public class CancelTrigger {
 		long currentTimeMilli = System.currentTimeMillis();
 		long lastCyclePerformance = this.performanceBuffer.lastCyclePerformance(currentTimeMilli, finishedTaskNumber);
 		if (lastCyclePerformance >= 0) {
+			if (lastCyclePerformance == 0) {
+				this.continuousZeroCycles += 1;
+			}
+			else {
+				this.continuousZeroCycles = 0L;
+			}
 			this.cycleMaxThroughputQueue.removeIf((element) -> element.isExpired());
 			this.cycleMaxThroughputQueue.enQueue(new ThroughputDataPoint(lastCyclePerformance, currentTimeMilli));
 			Double filteredFinishedTaskNumber = this.averageFilter.putAndGet(lastCyclePerformance);
@@ -97,6 +108,10 @@ public class CancelTrigger {
 			&& ((currentTimeMilli - this.prevCancelTimestamp) < (CancelTrigger.ONE_CYCLE_MILLI
 					* (CancelTrigger.TRIGGER_INTERVAL_IN_CANCEL_CYCLE
 						+ CancelTrigger.CONTINUOUS_WORK_WITHOUT_CANCEL_CYCLE)));
+
+		if (this.continuousZeroCycles > CancelTrigger.CONTINUOUS_ZERO_STOP_CANCEL_CYCLE) {
+			this.cycleMaxThroughputQueue.clear();
+		}
 
 		return need;
 	}
